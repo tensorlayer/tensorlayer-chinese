@@ -7,8 +7,7 @@
   :align: center
   :target: https://github.com/zsdonghao/tensorlayer
 
-`TensorLayer`_ is designed to use by both Researchers
-and Engineers, it is a transparent library built on the top of Google TensorFlow.
+`TensorLayer`_ 是一个基于Google TensorFlow专门为科研人员和工程师设计的透明化深度学习和强化学习库.
 It is designed to provide a higher-level
 API to TensorFlow in order to speed-up experimentations and developments.
 `TensorLayer`_ is easy to be extended and modified.
