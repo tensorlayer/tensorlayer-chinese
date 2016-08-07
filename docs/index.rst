@@ -1,4 +1,4 @@
-Welcome to TensorLayer
+欢迎阅读 TensorLayer 文档
 =======================================
 
 
