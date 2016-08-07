@@ -14,7 +14,7 @@
 </a>
 
 
-# TensorLayer: Deep learning and Reinforcement learning library for Researchers and Engineers. 
+# TensorLayer: 一个为研究者和工程师设计的深度学习和强化学习库
 
 TensorLayer is designed to use by both Researchers and Engineers, it is a transparent library built on the top of [Google TensorFlow](https://www.tensorflow.org). It is designed to provide a higher-level API to TensorFlow in order to speed-up experimentations and developments. TensorLayer is easy to be extended and modified. In addition, we provide many examples and tutorials to help you to go through deep learning and reinforcement learning.
 
