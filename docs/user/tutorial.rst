@@ -1,4 +1,4 @@
-.._tutorial:
+.. _tutorial:
 
 =======
 教程
