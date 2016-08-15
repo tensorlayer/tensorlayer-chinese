@@ -58,7 +58,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'TensorLayer'
+project = 'TensorLayer中文版'
 copyright = '2016, TensorLayer Contributors'
 author = 'TensorLayer Contributors'
 
