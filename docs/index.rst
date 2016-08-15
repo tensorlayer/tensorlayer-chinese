@@ -1,95 +1,40 @@
-欢迎阅读 TensorLayer 文档
-=======================================
+欢迎来到 TensorLayer
+==============================
 
 
-.. image:: user/my_figs/img_tensorlayer.png
-  :scale: 25 %
-  :align: center
-  :target: https://github.com/zsdonghao/tensorlayer
+.. image::usr/my_figs/img_tensorlayer.png
+   :scale:25 %
+   :align:center
 
-`TensorLayer`_ 是一个基于Google TensorFlow专门为科研人员和工程师设计的透明化深度学习和强化学习库.
-It is designed to provide a higher-level
-API to TensorFlow in order to speed-up experimentations and developments.
-`TensorLayer`_ is easy to be extended and modified.
-In addition, we provide many examples and tutorials
-to help you to go through deep learning and reinforcement learning.
+TensorLayer 是一个透明的基于Google TensorFlow顶层的透明化深度学习与强化学习库。
+它被设计为了加快实验速度而提供更高水平的TensorFlow API。
+TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应用。
 
-
-The `documentation <http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html>`_
-is not only for describing how to use `TensorLayer`_ but also
-a tutorial to walk through different type of Neural Networks, Deep
-Reinforcement Learning and Natural Language Processing etc.
-
-However, different with other inflexible TensorFlow wrappers,
-`TensorLayer`_ assumes that you are somewhat familiar with Neural Networks and TensorFlow.
-A basic understanding of how TensorFlow works is required to be
-able to use `TensorLayer`_ skillfully.
-
-
-
-.. _TensorLayer-philosopy:
-
-Philosophy
-----------
-
-`TensorLayer`_ grow out of a need to combine the flexibility of TensorFlow with the
-availability of the right building blocks for training neural networks.
-Its development is guided by a number of design goals:
-
-* **Transparency**: Do not hide TensorFlow behind abstractions. Try to rely on
-  TensorFlow's functionality where possible, and follow TensorFlow's conventions.
-  Do not hide training process, all iteration, initialization can be managed
-  by user.
-
-* **Tensor**: Neural networks perform on multidimensional data arrays which are
-  referred to as "tensors".
-
-* **Tutorial**: Providing mass format-consistent examples covering Dropout,
-  DropConnect, Denoising Autoencoder, LSTM, CNN etc, speed up your development.
-
-* **TPU**: Tensor Processing Unit is a custom ASIC built specifically for
-  machine learning and tailored for TensorFlow.
-
-* **Distribution**: Distributed Machine Learning is the default function of TensorFlow.
-
-* **Compatibility**: A network is abstracted to regularization, cost and outputs
-  of each layer. Other wraping libraries for TensorFlow are easy to merged
-  into TensorLayer, suitable for Researchers.
-
-* **Simplicity**: Be easy to use, extend and modify, to facilitate use
-  in Research and Engineering.
-
-* **High-Speed**: The running speed under GPU support is the same with
-  TensorFlow only. The simplicity do not sacrifice the performance.
-
+这篇文档不仅仅是为了描述如何使用这个库也是一个遍历不同类型的神经网络，
+深度强化学习和自然语言处理等内容的教程。
 
 .. note::
-   If you got problem to read the docs online, you could download the repository
-   on `GitHub`_, then go to ``/docs/_build/html/index.html`` to read the docs
-   offline. The ``_build`` folder can be generated in ``docs`` using ``make html``.
+   如果你阅读在线中文文档时有什么问题，你可以在github上下载这个项目，
+   然后去``/docs/cn/_build/html/index.html``阅读离线中文文档。
+   或者在 `TensorLayer <http://tensorlayer.readthedocs.io/en/latest/>`_ 中阅读官方原文档。
 
+用户指南
+-----------
 
-
-User Guide
-------------
-
-The TensorLayer user guide explains how to install TensorFlow, CUDA and cuDNN,
-how to build and train neural networks using TensorLayer, and how to contribute
-to the library as a developer.
+TensorLayer用户指南说明了如何去安装TensorFlow,CUDA和cuDNN，
+然后如何用TensorLayer建立和训练神经网络和如何作为（一个开发者支持这个库。）
 
 .. toctree::
-  :maxdepth: 2
+   :maxdepth: 2
 
-  user/installation
-  user/tutorial
-  user/development
-  user/more
+   user/installation
+   user/tutorial
+   user/development
 
-API Reference
--------------
+API目录
+----------
 
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
+如果你正在寻找某个特殊的函数，类或者方法，这一列文档就是为你准备的。
 
 .. toctree::
   :maxdepth: 2
@@ -103,9 +48,9 @@ method, this part of the documentation is for you.
   modules/visualize
   modules/files
   modules/utils
+  modules/init
   modules/preprocess
   modules/ops
-
 
 Indices and tables
 ==================
@@ -114,6 +59,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-
 .. _GitHub: https://github.com/zsdonghao/tensorlayer
-.. _TensorLayer: https://github.com/zsdonghao/tensorlayer/
+
+
