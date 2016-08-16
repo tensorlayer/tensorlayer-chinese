@@ -341,11 +341,11 @@ See tensorlayer/cost.py
 
 # 安装步骤
 
-**<font color="grey"> TensorFlow 安装：</font>**
+**<font color="grey"> 安装 TensorFlow：</font>**
 
-请预先安装TensorFlow，它的版本需要 >= 0.8： *[Tensorflow 安装指南（英文版）](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*.
+请预先安装TensorFlow，它的版本需要 >= 0.8： *[Tensorflow 安装指南（英文版）](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*。
 
-**<font color="grey"> GPU 设置：</font>**
+**<font color="grey"> 设置 GPU：</font>**
 
 TensorFlow GPU版需要你先安装 CUDA 和 cuDNN：
 
@@ -355,9 +355,9 @@ TensorFlow GPU版需要你先安装 CUDA 和 cuDNN：
 
 *[cuDNN 下载](https://developer.nvidia.com/cudnn)*
 
-**<font color="grey"> TensorLayer 安装：</font>**
+**<font color="grey"> 安装 TensorLayer：</font>**
 
-你可以跟着下面的步骤安装TensorLayer，详细请参考 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html).
+你可以跟着下面的步骤安装TensorLayer，详细请参考 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html)。
 
 ```python
 python setup.py install
