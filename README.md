@@ -20,7 +20,7 @@ TensorLayer 是为科研人员和工程师专门设计的，它是一个基于[G
 
 这篇文档不仅仅是为了描述如何使用这个库，也会涉及和学习不同类型的神经网络，深度和强化学习，还有自然语言处理等内容。
 
-然而，不同于其他的相对较不灵活的TensorFlow学习库，TensorLayer假设你已经在一定程度上熟悉并理解了神经网络和TensorFlow。为了能比较熟练的使用TensorLayer，会需要你对TensorFlow已经有一个较为基础的理解。
+不同于其他的相对较不灵活的TensorFlow学习库，TensorLayer假设你已经在一定程度上熟悉并理解了神经网络和TensorFlow。为了能比较熟练的使用TensorLayer，会需要你对TensorFlow已经有一个较为基础的理解。
 
 🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
 
