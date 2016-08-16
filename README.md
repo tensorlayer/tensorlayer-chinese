@@ -14,17 +14,15 @@
 </a>
 
 
-# TensorLayer: 一个为研究人员和工程师所设计的深度学习库
+# TensorLayer: 面向研究人员和工程师的深度学习和增强学习库  
 
-TensorLayer 是一个为科研人员和工程师设计的基于[Google TensorFlow](https://www.tensorflow.org)深度学习库。 
-TensorLayer 封装了TensorFlow的方法，提供更高级别（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度,也能够减少工程师在实际开发当中的重复工作。
-TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外， TensorLayer 也提供了许多示例和教程来帮助读者理解深度学习。
+TensorLayer 是为科研人员和工程师设计的一款基于[Google TensorFlow](https://www.tensorflow.org)开发的深度学习与增强学习库库。 
+它提供高级别的（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度,也能够减少工程师在实际开发当中的重复工作。
+TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外，TensorLayer 提供了大量示例和教程来帮助初学者理解深度学习，并提供大量的官方例子程序方便开发者快速找到适合自己项目的例子。
 
-在这篇文档当中您不仅可以学会如何使用这个库，也会了解不同类型的神经网络，深度学习，强化学习，还有自然语言处理等内容。
+阅读TensorLayer Readthedocs 文档您不仅可以学会如何使用这个库，也会了解不同类型的神经网络、深度学习、强化学习，还有自然语言处理等内容。
 
-为了使用户能够熟练使用TensorLayer，TensorLayer的文档和教程假设读者对于深度学习，神经网络以及TensorFlow有了一定的基础。
-
-
+不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让用非常熟练地使用它。
 
 🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
 
