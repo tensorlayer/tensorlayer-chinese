@@ -6,7 +6,7 @@
 import tensorflow as tf
 
 def identity(x):
-    """线性激活函数
+    """线性激活函数 
 
     参数
     ----------
