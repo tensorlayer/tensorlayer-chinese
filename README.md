@@ -54,15 +54,15 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 -
 
 # Readme 目录
-0. [Library Structure](#Library-Structure)
-0. [Overview](#Overview)
-0. [Easy to Modify](#Easytomodify)
-0. [Installation](#Installation)
-0. [Ways to Contribute](#Waystocontribute)
-0. [Online Documentation](http://tensorlayer.readthedocs.io/en/latest/)
-0. [Download PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
-0. [Download Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
-0. [Download HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
+0. [库目录 Library Structure](#Library-Structure)
+0. [概述 Overview](#Overview)
+0. [如何修改 Easy to Modify](#Easytomodify)
+0. [安装步骤 Installation](#Installation)
+0. [参与开发 Ways to Contribute](#Waystocontribute)
+0. [在线文档 Online Documentation](http://tensorlayer.readthedocs.io/en/latest/)
+0. [下载 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
+0. [下载 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
+0. [下载 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
 
 
 --
@@ -269,7 +269,7 @@ network = tl.DropoutLayer(network, keep=0.5, name='drop3')
 network = tl.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
 ```
 
-**<font color="grey"> Regularization of Weights: </font>**
+**<font color="grey"> 参数规则化 Regularization of Weights: </font>**
 
 After initializing the variables, the informations of network parameters can be observed by using **<font color="grey">network.print_params()</font>**.
 
@@ -382,7 +382,7 @@ cd docs
 make html
 ```
 
-# 下载文档
+# 在线文档
 你也可以通过 [Read the Docs](http://tensorlayercn.readthedocs.io/) 来下载下面这些文档。
 
 0. [下载 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
