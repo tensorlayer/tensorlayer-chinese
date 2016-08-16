@@ -339,25 +339,25 @@ ReconLayer.__init__(...):
 See tensorlayer/cost.py
 
 
-# Installation
+# 安装步骤
 
-**<font color="grey"> TensorFlow Installation: </font>**
+**<font color="grey"> TensorFlow 安装：</font>**
 
-This library requires Tensorflow (version >= 0.8) to be installed: *[Tensorflow installation instructions](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*.
+请预先安装TensorFlow，它的版本需要 >= 0.8： *[Tensorflow 安装指南（英文版）](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*.
 
-**<font color="grey"> GPU Setup: </font>**
+**<font color="grey"> GPU 设置：</font>**
 
-GPU-version of Tensorflow requires CUDA and cuDNN to be installed.
+TensorFlow GPU版需要你先安装 CUDA 和 cuDNN：
 
-*[CUDA, CuDNN installation instructions](https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux)*.
+*[CUDA, CuDNN 安装指南（英文版）](https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux)*
 
-*[CUDA download](https://developer.nvidia.com/cuda-downloads)*.
+*[CUDA 下载](https://developer.nvidia.com/cuda-downloads)*
 
-*[cuDNN download](https://developer.nvidia.com/cudnn)*.
+*[cuDNN 下载](https://developer.nvidia.com/cudnn)*
 
-**<font color="grey"> TensorLayer Installation: </font>**
+**<font color="grey"> TensorLayer 安装：</font>**
 
-You can install TensorLayer as follow, more detail in [Read the Docs](http://tensorlayer.readthedocs.io/en/latest/user/installation.html).
+你可以跟着下面的步骤安装TensorLayer，详细请参考 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html).
 
 ```python
 python setup.py install
@@ -373,7 +373,7 @@ TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研�
 如果你可以证明你的算法比现有的方法更快更好更有效，我们将会把它加入到TensorLayer中。请同时提供测试用的文件和具体的算法描述。
 
 # 网上文档
-网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/en/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
+网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
 ```shell
 cd docs
 make html
