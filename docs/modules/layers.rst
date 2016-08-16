@@ -33,71 +33,76 @@ More functions can be found in `TensorFlow API <https://www.tensorflow.org/versi
    initialize_rnn_state
 
 
-Basic layer
+Basic 层
 ----------------
 
 .. autoclass:: Layer
 
-Input layer
+输入层
 ----------------
 
 .. autoclass:: InputLayer
   :members:
 
-Word Embedding Input layer
+词向量输入层
 ---------------------------
 
 .. autoclass:: Word2vecEmbeddingInputlayer
 .. autoclass:: EmbeddingInputlayer
 
-Dense layer
+全连接层
 ----------------
 
 .. autoclass:: DenseLayer
 .. autoclass:: ReconLayer
    :members:
 
-Noise layer
+噪声层
 ----------------
 
 .. autoclass:: DropoutLayer
 .. autoclass:: DropconnectDenseLayer
 
-Convolutional layer
+卷积层
 --------------------
 
 .. autoclass:: Conv2dLayer
+
+
+池化层
+--------------------
+
 .. autoclass:: PoolLayer
 
-Recurrent layer
+递归层
 ----------------
 
 .. autoclass:: RNNLayer
 
-Shape layer
+修改形状层
 ----------------
 
 .. autoclass:: FlattenLayer
 .. autoclass:: ConcatLayer
 .. autoclass:: ReshapeLayer
 
-Wrapper
+包装(Wrapper)
 ----------------
 
 .. autoclass:: EmbeddingAttentionSeq2seqWrapper
   :members:
 
-Developing or Untested
+开发中与待测试
 -------------------------
 
-We highly welcome contributions! Every bit helps and will be credited.
+欢迎大家一起开发与测试，每一点贡献都会署名。
 
 .. autoclass:: Conv3dLayer
 .. autoclass:: MaxoutLayer
 .. autoclass:: GaussianNoiseLayer
 .. autoclass:: BidirectionalRNNLayer
 
-Helper functions
+辅助函数
 ----------------
 
 .. autofunction:: flatten_reshape
