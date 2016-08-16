@@ -14,10 +14,10 @@ we can. So we encourage you to use TensorFlow's function. TensorFlow provides
    identity
    ramp
 
-More TensorFlow official activation functions can be found
-`here <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#activation-functions>`_.
+更多TensorFlow官方激活产生请看
+`这里 <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#activation-functions>`_.
 
-Activation functions
+激活函数
 ---------------------
 
 .. autofunction:: identity
