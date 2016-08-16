@@ -14,17 +14,23 @@
 </a>
 
 
-# TensorLayer: 为研究员和工程师设计的深度学习和强化学习库
+# TensorLayer: 一个为研究人员和工程师所设计的深度学习库
 
-TensorLayer 是为科研人员和工程师专门设计的，它是一个基于[Google TensorFlow](https://www.tensorflow.org)顶层的透明化深度学习与强化学习库。 它的设计初衷为了加快实验速度而提供更高级别（Higher-Level）的TensorFlow API。 此外，TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应用。同时，我们也提供许多例子和教程来帮助你理解和学习深度学习和强化学习。
+TensorLayer 是一个为科研人员和工程师设计的基于[Google TensorFlow](https://www.tensorflow.org)深度学习库。 
+TensorLayer 封装了TensorFlow的方法，提供更高级别（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度,也能够减少工程师在实际开发当中的重复工作。
+TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外， TensorLayer 也提供了许多示例和教程来帮助读者理解深度学习。
 
-这篇文档不仅仅是为了描述如何使用这个库，也会涉及和学习不同类型的神经网络，深度和强化学习，还有自然语言处理等内容。
+在这篇文档当中您不仅可以学会如何使用这个库，也会了解不同类型的神经网络，深度学习，强化学习，还有自然语言处理等内容。
 
-不同于其他的相对较不灵活的TensorFlow学习库，TensorLayer假设你已经在一定程度上熟悉并理解了神经网络和TensorFlow。为了能比较熟练的使用TensorLayer，会需要你对TensorFlow已经有一个较为基础的理解。
+为了使用户能够熟练使用TensorLayer，TensorLayer的文档和教程假设读者对于深度学习，神经网络以及TensorFlow有了一定的基础。
+
+
 
 🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
 
 TensorLayer grow out of a need to combine the flexibility of TensorFlow with the availability of the right building blocks for training neural networks. Its development is guided by a number of design goals:
+
+
 
  - Transparency: Do not hide TensorFlow behind abstractions. Try to rely on TensorFlow’s functionality where possible, and follow TensorFlow’s conventions. Do not hide training process, all iteration, initialization can be managed by user.
  - Tensor: Neural networks perform on multidimensional data arrays which are referred to as “tensors”.
@@ -35,7 +41,16 @@ TensorLayer grow out of a need to combine the flexibility of TensorFlow with the
  - Simplicity: Be easy to use, extend and modify, to facilitate use in Research and Engineering.
  - High-Speed: The running speed under GPU support is the same with TensorFlow only. The simplicity do not sacrifice the performance.
 
+TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提供合适的操作粒度来建立和训练神经网络。TensorLayer的开发遵循以下几个原则：
 
+- 透明性：
+- 张量：
+- 教程：
+- TPU：
+- 分布式：
+- 兼容性：
+- 简洁：
+- 高速：
 
 Now, go through the [Overview](#overview) to see how powerful it is !!!
 
