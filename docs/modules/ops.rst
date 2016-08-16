@@ -1,7 +1,7 @@
 :mod:`tensorlayer.ops`
 ======================
 
-Operation system, more functions can be found in `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_.
+系统操作，更多函数可在`TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_中找到。
 
 .. automodule:: tensorlayer.ops
 
@@ -11,13 +11,13 @@ Operation system, more functions can be found in `TensorFlow API <https://www.te
    clear_all
    set_gpu_fraction
 
-TensorFlow functions
+TensorFlow 操作函数
 ---------------------------
 
 .. autofunction:: exit_tf
 .. autofunction:: clear_all
 
-GPU functions
+GPU 配置函数
 ---------------------------
 
 .. autofunction:: set_gpu_fraction
