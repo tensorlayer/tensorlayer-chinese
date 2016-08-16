@@ -1,7 +1,7 @@
 :mod:`tensorlayer.preprocess`
 =============================
 
-Data preprocessing, more Tensor functions about image, signal processing can be found in `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_
+数据预处理，更多关于图像、信号的Tensor函数，可在 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_ 中找到。
 
 .. automodule:: tensorlayer.preprocess
 
@@ -11,7 +11,7 @@ Data preprocessing, more Tensor functions about image, signal processing can be 
    crop_central_whiten_images
 
 
-Images
+图像预处理
 --------------------
 
 .. autofunction:: distorted_images
