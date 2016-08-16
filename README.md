@@ -16,13 +16,13 @@
 
 # TensorLayer: 为研究员和工程师设计的深度学习和强化学习库
 
-TensorLayer is designed to use by both Researchers and Engineers, it is a transparent library built on the top of [Google TensorFlow](https://www.tensorflow.org). It is designed to provide a higher-level API to TensorFlow in order to speed-up experimentations and developments. TensorLayer is easy to be extended and modified. In addition, we provide many examples and tutorials to help you to go through deep learning and reinforcement learning.
+TensorLayer 是为科研人员和工程师专门设计的，它是一个透明的基于[Google TensorFlow](https://www.tensorflow.org)顶层的透明化深度学习与强化学习库。 它被设计为了加快实验速度而提供更高水平的TensorFlow API。 TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应用。同时，我们也提供许多例子和教程来帮助你理解和学会深度学习和强化学习。
 
-The documentation is not only for describing how to use TensorLayer but also a tutorial to walk through different type of Neural Networks, Deep Reinforcement Learning and Natural Language Processing etc.
+这篇文档不仅仅是为了描述如何使用这个库，也是一个遍历不同类型的神经网络，深度强化学习和自然语言处理等内容的教程。
 
-However, different with other inflexible TensorFlow wrappers, TensorLayer assumes that you are somewhat familiar with Neural Networks and TensorFlow. A basic understanding of how TensorFlow works is required to be able to use TensorLayer skillfully.
+然而，不同于其他的相对较不灵活的TensorFlow学习库，TensorLayer假设你已经在一定程度上熟悉并理解了神经网络和TensorFlow。为了能比较好的使用TensorLayer，会需要你对TensorFlow已经有一个较为基础的理解。
 
-🆕🆕🆕 Machine translation tutorial is released.
+🆕🆕🆕 机器翻译(Machine Translation)的相关教程已经发布！
 
 TensorLayer grow out of a need to combine the flexibility of TensorFlow with the availability of the right building blocks for training neural networks. Its development is guided by a number of design goals:
 
@@ -37,7 +37,7 @@ TensorLayer grow out of a need to combine the flexibility of TensorFlow with the
 
 
 
-Now, go through the [Overview](#Overview) to see how powerful it is !!!
+Now, go through the [Overview](#overview) to see how powerful it is !!!
 
 -
 
