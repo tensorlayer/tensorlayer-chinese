@@ -385,9 +385,13 @@ cd docs
 make html
 ```
 
-# 在线文档
-你也可以通过 [Read the Docs](http://tensorlayercn.readthedocs.io/) 来下载下面这些文档。
+# 文档
 
-0. [下载 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
-0. [下载 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
-0. [下载 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
+0. [英文在线文档 Online Documentation](http://tensorlayer.readthedocs.io/)
+0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
+0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
+0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
+0. [中文在线文档 Online Documentation](http://tensorlayercn.readthedocs.io/)
+0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
+0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
+0. [下载中文 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
