@@ -6,7 +6,7 @@
 import tensorflow as tf
 
 def identity(x):
-    """线性激活函数 
+    u"""线性激活函数 
 
     参数
     ----------
@@ -16,7 +16,7 @@ def identity(x):
     return x
 
 def ramp(x=None, v_min=0, v_max=1, name=None):
-    """斜坡激活函数
+    u"""斜坡激活函数
 
     参数
     ----------
