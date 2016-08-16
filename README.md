@@ -40,6 +40,9 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
 
 
+注意：本repo是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文很好，我们建议你直接阅读[英文文档](http://tensorlayer.readthedocs.io/)。
+
+
 -
 
 ####🇨🇳为了促进华人开发者的交流速度，我们建立了多种交流渠道，您可把微信号发送到 haodong_cs@163.com 申请加入。
@@ -50,7 +53,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 
 -
 
-# Table of Contents
+# Readme 目录
 0. [Library Structure](#Library-Structure)
 0. [Overview](#Overview)
 0. [Easy to Modify](#Easytomodify)
