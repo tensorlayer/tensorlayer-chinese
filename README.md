@@ -14,11 +14,12 @@
 </a>
 
 
-# TensorLayer: 一个为研究人员和工程师所设计的深度学习库
+# TensorLayer: 面向研究人员和工程师的深度学习和增强学习库 
 
-TensorLayer 是一个为科研人员和工程师设计的基于[Google TensorFlow](https://www.tensorflow.org)深度学习库。 
-TensorLayer 封装了TensorFlow的方法，提供更高级别（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度,也能够减少工程师在实际开发当中的重复工作。
-TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外， TensorLayer 也提供了许多示例和教程来帮助读者理解深度学习。
+TensorLayer 是一个为研究人员和工程师设计的基于[Google TensorFlow](https://www.tensorflow.org)开发的深度学习库与增强学习库。 
+使用 TensorLayer 可以大大加快算法实验和产品开发速度。它提供更高级别（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度,也能够减少工程师在实际开发当中的重复工作。
+
+TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外， TensorLayer 也提供了大量示例和教程来帮助初学者学习深度学习，并方便开发者快速找到适合自己项目的例子
 
 在这篇文档当中您不仅可以学会如何使用这个库，也会了解不同类型的神经网络，深度学习，强化学习，还有自然语言处理等内容。
 
@@ -339,25 +340,25 @@ ReconLayer.__init__(...):
 See tensorlayer/cost.py
 
 
-# 安装步骤
+# Installation
 
-**<font color="grey"> TensorFlow 安装：</font>**
+**<font color="grey"> TensorFlow Installation: </font>**
 
-请预先安装TensorFlow，它的版本需要 >= 0.8： *[Tensorflow 安装指南（英文版）](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*.
+This library requires Tensorflow (version >= 0.8) to be installed: *[Tensorflow installation instructions](https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html)*.
 
-**<font color="grey"> GPU 设置：</font>**
+**<font color="grey"> GPU Setup: </font>**
 
-TensorFlow GPU版需要你先安装 CUDA 和 cuDNN：
+GPU-version of Tensorflow requires CUDA and cuDNN to be installed.
 
-*[CUDA, CuDNN 安装指南（英文版）](https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux)*
+*[CUDA, CuDNN installation instructions](https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux)*.
 
-*[CUDA 下载](https://developer.nvidia.com/cuda-downloads)*
+*[CUDA download](https://developer.nvidia.com/cuda-downloads)*.
 
-*[cuDNN 下载](https://developer.nvidia.com/cudnn)*
+*[cuDNN download](https://developer.nvidia.com/cudnn)*.
 
-**<font color="grey"> TensorLayer 安装：</font>**
+**<font color="grey"> TensorLayer Installation: </font>**
 
-你可以跟着下面的步骤安装TensorLayer，详细请参考 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html).
+You can install TensorLayer as follow, more detail in [Read the Docs](http://tensorlayer.readthedocs.io/en/latest/user/installation.html).
 
 ```python
 python setup.py install
@@ -373,7 +374,7 @@ TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研�
 如果你可以证明你的算法比现有的方法更快更好更有效，我们将会把它加入到TensorLayer中。请同时提供测试用的文件和具体的算法描述。
 
 # 网上文档
-网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
+网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/en/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
 ```shell
 cd docs
 make html
