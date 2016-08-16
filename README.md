@@ -40,7 +40,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
 
 
-注意：本repo是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文很好，我们建议你直接阅读[英文文档](http://tensorlayer.readthedocs.io/)。
+注意：本repo是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若您的英文很好，我们建议您直接阅读[英文文档](http://tensorlayer.readthedocs.io/)。
 
 
 -
@@ -379,19 +379,24 @@ TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研�
 如果你可以证明你的算法比现有的方法更快更好更有效，我们将会把它加入到TensorLayer中。请同时提供测试用的文件和具体的算法描述。
 
 # 网上文档
-网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/zh/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
+
+0. [英文在线文档 Online Documentation](http://tensorlayer.readthedocs.io/)
+0. [中文在线文档 Online Documentation](http://tensorlayercn.readthedocs.io/)
+
+如果您想在本地生成这些文档，也可以跟着下面的步骤：
+
 ```shell
 cd docs
 make html
 ```
 
-# 文档
+# 下载文档
 
-0. [英文在线文档 Online Documentation](http://tensorlayer.readthedocs.io/)
+
 0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
 0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
 0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
-0. [中文在线文档 Online Documentation](http://tensorlayercn.readthedocs.io/)
+
 0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
 0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
 0. [下载中文 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
