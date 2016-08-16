@@ -1,7 +1,7 @@
 :mod:`tensorlayer.nlp`
 ======================
 
-自然语言处理与词嵌套。
+自然语言处理与词向量。
 
 .. automodule:: tensorlayer.nlp
 
