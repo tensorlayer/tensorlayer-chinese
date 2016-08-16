@@ -42,7 +42,7 @@
 .. autofunction:: sample_top
 
 
-词的向量表示
+词的向量表示 
 -------------------------------
 
 .. autofunction:: simple_read_words
