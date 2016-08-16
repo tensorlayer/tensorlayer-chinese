@@ -121,7 +121,7 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 # Start training
 ...
 ```
-**<font color="grey"> Vanilla Sparse Autoencoder: </font>**
+**<font color="grey"> 普通稀疏自编码器 Vanilla Sparse Autoencoder: </font>**
 
 
 ```python
@@ -134,7 +134,7 @@ sess.run(tf.initialize_all_variables())
 recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name=None, n_epoch=200, batch_size=128, print_freq=10, save=True, save_name='w1pre_')
 ...
 ```
-**<font color="grey"> 堆栈式去噪自编码器 Stacked Denoising Autoencoder: </font>**
+**<font color="grey"> 去噪自编码器 Denoising Autoencoder: </font>**
 
 
 ```python
@@ -149,7 +149,7 @@ recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 ...
 ```
 
-**<font color="grey"> Stacked Denoising Autoencoders: </font>**
+**<font color="grey"> 堆栈式去噪自编码器 Stacked Denoising Autoencoder: </font>**
 
 ```python
 # 定义网络
@@ -182,7 +182,7 @@ recon_layer2.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 ...
 ```
 
-### *卷积神经网络*
+### *卷积神经网络 Convolutional Neural Network*
 
 Instead of feeding the images as 1D vectors, the images can be imported as 4D matrix, where [None, 28, 28, 1] represents [batchsize, height, width, channels]. Set 'batchsize' to 'None' means data with different batchsize can all filled into the placeholder.
 
@@ -230,7 +230,7 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 For more powerful functions, please go to *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*.
 
 
-### *Recurrent Neural Network*
+### *递归神经网络 Recurrent Neural Network*
 
 **<font color="grey"> LSTM: </font>** 
 
@@ -255,7 +255,7 @@ For RL part, please read *[Policy Gradient](http://tensorlayer.readthedocs.io/en
 
 
 
-### *Cost Function*
+### *损失函数 Cost Function*
 
 TensorLayer provides a simple way to creat you own cost function. Take a MLP below for example.
 
@@ -319,7 +319,7 @@ Greedy layer-wise pretrain is an important task for deep neural network initiali
 For example, the pre-train process of *[Vanilla Sparse Autoencoder](http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity)* can be implemented by using KL divergence as the following code, but for *[Deep Rectifier Network](http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf)*, the sparsity can be implemented by using the L1 regularization of activation output.
 
 ```python
-# Vanilla Sparse Autoencoder
+# 普通稀疏自编码器 Vanilla Sparse Autoencoder
 beta = 4
 rho = 0.15
 p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)
