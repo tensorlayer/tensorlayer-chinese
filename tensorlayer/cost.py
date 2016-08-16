@@ -10,29 +10,36 @@ from tensorflow.python.ops import standard_ops
 
 ## Cost Functions
 def cross_entropy(output, target):
-    """返回两个分布的交叉熵，在内部实现Softmax。
+    """Returns the cost function of Cross-entropy of two distributions, implement
+    softmax internally.
 
-    参数
+    Parameters
     ----------
-    output : Tensor变量，网络输出值（不需要是Softmax输出，因为``cross_entropy``在内部会实现Softmax
-        一个有这样数据维度的分布: [None, n_feature].
-    target : Tensor变量，目标值
-        一个有这样数据维度的分布: [None, n_feature].
+    output : Tensorflow variable
+        A distribution with shape: [None, n_feature]. 
+    target : Tensorflow variable
+        A distribution with shape: [None, n_feature].
 
-    例子
+    Examples
     --------
     >>> ce = tf.cost.cross_entropy(y_logits, y_target_logits)
 
-    注意
-    --------
-    关于 cross-entropy: `wiki <https://en.wikipedia.org/wiki/Cross_entropy>`_.\n
+    Notes
+    -----
+    About cross-entropy: `wiki <https://en.wikipedia.org/wiki/Cross_entropy>`_.\n
+    The code is borrowed from: `here <https://en.wikipedia.org/wiki/Cross_entropy>`_.
     """
-    pass
+    with tf.name_scope("cross_entropy_loss"):
+        net_output_tf = output
+        target_tf = target
+        cross_entropy = tf.add(tf.mul(tf.log(net_output_tf, name=None),target_tf),
+                             tf.mul(tf.log(1 - net_output_tf), (1 - target_tf)))
+        return -1 * tf.reduce_mean(tf.reduce_sum(cross_entropy, 1), name='cross_entropy_mean')
 
 def mean_squared_error(output, target):
     """Return the cost function of Mean-squre-error of two distributions.
 
-    参数
+    Parameters
     ----------
     output : tensorflow variable
         A distribution with shape: [None, n_feature].
@@ -40,7 +47,8 @@ def mean_squared_error(output, target):
         A distribution with shape: [None, n_feature].
 
     """
-    pass
+    mse = tf.reduce_sum(tf.squared_difference(y, x_recon), reduction_indices = 1)
+    return tf.reduce_mean(mse)
 
 ## Regularization Functions
 def li_regularizer(scale):
@@ -50,20 +58,48 @@ def li_regularizer(scale):
 
 
 
-  参赛
+  Parameters
   ----------
-  scale : 浮点值
+  scale : float
     A scalar multiplier `Tensor`. 0.0 disables the regularizer.
 
-  返回
+  Returns
   --------
   A function with signature `li(weights, name=None)` that apply L1 regularization.
 
-  异常
+  Raises
   ------
-  ValueError: if scale is outside of the range [0.0, 1.0] or if scale is not a float.
+  ValueError : if scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
-  pass
+  import numbers
+  from tensorflow.python.framework import ops
+  from tensorflow.python.ops import standard_ops
+  # from tensorflow.python.platform import tf_logging as logging
+
+  if isinstance(scale, numbers.Integral):
+    raise ValueError('scale cannot be an integer: %s' % scale)
+  if isinstance(scale, numbers.Real):
+    if scale < 0.:
+      raise ValueError('Setting a scale less than 0 on a regularizer: %g' %
+                       scale)
+    if scale >= 1.:
+      raise ValueError('Setting a scale greater than 1 on a regularizer: %g' %
+                       scale)
+    if scale == 0.:
+      logging.info('Scale of 0 disables regularizer.')
+      return lambda _, name=None: None
+
+  def li(weights, name=None):
+    """Applies li regularization to weights."""
+    with ops.op_scope([weights], name, 'li_regularizer') as scope:
+      my_scale = ops.convert_to_tensor(scale,
+                                       dtype=weights.dtype.base_dtype,
+                                       name='scale')
+    return standard_ops.mul(
+          my_scale,
+          standard_ops.reduce_sum(standard_ops.sqrt(standard_ops.reduce_sum(tf.square(weights), 1))),
+          name=scope)
+  return li
 
 def lo_regularizer(scale):
   """lo regularization removes the neurons of current layer, `o` represents `outputs`\n
@@ -81,9 +117,37 @@ def lo_regularizer(scale):
 
   Raises
   ------
-  ValueError: If scale is outside of the range [0.0, 1.0] or if scale is not a float.
+  ValueError : If scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
-  pass
+  import numbers
+  from tensorflow.python.framework import ops
+  from tensorflow.python.ops import standard_ops
+  # from tensorflow.python.platform import tf_logging as logging
+
+  if isinstance(scale, numbers.Integral):
+    raise ValueError('scale cannot be an integer: %s' % scale)
+  if isinstance(scale, numbers.Real):
+    if scale < 0.:
+      raise ValueError('Setting a scale less than 0 on a regularizer: %g' %
+                       scale)
+    if scale >= 1.:
+      raise ValueError('Setting a scale greater than 1 on a regularizer: %g' %
+                       scale)
+    if scale == 0.:
+      logging.info('Scale of 0 disables regularizer.')
+      return lambda _, name=None: None
+
+  def lo(weights, name=None):
+    """Applies group column regularization to weights."""
+    with ops.op_scope([weights], name, 'lo_regularizer') as scope:
+      my_scale = ops.convert_to_tensor(scale,
+                                       dtype=weights.dtype.base_dtype,
+                                       name='scale')
+      return standard_ops.mul(
+          my_scale,
+          standard_ops.reduce_sum(standard_ops.sqrt(standard_ops.reduce_sum(tf.square(weights), 0))),
+          name=scope)
+  return lo
 
 def maxnorm_regularizer(scale=1.0):
   """Max-norm regularization returns a function that can be used
@@ -102,9 +166,33 @@ def maxnorm_regularizer(scale=1.0):
 
   Raises
   --------
-  ValueError: If scale is outside of the range [0.0, 1.0] or if scale is not a float.
+  ValueError : If scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
-  pass
+  import numbers
+  from tensorflow.python.framework import ops
+  from tensorflow.python.ops import standard_ops
+
+  if isinstance(scale, numbers.Integral):
+    raise ValueError('scale cannot be an integer: %s' % scale)
+  if isinstance(scale, numbers.Real):
+    if scale < 0.:
+      raise ValueError('Setting a scale less than 0 on a regularizer: %g' %
+                       scale)
+    # if scale >= 1.:
+    #   raise ValueError('Setting a scale greater than 1 on a regularizer: %g' %
+    #                    scale)
+    if scale == 0.:
+      logging.info('Scale of 0 disables regularizer.')
+      return lambda _, name=None: None
+
+  def mn(weights, name=None):
+    """Applies max-norm regularization to weights."""
+    with ops.op_scope([weights], name, 'maxnorm_regularizer') as scope:
+      my_scale = ops.convert_to_tensor(scale,
+                                       dtype=weights.dtype.base_dtype,
+                                       name='scale')
+      return standard_ops.mul(my_scale, standard_ops.reduce_max(standard_ops.abs(weights)), name=scope)
+  return mn
 
 def maxnorm_o_regularizer(scale):
   """Max-norm output regularization removes the neurons of current layer.\n
@@ -122,9 +210,33 @@ def maxnorm_o_regularizer(scale):
 
   Raises
   ---------
-  ValueError: If scale is outside of the range [0.0, 1.0] or if scale is not a float.
+  ValueError : If scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
-  pass
+  import numbers
+  from tensorflow.python.framework import ops
+  from tensorflow.python.ops import standard_ops
+
+  if isinstance(scale, numbers.Integral):
+    raise ValueError('scale cannot be an integer: %s' % scale)
+  if isinstance(scale, numbers.Real):
+    if scale < 0.:
+      raise ValueError('Setting a scale less than 0 on a regularizer: %g' %
+                       scale)
+    # if scale >= 1.:
+    #   raise ValueError('Setting a scale greater than 1 on a regularizer: %g' %
+    #                    scale)
+    if scale == 0.:
+      logging.info('Scale of 0 disables regularizer.')
+      return lambda _, name=None: None
+
+  def mn_o(weights, name=None):
+    """Applies max-norm regularization to weights."""
+    with ops.op_scope([weights], name, 'maxnorm_o_regularizer') as scope:
+      my_scale = ops.convert_to_tensor(scale,
+                                       dtype=weights.dtype.base_dtype,
+                                               name='scale')
+      return standard_ops.mul(my_scale, standard_ops.reduce_sum(standard_ops.reduce_max(standard_ops.abs(weights), 0)), name=scope)
+  return mn_o
 
 def maxnorm_i_regularizer(scale):
   """Max-norm input regularization removes the neurons of previous layer.\n
@@ -142,9 +254,33 @@ def maxnorm_i_regularizer(scale):
 
   Raises
   ---------
-  ValueError: If scale is outside of the range [0.0, 1.0] or if scale is not a float.
+  ValueError : If scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
-  pass
+  import numbers
+  from tensorflow.python.framework import ops
+  from tensorflow.python.ops import standard_ops
+
+  if isinstance(scale, numbers.Integral):
+    raise ValueError('scale cannot be an integer: %s' % scale)
+  if isinstance(scale, numbers.Real):
+    if scale < 0.:
+      raise ValueError('Setting a scale less than 0 on a regularizer: %g' %
+                       scale)
+    # if scale >= 1.:
+    #   raise ValueError('Setting a scale greater than 1 on a regularizer: %g' %
+    #                    scale)
+    if scale == 0.:
+      logging.info('Scale of 0 disables regularizer.')
+      return lambda _, name=None: None
+
+  def mn_i(weights, name=None):
+    """Applies max-norm regularization to weights."""
+    with ops.op_scope([weights], name, 'maxnorm_o_regularizer') as scope:
+      my_scale = ops.convert_to_tensor(scale,
+                                       dtype=weights.dtype.base_dtype,
+                                               name='scale')
+      return standard_ops.mul(my_scale, standard_ops.reduce_sum(standard_ops.reduce_max(standard_ops.abs(weights), 1)), name=scope)
+  return mn_i
 
 
 
