@@ -366,23 +366,22 @@ pip install . -e
 ```
 
 
-# Ways to Contribute
+# 参与开发
 
-TensorLayer begins as an internal repository at Imperial College Lodnon, helping researchers to test their new methods. It now encourage researches from all over the world to publish their new methods so as to promote the development of machine learning.
+TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研工作者测试他们的一些想法和算法。然而现在我们鼓励世界各地的研究者发布自己的方法用以促进和加快机器学习的进一步发展。
 
-Your method can be merged into TensorLayer, if you can prove it is better than the existing methods. Test script with detailed descriptions is required.
+如果你可以证明你的算法比现有的方法更快更好更有效，我们将会把它加入到TensorLayer中。请同时提供测试用的文件和具体的算法描述。
 
-
-# Online Documentation
-The documentation is placed in [Read the Docs](http://tensorlayer.readthedocs.io/en/latest/). To generate the documentation yourself, do this:
+# 网上文档
+网上文档被放在了 [Read the Docs](http://tensorlayercn.readthedocs.io/en/latest/)。如果你想在本地生成这些文档，也可以跟着下面的步骤：
 ```shell
 cd docs
 make html
 ```
 
-# Download Documentation
-You can download the documentation via [Read the Docs](http://tensorlayer.readthedocs.io/).
+# 下载文档
+你也可以通过 [Read the Docs](http://tensorlayercn.readthedocs.io/) 来下载下面这些文档。
 
-0. [Download PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
-0. [Download Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
-0. [Download HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
+0. [下载 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
+0. [下载 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
+0. [下载 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
