@@ -1,7 +1,7 @@
 :mod:`tensorlayer.iterate`
 ==========================
 
-Data iteration.
+数据迭代。
 
 
 .. automodule:: tensorlayer.iterate
@@ -13,7 +13,7 @@ Data iteration.
    ptb_iterator
 
 
-Iteration functions
+迭代函数
 --------------------
 
 .. autofunction:: minibatches
