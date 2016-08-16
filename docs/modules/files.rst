@@ -1,7 +1,7 @@
 :mod:`tensorlayer.files`
 ========================
 
-Load benchmark dataset, save and restore model, save and load variables.
+下载基准(benchmark)数据集，保存加载模型和数据。
 
 
 .. automodule:: tensorlayer.files
@@ -27,7 +27,7 @@ Load benchmark dataset, save and restore model, save and load variables.
 
    load_file_list
 
-Load dataset functions
+下载数据集
 ------------------------
 
 .. autofunction:: load_mnist_dataset
@@ -39,25 +39,25 @@ Load dataset functions
 .. autofunction:: load_wmt_en_fr_dataset
 
 
-Load and save network
+保存与加载模型
 ----------------------
 
 .. autofunction:: save_npz
 .. autofunction:: load_npz
 .. autofunction:: assign_params
 
-Load and save variables
+保存与加载数据
 ------------------------
 .. autofunction:: save_any_to_npy
 .. autofunction:: load_npy_to_any
 
 
-Visualizing npz file
+可视化 npz 文件
 ----------------------
 .. autofunction:: npz_to_W_pdf
 
 
-Helper functions
+辅助函数
 ------------------
 
 .. autofunction:: load_file_list
