@@ -2,9 +2,11 @@
 ==============================
 
 
-.. image::usr/my_figs/img_tensorlayer.png
-   :scale:25 %
-   :align:center
+.. image:: user/my_figs/img_tensorlayer.png
+  :scale: 25 %
+  :align: center
+  :target: https://github.com/zsdonghao/tensorlayer
+
 
 TensorLayer 是一个透明的基于Google TensorFlow顶层的透明化深度学习与强化学习库。
 它被设计为了加快实验速度而提供更高水平的TensorFlow API。
