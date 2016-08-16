@@ -66,7 +66,9 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 
 
 --
-# Library Structure
+# 库目录
+
+[TensorLayer 官方 Github](https://github.com/zsdonghao/tensorlayer)的目录如下。
 
 ```
 <folder>
@@ -81,7 +83,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 ├── .. 
 ```
 --
-# Overview
+# 概述
 More examples about Deep Learning, Reinforcement Learning and Nature Language Processing available on *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*, you can also download the docs file then read it locally.
 
 0. [Fully Connected Network](#)
@@ -90,7 +92,7 @@ More examples about Deep Learning, Reinforcement Learning and Nature Language Pr
 0. [Reinforcement Learning](#)
 0. [Cost Function](#)
 
-### *Fully Connected Network*
+### *多层神经网络*
 TensorLayer provides large amount of state-of-the-art Layers including Dropout, DropConnect, ResNet, Pre-train and so on.
 
 **<font color="grey"> Placeholder: </font>**
@@ -123,25 +125,25 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 
 
 ```python
-# Define the network
+# 定义网络
 network = tl.layers.InputLayer(x, name='input_layer')
 network = tl.layers.DenseLayer(network, n_units=196, act = tf.nn.sigmoid, name='sigmoid1')
 recon_layer1 = tl.layers.ReconLayer(network, x_recon=x, n_units=784, act = tf.nn.sigmoid, name='recon_layer1')
-# Start pre-train
+# 开始预训练
 sess.run(tf.initialize_all_variables())
 recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name=None, n_epoch=200, batch_size=128, print_freq=10, save=True, save_name='w1pre_')
 ...
 ```
-**<font color="grey"> Denoising Autoencoder: </font>**
+**<font color="grey"> 堆栈式去噪自编码器 Stacked Denoising Autoencoder: </font>**
 
 
 ```python
-# Define the network
+# 定义网络
 network = tl.layers.InputLayer(x, name='input_layer')
 network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')   
 network = tl.layers.DenseLayer(network, n_units=196, act = tf.nn.relu, name='relu1')
 recon_layer1 = tl.layers.ReconLayer(network, x_recon=x, n_units=784, act = tf.nn.softplus, name='recon_layer1')
-# Start pre-train
+# 开始预训练
 sess.run(tf.initialize_all_variables())
 recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='denoising1', n_epoch=200, batch_size=128, print_freq=10, save=True, save_name='w1pre_')
 ...
@@ -150,7 +152,7 @@ recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 **<font color="grey"> Stacked Denoising Autoencoders: </font>**
 
 ```python
-# Define the network
+# 定义网络
 network = tl.layers.InputLayer(x, name='input_layer')
 # denoise layer for Autoencoders
 network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')
@@ -169,18 +171,18 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 
 sess.run(tf.initialize_all_variables())
 
-# Print all parameters before pre-train
+# 显示模型参数信息
 network.print_params()
 
-# Pre-train Layer 1
+# 开始预训练 Layer 1
 recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='denoising1', n_epoch=100, batch_size=128, print_freq=10, save=True, save_name='w1pre_')
-# Pre-train Layer 2
+# 开始预训练 Layer 2
 recon_layer2.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='denoising1', n_epoch=100, batch_size=128, print_freq=10, save=False)
-# Start training
+# 开始训练, 微调 fine-tune
 ...
 ```
 
-### *Convolutional Neural Network*
+### *卷积神经网络*
 
 Instead of feeding the images as 1D vectors, the images can be imported as 4D matrix, where [None, 28, 28, 1] represents [batchsize, height, width, channels]. Set 'batchsize' to 'None' means data with different batchsize can all filled into the placeholder.
 
