@@ -28,31 +28,19 @@ TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习
 
 🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
 
-TensorLayer grow out of a need to combine the flexibility of TensorFlow with the availability of the right building blocks for training neural networks. Its development is guided by a number of design goals:
-
-
-
- - Transparency: Do not hide TensorFlow behind abstractions. Try to rely on TensorFlow’s functionality where possible, and follow TensorFlow’s conventions. Do not hide training process, all iteration, initialization can be managed by user.
- - Tensor: Neural networks perform on multidimensional data arrays which are referred to as “tensors”.
- - Tutorial: Providing mass format-consistent examples covering Dropout, DropConnect, Denoising Autoencoder, LSTM, CNN etc, speed up your development.
- - TPU: Tensor Processing Unit is a custom ASIC built specifically for machine learning and tailored for TensorFlow.
- - Distribution: Distributed Machine Learning is the default function of TensorFlow.
- - Compatibility: A network is abstracted to regularization, cost and outputs of each layer. Other wraping libraries for TensorFlow are easy to merged into TensorLayer, suitable for Researchers.
- - Simplicity: Be easy to use, extend and modify, to facilitate use in Research and Engineering.
- - High-Speed: The running speed under GPU support is the same with TensorFlow only. The simplicity do not sacrifice the performance.
-
 TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提供合适的操作粒度来建立和训练神经网络。TensorLayer的开发遵循以下几个原则：
 
-- 透明性：
-- 张量：
-- 教程：
-- TPU：
-- 分布式：
-- 兼容性：
-- 简洁：
-- 高速：
+- 透明性：用户可以直接使用 TensorFlow 的方法来操作所有有的训练，迭代，初始化过程，我们鼓励用户尽可能多的在TensorLayer中使用TensorFlow的方法，利用TensorFlow所提供的便利。
+- 张量：张量是一个可用来表示在一些向量、标量和其他张量之间的线性关系的多线性函数。TensorFlow 有这种数据结构来表示神经网络所需要的数据。
+- 教程：TensorLayer提供了大量的连贯教程，让用户可以循序渐进的学习使用TensorLayer和深度学习了解，教程的内容覆盖了 Dropout, DropConnect, Denoising Autoencoder, LSTM, CNN 等等。
+- TPU：为了针对 TensorFlow 深度学习打造的定制化ASIC芯片。
+- 分布式：TensorFlow 默认支持分布式系统。
+- 兼容性：单层网络的建立被抽象成正则化，成本和每一层的输出，方便与其他基于TensorFlow的库协作。
+- 简洁：易于使用，扩展与修改，以便在研究和工程中使用。
+- 高速：在GPU的支持下运行速度与纯TensorFlow脚本速度一致。简洁但不牺牲性能。
 
-Now, go through the [Overview](#overview) to see how powerful it is !!!
+让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
+
 
 -
 
