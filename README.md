@@ -59,11 +59,11 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 0. [如何修改 Easy to Modify](#Easytomodify)
 0. [安装步骤 Installation](#Installation)
 0. [参与开发 Ways to Contribute](#Waystocontribute)
-0. [英文在线文档 Online Documentation](http://tensorlayer.readthedocs.io/)
+0. [英文在线文档](http://tensorlayer.readthedocs.io/)
 0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
 0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
 0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
-0. [中文在线文档 Online Documentation](http://tensorlayercn.readthedocs.io/)
+0. [中文在线文档](http://tensorlayercn.readthedocs.io/)
 0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
 0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
 0. [下载中文 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
@@ -380,8 +380,8 @@ TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研�
 
 # 网上文档
 
-0. [英文在线文档 Online Documentation](http://tensorlayer.readthedocs.io/)
-0. [中文在线文档 Online Documentation](http://tensorlayercn.readthedocs.io/)
+0. [英文在线文档](http://tensorlayer.readthedocs.io/)
+0. [中文在线文档](http://tensorlayercn.readthedocs.io/)
 
 如果您想在本地生成这些文档，也可以跟着下面的步骤：
 
