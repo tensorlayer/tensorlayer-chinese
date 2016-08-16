@@ -19,18 +19,17 @@ import gzip
 
 ## Load dataset functions
 def load_mnist_dataset(shape=(-1,784)):
-    """Automatically download MNIST dataset
-    and return the training, validation and test set with 50000, 10000 and 10000
-    digit images respectively.
+    """自动下载或加载MNIST数据。然后返回50k个训练数据、10k个验证数据和10k个测试数据。
 
-    Parameters
+    参数
     ----------
     shape : tuple
-        The shape of digit images
+        返回数据的特征形状
 
-    Examples
+    例子
     --------
     >>> X_train, y_train, X_val, y_val, X_test, y_test = tl.files.load_mnist_dataset(shape=(-1,784))
+    >>> X_train, y_train, X_val, y_val, X_test, y_test = tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
     """
     # We first define a download function, supporting both Python 2 and 3.
     if sys.version_info[0] == 2:
@@ -104,8 +103,8 @@ def load_mnist_dataset(shape=(-1,784)):
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
-    """The CIFAR-10 dataset consists of 60000 32x32 colour images in 10 classes, with
-    6000 images per class. There are 50000 training images and 10000 test images.
+    """CIFAR-10 数据集包含60000个32x32 RGB 图像，共10类，每类
+    6000个数据样本. 一共有50000个训练样本，10000个测试样本。
 
     The dataset is divided into five training batches and one test batch, each with
     10000 images. The test batch contains exactly 1000 randomly-selected images from
@@ -113,7 +112,7 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
     but some training batches may contain more images from one class than another.
     Between them, the training batches contain exactly 5000 images from each class.
 
-    Parameters
+    参数
     ----------
     shape : tupe
         The shape of digit images: e.g. (-1, 3, 32, 32) , (-1, 32, 32, 3) , (-1, 32*32*3)
@@ -122,12 +121,12 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
     second : int
         If ``plotable`` is True, ``second`` is the display time.
 
-    Examples
+    例子
     --------
     >>> X_train, y_train, X_test, y_test = tl.files.load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=True)
 
-    Note
-    ------
+    注意
+    --------
     CIFAR-10 images can only be display without color change under uint8.
     >>> X_train = np.asarray(X_train, dtype=np.uint8)
     >>> plt.ion()
@@ -297,17 +296,17 @@ def load_ptb_dataset():
     after each epoch. They clip the norm of the gradients (normalized by
     minibatch size) at 10.
     
-    Examples
+    例子
     --------
     >>> train_data, valid_data, test_data, vocab_size = tl.files.load_ptb_dataset()
 
-    Code References
+    代码参考
     ---------------
     tensorflow.models.rnn.ptb import reader
 
-    Download Links
+    下载链接
     ---------------
-    `Manual download <http://www.fit.vutbr.cz/~imikolov/rnnlm/simple-examples.tgz>`_
+    `手动下载链接 <http://www.fit.vutbr.cz/~imikolov/rnnlm/simple-examples.tgz>`_
     """
     # We first define a download function, supporting both Python 2 and 3.
     filename = 'simple-examples.tgz'
