@@ -1,7 +1,7 @@
 :mod:`tensorlayer.nlp`
 ======================
 
-Natural Language Processing and Word Representation.
+自然语言处理与词嵌套。
 
 .. automodule:: tensorlayer.nlp
 
@@ -29,20 +29,20 @@ Natural Language Processing and Word Representation.
    data_to_token_ids
 
 
-Iteration functions
+迭代函数
 --------------------
 
 .. autofunction:: generate_skip_gram_batch
 
 
-Sampling functions
+抽样函数
 -------------------
 
 .. autofunction:: sample
 .. autofunction:: sample_top
 
 
-Vector representations of words
+词的向量表示
 -------------------------------
 
 .. autofunction:: simple_read_words
@@ -55,7 +55,7 @@ Vector representations of words
 .. autofunction:: word_ids_to_words
 .. autofunction:: save_vocab
 
-Functions for translation
+机器翻译相关函数
 ---------------------------
 
 .. autofunction:: basic_tokenizer
