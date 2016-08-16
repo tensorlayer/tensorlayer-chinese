@@ -20,14 +20,14 @@ For example, you can implement L1, L2 and sum regularization by
    maxnorm_o_regularizer
    maxnorm_i_regularizer
 
-Cost functions
+损失函数
 ----------------
 
 .. autofunction:: cross_entropy
 .. autofunction:: mean_squared_error
 
 
-Regularization functions
+规则化函数
 --------------------------
 
 .. autofunction:: li_regularizer
