@@ -10,24 +10,22 @@ from tensorflow.python.ops import standard_ops
 
 ## Cost Functions
 def cross_entropy(output, target):
-    """Returns the cost function of Cross-entropy of two distributions, implement
-    softmax internally.
+    """返回两个分布的交叉熵，在内部实现Softmax。
 
-    Parameters
+    参数
     ----------
-    output : Tensorflow variable
-        A distribution with shape: [None, n_feature].
-    target : Tensorflow variable
-        A distribution with shape: [None, n_feature].
+    output : Tensor变量，网络输出值（不需要是Softmax输出，因为``cross_entropy``在内部会实现Softmax
+        一个有这样数据维度的分布: [None, n_feature].
+    target : Tensor变量，目标值
+        一个有这样数据维度的分布: [None, n_feature].
 
-    Examples
+    例子
     --------
     >>> ce = tf.cost.cross_entropy(y_logits, y_target_logits)
 
-    Notes
-    -----
-    About cross-entropy: `wiki <https://en.wikipedia.org/wiki/Cross_entropy>`_.\n
-    The code is borrowed from: `here <https://en.wikipedia.org/wiki/Cross_entropy>`_.
+    注意
+    --------
+    关于 cross-entropy: `wiki <https://en.wikipedia.org/wiki/Cross_entropy>`_.\n
     """
     with tf.name_scope("cross_entropy_loss"):
         net_output_tf = output
@@ -39,7 +37,7 @@ def cross_entropy(output, target):
 def mean_squared_error(output, target):
     """Return the cost function of Mean-squre-error of two distributions.
 
-    Parameters
+    参数
     ----------
     output : tensorflow variable
         A distribution with shape: [None, n_feature].
@@ -58,16 +56,16 @@ def li_regularizer(scale):
 
 
 
-  Parameters
+  参赛
   ----------
-  scale : float
+  scale : 浮点值
     A scalar multiplier `Tensor`. 0.0 disables the regularizer.
 
-  Returns
+  返回
   --------
   A function with signature `li(weights, name=None)` that apply L1 regularization.
 
-  Raises
+  异常
   ------
   ValueError: if scale is outside of the range [0.0, 1.0] or if scale is not a float.
   """
