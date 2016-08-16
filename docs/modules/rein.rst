@@ -1,7 +1,7 @@
 :mod:`tensorlayer.rein`
 ==============================
 
-Reinforcement Learning.
+强化学习（增强学习）相关函数。
 
 .. automodule:: tensorlayer.rein
 
@@ -11,12 +11,12 @@ Reinforcement Learning.
   cross_entropy_reward_loss
 
 
-Reward functions
+奖励函数
 ---------------------
 
 .. autofunction:: discount_episode_rewards
 
-Cost functions
+损失函数
 ---------------------
 
 .. autofunction:: cross_entropy_reward_loss
