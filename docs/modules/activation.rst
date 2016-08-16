@@ -1,11 +1,10 @@
 :mod:`tensorlayer.activation`
 ==============================
 
-To make TensorLayer simple, we minimize the number of activation functions as much as
-we can. So we encourage you to use TensorFlow's function. TensorFlow provides
+为了尽可能地保持TensorLayer的简洁性，我们最小化激活函数的数量。因此我们鼓励直接使用
+TensorFlow官方的函数，比如
 ``tf.nn.relu``, ``tf.nn.relu6``, ``tf.nn.elu``, ``tf.nn.softplus``,
-``tf.nn.softsign`` and so on, see `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_.
-
+``tf.nn.softsign`` 等等。
 
 .. automodule:: tensorlayer.activation
 
