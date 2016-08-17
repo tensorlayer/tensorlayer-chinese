@@ -191,7 +191,7 @@ recon_layer2.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 
 ### *卷积神经网络 Convolutional Neural Network*
 
-在卷积神经网络中，图片集可以被表示成一个四维的矩阵来作为输入而不是一个1维向量，即 [None, 28, 28 1]代表[batchsize, height, width, channels]。将batchsize设置为None的意思是数据可以以任意的batchsize来填入占位符。
+在卷积神经网络中，图片集可以被表示成一个四维的矩阵来作为输入而不是一个1维向量，即 [None, 28, 28, 1]代表[batchsize, height, width, channels]。将batchsize设置为None的意思是数据可以以任意的batchsize来填入占位符。
 
 ```python
 x = tf.placeholder(tf.float32, shape=[None, 28, 28, 1])
