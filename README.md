@@ -42,7 +42,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
 
 
-注意：本repo是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若您的英文很好，我们建议您直接阅读[英文文档](http://tensorlayer.readthedocs.io/)。
+注意：本文档是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比原版慢，若您的英文很好，我们建议您直接阅读其[英文文档](http://tensorlayer.readthedocs.io/)。
 
 
 -
