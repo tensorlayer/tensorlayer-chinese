@@ -89,7 +89,8 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 ```
 --
 # 概述
-More examples about Deep Learning, Reinforcement Learning and Nature Language Processing available on *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*, you can also download the docs file then read it locally.
+
+如果您了解更多关于深度学习，增强学习和自然语言处理的内容，请移步*[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*。您也可以下载这些文档以便您在本地阅读。
 
 0. [多层神经网络 Fully Connected Network](#)
 0. [卷积神经网络 Convolutional Neural Network](#)
@@ -98,24 +99,27 @@ More examples about Deep Learning, Reinforcement Learning and Nature Language Pr
 0. [损失函数 Cost Function](#)
 
 ### *多层神经网络*
-TensorLayer provides large amount of state-of-the-art Layers including Dropout, DropConnect, ResNet, Pre-train and so on.
 
-**<font color="grey"> Placeholder: </font>**
+TensorLayer 提供了大量最新的(state-of-the-art)神经网络层,他们包括Dropout, DropConnect, ResNet, Pre-train 等等。
+
+**<font color="grey"> 占位符 (placeholder): </font>**
 
 All placeholder and variables can be initialized by the same way with Tensorflow's tutorial. For details please read *[tensorflow-placeholder](https://www.tensorflow.org/versions/master/api_docs/python/io_ops.html#placeholder)*, *[tensorflow-variables](https://www.tensorflow.org/versions/master/how_tos/variables/index.html)* and *[tensorflow-math](https://www.tensorflow.org/versions/r0.9/api_docs/python/math_ops.html)*.
 
+所有的占位符(placeholder)和变量(variable)都可以使用 TensorFlow 的方法进行初始化。如果您想了解更多关于变量，占位符初始化的细节，请阅读 *[tensorflow-placeholder](https://www.tensorflow.org/versions/master/api_docs/python/io_ops.html#placeholder)*, *[tensorflow-variables](https://www.tensorflow.org/versions/master/how_tos/variables/index.html)* and *[tensorflow-math](https://www.tensorflow.org/versions/r0.9/api_docs/python/math_ops.html)*
+
 ```python
-# For MNIST example, 28x28 images have 784 pixels, i.e, 784 inputs.
+# 在MNIST实例中，每一张图片的尺寸是28x28，有784个像素点，即784个输入。
 import tensorflow as tf
 import tensorlayer as tl
 x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
 y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 ```
 
-**<font color="grey"> Rectifying Network with Dropout: </font>**
+**<font color="grey"> 使用Dropout对神经网络进行校正(rectifing): </font>**
 
 ```python
-# Define the network
+# 定义神经网络
 network = tl.layers.InputLayer(x, name='input_layer')
 network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
 network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu1')
@@ -123,7 +127,7 @@ network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
 network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
-# Start training
+# 开始训练
 ...
 ```
 **<font color="grey"> 普通稀疏自编码器 Vanilla Sparse Autoencoder: </font>**
@@ -161,16 +165,16 @@ recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 network = tl.layers.InputLayer(x, name='input_layer')
 # denoise layer for Autoencoders
 network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')
-# 1st layer
+# 第一层
 network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
 network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu1')
 x_recon1 = network.outputs
 recon_layer1 = tl.layers.ReconLayer(network, x_recon=x, n_units=784, act = tf.nn.softplus, name='recon_layer1')
-# 2nd layer
+# 第二层
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
 network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
 recon_layer2 = tl.layers.ReconLayer(network, x_recon=x_recon1, n_units=800, act = tf.nn.softplus, name='recon_layer2')
-# 3rd layer
+# 的三层
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
 
@@ -189,7 +193,7 @@ recon_layer2.pretrain(sess, x=x, X_train=X_train, X_val=X_val, denoise_name='den
 
 ### *卷积神经网络 Convolutional Neural Network*
 
-Instead of feeding the images as 1D vectors, the images can be imported as 4D matrix, where [None, 28, 28, 1] represents [batchsize, height, width, channels]. Set 'batchsize' to 'None' means data with different batchsize can all filled into the placeholder.
+在卷积神经网络中，图片集可以被表示成一个四维的矩阵来作为输入而不是一个1维向量，即 [None, 28, 28 1]代表[batchsize, height, width, channels]。将batchsize设置为None的意思是数据可以以任意的batchsize来填入占位符。
 
 ```python
 x = tf.placeholder(tf.float32, shape=[None, 28, 28, 1])
@@ -198,8 +202,7 @@ y_ = tf.placeholder(tf.int64, shape=[None,])
 
 **<font color="grey"> CNNs + MLP: </font>**
 
-A 2 layers CNN followed by 2 fully connected layers can be defined by the following codes:
-
+以下代码定义了一个2层卷积神经网络,每一层之后都是一个全连接(fully-connected)网络:
 ```python
 network = tl.layers.InputLayer(x, name='input_layer')
 network = tl.layers.Conv2dLayer(network,
@@ -232,18 +235,18 @@ network = tl.layers.DenseLayer(network, n_units=256, act = tf.nn.relu, name='rel
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')                              # output: (?, 256)
 network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')    # output: (?, 10)
 ```
-For more powerful functions, please go to *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*.
-
+如果您希望了解更多的功能，请移步 *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*。
 
 ### *递归神经网络 Recurrent Neural Network*
 
 **<font color="grey"> LSTM: </font>** 
 
-Please go to *[Understand LSTM](http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html#run-the-ptb-example)*.
+如果您想了解LSTM,请移步*[Understand LSTM](http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html#run-the-ptb-example)*。
 
-
-### *Reinforcement Learning*
+### *增强学习 Reinforcement Learning*
 To understand Reinforcement Learning, a Blog (*[Deep Reinforcement Learning: Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)*) and a Paper (*[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)*) are recommended. To play with RL, use *[OpenAI Gym](https://github.com/openai/gym)* as benchmark is recommended.
+
+为了使您能够更加深入的了解，我们向您推荐这篇博客 *[Deep Reinforcement Learning: Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)* 和这篇文章 *[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)*。如果您想亲自试试增强学习，我们建议您使用 *[OpenAI Gym](https://github.com/openai/gym)* 作为benchmark。
 
 **<font color="grey"> Pong Game: </font>**
 
@@ -376,7 +379,7 @@ pip install . -e
 
 # 参与开发
 
-TensorLayer 始于帝国理工大学的内部项目，主要用于帮助科研工作者测试他们的一些想法和算法。然而现在我们鼓励世界各地的研究者发布自己的方法用以促进和加快机器学习的进一步发展。
+TensorLayer 始于帝国理工大学Data Science Institute的内部项目，主要用于帮助科研工作者测试他们的一些想法和算法。然而现在我们鼓励世界各地的研究者发布自己的方法用以促进和加快机器学习的进一步发展。
 
 如果你可以证明你的算法比现有的方法更快更好更有效，我们将会把它加入到TensorLayer中。请同时提供测试用的文件和具体的算法描述。
 
