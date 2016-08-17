@@ -104,8 +104,6 @@ TensorLayer 提供了大量最新的(state-of-the-art)神经网络层,他们包�
 
 **<font color="grey"> 占位符 (placeholder): </font>**
 
-All placeholder and variables can be initialized by the same way with Tensorflow's tutorial. For details please read *[tensorflow-placeholder](https://www.tensorflow.org/versions/master/api_docs/python/io_ops.html#placeholder)*, *[tensorflow-variables](https://www.tensorflow.org/versions/master/how_tos/variables/index.html)* and *[tensorflow-math](https://www.tensorflow.org/versions/r0.9/api_docs/python/math_ops.html)*.
-
 所有的占位符(placeholder)和变量(variable)都可以使用 TensorFlow 的方法进行初始化。如果您想了解更多关于变量，占位符初始化的细节，请阅读 *[tensorflow-placeholder](https://www.tensorflow.org/versions/master/api_docs/python/io_ops.html#placeholder)*, *[tensorflow-variables](https://www.tensorflow.org/versions/master/how_tos/variables/index.html)* and *[tensorflow-math](https://www.tensorflow.org/versions/r0.9/api_docs/python/math_ops.html)*
 
 ```python
@@ -244,7 +242,6 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 如果您想了解LSTM,请移步*[Understand LSTM](http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html#run-the-ptb-example)*。
 
 ### *增强学习 Reinforcement Learning*
-To understand Reinforcement Learning, a Blog (*[Deep Reinforcement Learning: Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)*) and a Paper (*[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)*) are recommended. To play with RL, use *[OpenAI Gym](https://github.com/openai/gym)* as benchmark is recommended.
 
 为了使您能够更加深入的了解，我们向您推荐这篇博客 *[Deep Reinforcement Learning: Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)* 和这篇文章 *[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)*。如果您想亲自试试增强学习，我们建议您使用 *[OpenAI Gym](https://github.com/openai/gym)* 作为benchmark。
 
