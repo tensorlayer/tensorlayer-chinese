@@ -7,7 +7,7 @@
     </div>
 </div>
 -->
-<a href="http://tensorlayer.readthedocs.io">
+<a href="http://github.com/zsdonghao/tensorlayer">
 <div align="center">
 	<img src="img/img_tensorlayer.png" width="30%" height="30%"/>
 </div>
