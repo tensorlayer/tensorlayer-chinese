@@ -61,12 +61,12 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 0. [如何修改 Easy to Modify](#如何修改)
 0. [安装步骤 Installation](#安装步骤)
 0. [参与开发 Ways to Contribute](#参与开发)
-1. 
+
 0. [英文在线文档](http://tensorlayer.readthedocs.io/)
 0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
 0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
 0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
-1. 
+
 0. [中文在线文档](http://tensorlayercn.readthedocs.io/)
 0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
 0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
