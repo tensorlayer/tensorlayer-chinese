@@ -57,14 +57,16 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 
 # Readme 目录
 0. [库目录 Library Structure](#库目录)
-0. [概述 Overview](#Overview)
-0. [如何修改 Easy to Modify](#Easytomodify)
-0. [安装步骤 Installation](#Installation)
-0. [参与开发 Ways to Contribute](#Waystocontribute)
+0. [概述 Overview](#概述)
+0. [如何修改 Easy to Modify](#如何修改)
+0. [安装步骤 Installation](#安装步骤)
+0. [参与开发 Ways to Contribute](#参与开发)
+1. 
 0. [英文在线文档](http://tensorlayer.readthedocs.io/)
 0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
 0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
 0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
+1. 
 0. [中文在线文档](http://tensorlayercn.readthedocs.io/)
 0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
 0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
@@ -320,7 +322,7 @@ network.print_layers()
 ```
 如果希望了解更多，请移步*[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*.
 
-# 如何修改 Easy to Modify
+# 如何修改
 **<font color="grey">修改预训练行为 Modifying Pre-train Behaviour: </font>**
 
 逐层贪婪的预训练(Greedy layer-wise pretrain)对于深度神经网络的初始化是非常重要的。根据不同的应用和模型，测量逐层贪婪预训练的方法也各不相同。
