@@ -249,20 +249,21 @@ network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity
 
 Atari Pong Game is a single agent example. *[Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)* using 130 lines of Python only *[(Code link)](https://gist.github.com/karpathy/a4166c7fe253700972fcbc77e4ea32c5)* can be reimplemented as follow.
 
+雅达利(Atari)的乒乓球游戏是一个 single agent example, *[Pong from Pixels](http://karpathy.github.io/2016/05/31/rl/)* 只用了130行python代码，这些代码可以像以下这样重新实现。
+
 ```python
-# Policy network
+# 策略网络(policy network)
 network = tl.layers.InputLayer(x, name='input_layer')
 network = tl.layers.DenseLayer(network, n_units= H , act = tf.nn.relu, name='relu_layer')
 network = tl.layers.DenseLayer(network, n_units= 1 , act = tf.nn.sigmoid, name='output_layer')
 ```
 
-For RL part, please read *[Policy Gradient](http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html#understand-reinforcement-learning)*.
-
+如果您想了解更多关于增强学习的内容，请您移步*[Policy Gradient](http://tensorlayer.readthedocs.io/en/latest/user/tutorial.html#understand-reinforcement-learning)*。
 
 
 ### *损失函数 Cost Function*
 
-TensorLayer provides a simple way to creat you own cost function. Take a MLP below for example.
+TensorLayer 为用户提供了非常简便的途径来创建用户自己的损失函数(cost finction)。比如以下这个多层感知机(multi-layer percptron)的例子。
 
 ```python
 network = tl.InputLayer(x, name='input_layer')
@@ -274,9 +275,9 @@ network = tl.DropoutLayer(network, keep=0.5, name='drop3')
 network = tl.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
 ```
 
-**<font color="grey"> 参数规则化 Regularization of Weights: </font>**
+**<font color="grey"> 参数正则化 Regularization of Weights: </font>**
 
-After initializing the variables, the informations of network parameters can be observed by using **<font color="grey">network.print_params()</font>**.
+在初始化变量之后，我们可以使用**<font color="grey">network.print_params()</font>**方法来输出网络的参数信息。
 
 ```python
 sess.run(tf.initialize_all_variables())
@@ -289,20 +290,24 @@ network.print_params()
 >> param 5: (10,) (mean: 0.000000, median: 0.000000 std: 0.000000)
 >> num of params: 1276810
 ```
-
-The output of network is **<font color="grey">network.outputs</font>**, then the cross entropy can be defined as follow. Besides, to regularize the weights, the **<font color="grey">network.all_params</font>** contains all parameters of the network. In this case, **<font color="grey">network.all_params</font>** = [W1, b1, W2, b2, Wout, bout] according to param 0, 1 ... 5 shown by **<font color="grey">network.print_params()</font>**. Then max-norm regularization on W1 and W2 can be performed as follow.
-
+!!!
+**<font color="grey">network.outputs</font>**是模型的输出，之后我们就可以像下面这样定义交叉熵。除此之外，**<font color="grey">network.all_params</font>** 包含了模型的所有参数。就以下这个例子来说**<font color="grey">network.all_params</font>** = [W1, b1, W2, b2, Wout, bout] 根据用*<font color="grey">network.print_params()</font>**方法显示的参数0,1, ... ,5。然后对于 W1 和 W2 的最大范数就可以通过以下代码来实现。
+!!!
 ```python
 y = network.outputs
 cross_entropy = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
 cost = cross_entropy
 cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) + tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
 ```
-In addition, all TensorFlow's regularizers like **<font color="grey">tf.contrib.layers.l2_regularizer</font>** can be used with TensorLayer.
+除外，所有TensorFlow的正则化函数(regularizers)都可以被用于TensorLayer,比如 **<font color="grey">tf.contrib.layers.l2_regularizer</font>**。
 
-**<font color="grey"> Regularization of Activation Outputs: </font>**
+**<font color="grey">启发函数输出的正则化 Regularization of Activation Outputs: </font>**
 
-Instance method **<font color="grey">network.print_layers()</font>** prints all outputs of different layers in order. To achieve regularization on activation output, you can use **<font color="grey">network.all_layers</font>** which contains all outputs of different layers. If you want to use L1 penalty on the activations of first hidden layer, just simply add **<font color="grey">tf.contrib.layers.l2_regularizer(lambda_l1)(network.all_layers[1])</font>** to the cost function.
+
+！！！
+**<font color="grey">network.print_layers()</font>**方法会按顺序打印每一层的输出。**<font color="grey">network.all_layers</font>**
+包含了不同层的所有输出。比方说，如果用户希望使用 L1 罚项作为第一层启发函数的罚项，用户只需要把 **<font color="grey">tf.contrib.layers.l2_regularizer(lambda_l1)(network.all_layers[1])</font>** 加到损失函数。
+！！！
 
 ```python
 network.print_layers()
@@ -313,15 +318,14 @@ network.print_layers()
 >> layer 4: Tensor("dropout_2/mul_1:0", shape=(?, 800), dtype=float32)
 >> layer 5: Tensor("add_2:0", shape=(?, 10), dtype=float32)
 ```
-For more powerful functions, please go to *[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*.
+如果希望了解更多，请移步*[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*.
 
-# Easy to Modify
-**<font color="grey"> Modifying Pre-train Behaviour: </font>**
+# 如何修改 Easy to Modify
+**<font color="grey">修改预训练行为 Modifying Pre-train Behaviour: </font>**
 
+逐层贪婪的预训练(Greedy layer-wise pretrain)对于深度神经网络的初始化是非常重要的。根据不同的应用和模型，测量逐层贪婪预训练的方法也各不相同。
 
-Greedy layer-wise pretrain is an important task for deep neural network initialization, while there are many kinds of pre-train metrics according to different architectures and applications.
-
-For example, the pre-train process of *[Vanilla Sparse Autoencoder](http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity)* can be implemented by using KL divergence as the following code, but for *[Deep Rectifier Network](http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf)*, the sparsity can be implemented by using the L1 regularization of activation output.
+比方说，*[Vanilla Sparse Autoencoder](http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity)* 的预训练是通过Kullback–Leibler散度(KL divergence)来实现的(请看以下代码)。但是，对于*[Deep Rectifier Network](http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf)* 权值矩阵的稀疏行是通过对输出的启发函数使用 L1 范式来实现的。
 
 ```python
 # 普通稀疏自编码器 Vanilla Sparse Autoencoder
@@ -342,9 +346,9 @@ ReconLayer.__init__(...):
 	self.cost = mse + L1_a + L2_w
 ```
 
-**<font color="grey"> Adding Customized Regularizer: </font>**
+**<font color="grey">使用定制的正则化函数 Adding Customized Regularizer: </font>**
 
-See tensorlayer/cost.py
+请查看 tensorlayer/cost.py
 
 
 # 安装步骤
