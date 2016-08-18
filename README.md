@@ -90,7 +90,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 --
 # 概述
 
-如果您了解更多关于深度学习，增强学习和自然语言处理的内容，请移步*[Read the Docs](http://tensorlayer.readthedocs.io/en/latest/)*。您也可以下载这些文档以便您在本地阅读。
+如果您了解更多关于深度学习，增强学习和自然语言处理的内容，请移步*[Read the Docs 英文版](http://tensorlayer.readthedocs.io/en/latest/)*或*[Read the Docs 中文版](http://tensorlayercn.readthedocs.io)*。您也可以下载这些文档以便您在本地阅读。
 
 0. [多层神经网络 Fully Connected Network](#)
 0. [卷积神经网络 Convolutional Neural Network](#)
@@ -114,7 +114,7 @@ x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
 y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 ```
 
-**<font color="grey"> 使用Dropout对神经网络进行校正(rectifing): </font>**
+**<font color="grey"> Dropout+Relu: </font>**
 
 ```python
 # 定义神经网络
