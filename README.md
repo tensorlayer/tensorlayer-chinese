@@ -398,11 +398,9 @@ make html
 
 # 下载文档
 
-
 0. [下载英文 PDF](https://media.readthedocs.org/pdf/tensorlayer/latest/tensorlayer.pdf)
 0. [下载英文 Epub](http://readthedocs.org/projects/tensorlayer/downloads/epub/latest/)
 0. [下载英文 HTML](http://readthedocs.org/projects/tensorlayer/downloads/htmlzip/latest/)
-
 0. [下载中文 PDF](https://media.readthedocs.org/pdf/tensorlayercn/latest/tensorlayercn.pdf)
 0. [下载中文 Epub](http://readthedocs.org/projects/tensorlayercn/downloads/epub/latest/)
 0. [下载中文 HTML](http://readthedocs.org/projects/tensorlayercn/downloads/htmlzip/latest/)
