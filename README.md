@@ -299,7 +299,7 @@ cross_entropy = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y,
 cost = cross_entropy
 cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) + tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
 ```
-除外，所有TensorFlow的正则化函数(regularizers)都可以被用于TensorLayer,比如 **<font color="grey">tf.contrib.layers.l2_regularizer</font>**。
+除外，所有TensorFlow的正则项(regularizers)都可以被用于TensorLayer,比如 **<font color="grey">tf.contrib.layers.l2_regularizer</font>**。
 
 **<font color="grey">启发函数输出的正则化 Regularization of Activation Outputs: </font>**
 
@@ -346,7 +346,7 @@ ReconLayer.__init__(...):
 	self.cost = mse + L1_a + L2_w
 ```
 
-**<font color="grey">使用自定义的正则化函数 Adding Customized Regularizer: </font>**
+**<font color="grey">使用自定义的正则项 Adding Customized Regularizer: </font>**
 
 请查看 tensorlayer/cost.py
 
