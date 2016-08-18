@@ -346,7 +346,7 @@ ReconLayer.__init__(...):
 	self.cost = mse + L1_a + L2_w
 ```
 
-**<font color="grey">使用定制的正则化函数 Adding Customized Regularizer: </font>**
+**<font color="grey">使用自定义的正则化函数 Adding Customized Regularizer: </font>**
 
 请查看 tensorlayer/cost.py
 
