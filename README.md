@@ -56,7 +56,7 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 -
 
 # Readme 目录
-0. [库目录 Library Structure](#Library-Structure)
+0. [库目录 Library Structure](#库目录)
 0. [概述 Overview](#Overview)
 0. [如何修改 Easy to Modify](#Easytomodify)
 0. [安装步骤 Installation](#Installation)
