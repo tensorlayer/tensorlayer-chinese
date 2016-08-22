@@ -1,7 +1,7 @@
 .. _installation
 
 =================
-安装
+安装 Setup
 =================
 
 TensorLayer有许多需要先安装的先决条件，包括 `TensorFlow <https://www.tensorflow.org>`_ ,
