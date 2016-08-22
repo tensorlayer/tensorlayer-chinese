@@ -1,16 +1,16 @@
 .. _more:
 
 ============
-Example
+例子
 ============
 
 
-Basics
+基础经典
 ============
 
  - Multi-layer perceptron (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist_simple.py`` on `GitHub`_.
 
-Computer Vision
+计算机视觉
 ==================
 
  - Denoising Autoencoder (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist.py`` on `GitHub`_.
@@ -19,7 +19,7 @@ Computer Vision
  - Convolutional Network (CIFAR-10). A Convolutional neural network implementation for classifying CIFAR-10 dataset, see ``tutorial_cifar10.py`` on `GitHub`_.
 
 
-Natural Language Processing
+自然语言处理
 ==============================
 
  - Recurrent Neural Network (LSTM). Apply multiple LSTM to PTB dataset for language modeling, see ``tutorial_ptb_lstm.py`` on `GitHub`_.
@@ -28,12 +28,12 @@ Natural Language Processing
  - Text Generation. Generates new text scripts, using LSTM network, see ``tutorial_generate_text.py`` on `GitHub`_.
  - Machine Translation (WMT). Translate English to French. Apply Attention mechanism and Seq2seq to WMT English-to-French translation data, see ``tutorial_translate.py`` on `GitHub`_.
 
-Reinforcement Learning
+强化学习(RL)
 ==============================
 
  - Deep Reinforcement Learning - Pong Game. Teach a machine to play Pong games, see ``tutorial_atari_pong.py`` on `GitHub`_.
 
-Applications
+应用
 =============
 
 There are some good applications implemented by TensorLayer.
@@ -43,15 +43,15 @@ If you want to share your application, please contact hao.dong11@imperial.ac.uk.
 1D CNN + LSTM for Biosignal
 ---------------------------------
 
-Author : `Akara Supratak <https://akaraspt.github.io>`_
+作者 : `Akara Supratak <https://akaraspt.github.io>`_
 
-Introduction
+简介
 ^^^^^^^^^^^^
 
-Implementation
+实现
 ^^^^^^^^^^^^^^
 
-Citation
+引用
 ^^^^^^^^
 
 
