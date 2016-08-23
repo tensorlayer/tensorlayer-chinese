@@ -47,25 +47,59 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 下载数据集
 ------------------------
 
+MNIST
+^^^^^^^
 .. autofunction:: load_mnist_dataset
+
+CIFAR-10
+^^^^^^^^^^^^
 .. autofunction:: load_cifar10_dataset
+
+Penn TreeBank (PTB)
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_ptb_dataset
+
+Matt Mahoney's text8
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_matt_mahoney_text8_dataset
+
+IMBD
+^^^^^^^
 .. autofunction:: load_imbd_dataset
+
+
+Nietzsche
+^^^^^^^^^^^^^^
 .. autofunction:: load_nietzsche_dataset
+
+
+WMT'15 Website 的英文译法文数据
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. autofunction:: load_wmt_en_fr_dataset
 
 
 保存与加载模型
 ----------------------
 
+保持模型到.npz文件
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_npz
+
+从.npz文件加载模型
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
 .. autofunction:: assign_params
 
 保存与加载数据
 ------------------------
+
+保持数据到.npy文件
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_any_to_npy
+
+从.npy文件加载数据
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npy_to_any
 
 
