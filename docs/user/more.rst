@@ -1,26 +1,25 @@
 .. _more:
 
 ============
-More
+更多
 ============
 
 
-Your Contribution
+你的贡献
 =================
 
-There are many functions need to be contributed such as
-Maxout, ResNet, Bi-directional RNN, Neural Turing Machine etc.
-Please push on `GitHub`_, every bit helps and will be credited.
+贡献方式有很多种，比如提供应用、实现新的TensorLayer层、回答 `GitHub`_ Issues 以及帮助完善翻译等等。
+每一点贡献都会署名，欢迎在 `GitHub`_ 上push。
 
 
-Competitions
+竞赛
 ============
 
-Coming soon
+即将到来
 
 
 
-Applications
+应用例子 
 ============
 
 There are some good applications implemented by TensorLayer.
