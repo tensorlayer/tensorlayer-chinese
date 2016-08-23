@@ -15,37 +15,36 @@
 竞赛
 ============
 
-即将到来
+有奖竞赛即将到来
 
 
 
 应用例子 
 ============
 
-There are some good applications implemented by TensorLayer.
-You may able to find some useful examples for your project.
-If you want to share your application, please contact hao.dong11@imperial.ac.uk.
+有很多基于TensorLayer开发的优秀应用，你或许可以在这里找到适合你项目用的模型。
+此外，如果你想分享你的应用例子，请联系 hao.dong11@imperial.ac.uk.
 
-CNN+LSTM for Biosignal
+1D CNN+LSTM for Biosignal
 ------------------------
 
-Author : `Akara Supratak <https://akaraspt.github.io>`_
+作者 : `Akara Supratak <https://akaraspt.github.io>`_
 
-Introduction
-^^^^^^^^^^^^
+介绍
+^^^^^^^^^
 
-Implementation
-^^^^^^^^^^^^^^
+实现
+^^^^^^^^^^^
 
-Citation
+引用
 ^^^^^^^^
 
 
-Recruitment
-===========
+招聘信息
+==============
 
 
-Data Science Institute, Imperial College London
+帝国理工大学－数据科学院
 ------------------------------------------------
 
 Data science is therefore by nature at the core of all modern transdisciplinary scientific activities, as it involves the whole life cycle of data, from acquisition and exploration to analysis and communication of the results. Data science is not only concerned with the tools and methods to obtain, manage and analyse data: it is also about extracting value from data and translating it from asset to product.
