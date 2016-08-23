@@ -1627,7 +1627,7 @@ softmax抽样是处理大量词汇库输出的时降低计算开销的一种方�
 
 
 
-成本函数
+损失函数
 =================
 
 TensorLayer提供一个简单的方法来创建您自己的成本函数。
@@ -1644,7 +1644,7 @@ TensorLayer提供一个简单的方法来创建您自己的成本函数。
   network = tl.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
 
 
-权重的正则化
+权值的正则化
 ----------------------
 
 在初始化变量之后，网络参数的信息可以使用 ``network.print.params()`` 来获得。
