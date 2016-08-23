@@ -14,6 +14,10 @@ API - 数据预处理
 图像预处理
 --------------------
 
+对训练数据
+^^^^^^^^^^^^^^^^
 .. autofunction:: distorted_images
 
+对测试数据
+^^^^^^^^^^^^^^^^^
 .. autofunction:: crop_central_whiten_images
