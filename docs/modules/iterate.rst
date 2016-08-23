@@ -13,9 +13,13 @@ API - 迭代函数
    ptb_iterator
 
 
-迭代函数
+非时间序列
 --------------------
 
 .. autofunction:: minibatches
+
+时间序列
+--------------------
+
 .. autofunction:: seq_minibatches
 .. autofunction:: ptb_iterator
