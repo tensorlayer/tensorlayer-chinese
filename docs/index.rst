@@ -18,7 +18,8 @@ TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应
 .. note::
   我们建议你在 `Github <https://github.com/zsdonghao/tensorlayer>`_ 上star和watch `官方项目 <https://github.com/zsdonghao/tensorlayer>`_ ，这样当官方有更新时，你会立即知道。本文档为 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_ 的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_。
   
-  TensorLayer的Tutorial其实就是TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow教程来学习： `英文 <https://www.tensorflow.org/versions/master/tutorials/index.html`_ ， `极客学院中文翻译 <http://wiki.jikexueyuan.com/project/tensorflow-zh/`_ 
+  TensorLayer的Tutorial包含TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow深度学习教程来学习 `[英文] <https://www.tensorflow.org/versions/master/tutorials/index.html>`_ `[极客学院中文翻译] <http://wiki.jikexueyuan.com/project/tensorflow-zh/>`_ 
+  
 
   如果你阅读在线中文文档时有什么问题，你可以在github上下载这个项目，
   然后去 ``/docs/cn/_build/html/index.html`` 阅读离线中文文档。
