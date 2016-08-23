@@ -24,9 +24,12 @@ TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习
 
 不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让用非常熟练地使用它。
 
-🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
+⚠️⚠️⚠️ 本文档为[官方文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文很好，我们建议你直接阅读[官方文档](https://github.com/zsdonghao/tensorlayer)。 同时我们建议你在 Github 上star和watch官方项目，这样当官方有更新时，你会立即知道。
 
 ❤️❤️❤️ TensorLayer首批开发者包括中国人，我们承诺将一直支持中国社区。
+
+🆕🆕🆕 机器翻译（Machine Translation）的相关教程已经发布！
+
 
 TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提供合适的操作粒度来建立和训练神经网络。TensorLayer的开发遵循以下几个原则：
 
@@ -42,7 +45,6 @@ TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提�
 让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
 
 
-注意：本文档是[TensorLayer Github](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比原版慢，若您的英文很好，我们建议您直接阅读其[英文文档](http://tensorlayer.readthedocs.io/)。
 
 
 -
