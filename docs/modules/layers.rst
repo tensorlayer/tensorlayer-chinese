@@ -44,7 +44,7 @@ Basic 层
 .. autoclass:: InputLayer
   :members:
 
-词向量输入层
+嵌入层+输入层
 ---------------------------
 
 .. autoclass:: Word2vecEmbeddingInputlayer
@@ -86,7 +86,7 @@ Basic 层
 .. autoclass:: ConcatLayer
 .. autoclass:: ReshapeLayer
 
-包装(Wrapper)
+包装器(Wrapper)
 ----------------
 
 .. autoclass:: EmbeddingAttentionSeq2seqWrapper
