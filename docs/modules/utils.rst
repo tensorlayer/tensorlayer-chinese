@@ -1,4 +1,4 @@
-:mod:`tensorlayer.utils`
+API - 实用函数
 ========================
 
 .. automodule:: tensorlayer.utils
