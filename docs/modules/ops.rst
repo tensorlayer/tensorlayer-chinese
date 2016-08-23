@@ -1,7 +1,7 @@
 API - 操作系统管理
 ======================
 
-系统操作，更多函数可在`TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_中找到。
+系统操作，更多函数可在 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_ 中找到。
 
 .. automodule:: tensorlayer.ops
 
