@@ -132,7 +132,7 @@ API - 神经网络层
           Biases 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
       name : 字符串或 None
           该层的名字。
-
+      """
       def __init__(
           self,
           layer = None,
