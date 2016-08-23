@@ -1,4 +1,4 @@
-:mod:`tensorlayer.preprocess`
+API - 数据预处理
 =============================
 
 数据预处理，更多关于图像、信号的Tensor函数，可在 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_ 中找到。
