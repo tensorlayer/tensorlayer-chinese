@@ -9,13 +9,6 @@ API - 神经网络层
 理解神经网络层
 ---------------
 
-神经网络的初始化是通过输入层实现的，然后我们可以像下面的代码那样把不同的层堆叠在一起，实现一个完整的神经网络，因此一个神经网络其实就是一个 ``Layer`` 类。
-神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
-其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则``all_params = [W1, b1, W2, b2, W_out, b_out]`` 。
-然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，``all_layers = [dropout(?, 784), relu(?, 800), dropout(?, 800), relu(?, 800), dropout(?, 800)], identity(?, 10)]`` ， ``?`` 代表任意batch size 都可以。
-你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
-若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
-
 所有TensorLayer层有如下的属性：
 
  - ``layer.outputs`` : 一个 Tensor，当前层的输出。
@@ -25,10 +18,19 @@ API - 神经网络层
 
 所有TensorLayer层有如下的方法：
 
- - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``sess.run(tf.initialize_all_variables())`` 之后）。
-                              另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
+ - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``sess.run(tf.initialize_all_variables())`` 之后）。另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
  - ``layer.print_layers()`` : 打印出神经网络每一层输出的信息。
  - ``layer.count_params()`` : 打印出神经网络参数的数量。
+
+
+
+神经网络的初始化是通过输入层实现的，然后我们可以像下面的代码那样把不同的层堆叠在一起，实现一个完整的神经网络，因此一个神经网络其实就是一个 ``Layer`` 类。
+神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
+其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则``all_params = [W1, b1, W2, b2, W_out, b_out]`` 。
+然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，``all_layers = [dropout(?, 784), relu(?, 800), dropout(?, 800), relu(?, 800), dropout(?, 800)], identity(?, 10)]`` ， ``?`` 代表任意batch size 都可以。
+你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
+若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
+
 
 .. code-block:: python
 
@@ -94,36 +96,35 @@ API - 神经网络层
 理解Dense层
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Before creating your own TensorLayer layer, let's have a look at Dense layer.
-It creates a weights matrix and biases vector if not exists, then implement
-the output expression.
-At the end, as a layer with parameter, we also need to append the parameters into ``all_params``.
+在创造自定义层之前，我们来看看全连接（Dense）层是如何实现的。
+若不存在Weights矩阵和Biases向量时，它新建之，然后通过给定的激活函数计算出 ``outputs`` 。
+在最后，作为一个有新参数的层，我们需要把新参数附加到 ``all_params`` 中。
 
 
 .. code-block:: python
 
   class DenseLayer(Layer):
       """
-      The :class:`DenseLayer` class is a fully connected layer.
+      `DenseLayer` 是一个全连接层
 
-      Parameters
+      参数
       ----------
-      layer : a :class:`Layer` instance
-          The `Layer` class feeding into this layer.
-      n_units : int
+      layer : 一个 `Layer` 实例
+          输入一个 `Layer` 类。
+      n_units : 一个整数
           The number of units of the layer.
-      act : activation function
+      act : 激活函数 （activation function）
           The function that is applied to the layer activations.
-      W_init : weights initializer
+      W_init : Weights初始化器（weights initializer）
           The initializer for initializing the weight matrix.
-      b_init : biases initializer
+      b_init : Biases初始化器（biases initializer）
           The initializer for initializing the bias vector.
-      W_init_args : dictionary
-          The arguments for the weights tf.get_variable.
-      b_init_args : dictionary
-          The arguments for the biases tf.get_variable.
-      name : a string or None
-          An optional name to attach to this layer.
+      W_init_args : 一个字典（dictionary）
+          Weights 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
+      b_init_args : 一个字典（dictionary）
+          Biases 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
+      name : 字符串或 None
+          该层的名字。
 
       def __init__(
           self,
@@ -148,7 +149,7 @@ At the end, as a layer with parameter, we also need to append the parameters int
               b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
           self.outputs = act(tf.matmul(self.inputs, W) + b)
 
-          # Hint : list(), dict() is pass by value (shallow).
+          # 提示 : list(), dict() 是浅复制。
           self.all_layers = list(layer.all_layers)
           self.all_params = list(layer.all_params)
           self.all_drop = dict(layer.all_drop)
@@ -159,10 +160,9 @@ At the end, as a layer with parameter, we also need to append the parameters int
 一个简单的层
 ^^^^^^^^^^^^^^^
 
-To implement a custom layer in TensorLayer, you will have to write a Python class
-that subclasses Layer and implement the ``outputs`` expression.
+实现一个自定义层，你需要写一个新的Python类，然后实现 ``outputs`` 表达式。
 
-The following is an example implementation of a layer that multiplies its input by 2:
+下面的例子实现了把输入乘以2，然后输出。
 
 .. code-block:: python
 
