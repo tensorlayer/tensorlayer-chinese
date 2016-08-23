@@ -22,7 +22,7 @@ TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应
 
    如果你阅读在线中文文档时有什么问题，你可以在github上下载这个项目，
    然后去 ``/docs/cn/_build/html/index.html`` 阅读离线中文文档。
-   或者在 `TensorLayer <http://tensorlayer.readthedocs.io/en/latest/>`_ 中阅读官方原文档。
+   或者在 `Read the docs <http://tensorlayer.readthedocs.io/en/latest/>`_ 中阅读官方原文档。
 
 用户指南
 -----------
