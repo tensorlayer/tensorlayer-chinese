@@ -1,4 +1,4 @@
-:mod:`tensorlayer.cost`
+API - 损失函数
 =======================
 
 为了尽可能地保持TensorLayer的简洁性，我们最小化损失函数的数量。
