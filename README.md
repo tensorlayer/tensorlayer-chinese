@@ -24,9 +24,9 @@ TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习
 
 不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让你非常熟练地使用它。
 
-⚠️⚠️⚠️ 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)
+🌞🌞🌞 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)
 
-📖📖📖 TensorLayer的Tutorial其实就是TensorFlow官方教程的模块化实现，因此你可以对照TensorFlow教程来学习[[英文]](https://www.tensorflow.org/versions/master/tutorials/index.html)[[极客学院中文翻译]](http://wiki.jikexueyuan.com/project/tensorflow-zh/)
+📖📖📖 TensorLayer的Tutorial其实就是TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow教程来学习[[英文]](https://www.tensorflow.org/versions/master/tutorials/index.html)[[极客学院中文翻译]](http://wiki.jikexueyuan.com/project/tensorflow-zh/)
 
 ❤️❤️❤️ TensorLayer首批开发者包括中国人，我们承诺将一直支持中国社区
 
