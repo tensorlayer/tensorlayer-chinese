@@ -79,7 +79,7 @@ Basic 层
 
 .. autoclass:: RNNLayer
 
-修改形状层
+形状修改层
 ----------------
 
 .. autoclass:: FlattenLayer
