@@ -28,11 +28,11 @@ API - 神经网络层
 神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
 其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则:
 
-`all_params = [W1, b1, W2, b2, W_out, b_out]`
+``all_params`` = [W1, b1, W2, b2, W_out, b_out]
 
 然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，则：
 
-``all_layers=[drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]`` 
+``all_layers`` = [drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]
 
 其中``?`` 代表任意batch size都可以。
 你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
