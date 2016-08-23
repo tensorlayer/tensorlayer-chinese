@@ -22,7 +22,7 @@ TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习
 
 阅读TensorLayer Readthedocs 文档您不仅可以学会如何使用这个库，也会了解不同类型的神经网络、深度学习、强化学习，还有自然语言处理等内容。
 
-不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让用非常熟练地使用它。
+不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让你非常熟练地使用它。
 
 ⚠️⚠️⚠️ 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)。 
 
