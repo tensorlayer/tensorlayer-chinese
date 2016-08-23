@@ -17,7 +17,7 @@ TensorFlow官方的函数，比如
 
 .. code-block:: python
 
-  def doubleactivation(x):
+  def double_activation(x):
       return x * 2
       
       
