@@ -5,6 +5,184 @@ API - 神经网络层
 例如，我们不提供local response normalization layer，用户可以在 ``Layer.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
 更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
+
+理解神经网络层
+---------------
+
+神经网络的初始化是通过输入层实现的，然后我们可以像下面的代码那样把不同的层堆叠在一起，实现一个完整的神经网络，因此一个神经网络其实就是一个 ``Layer`` 类。
+神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
+其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则``all_params = [W1, b1, W2, b2, W_out, b_out]`` 。
+然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，``all_layers = [dropout(?, 784), relu(?, 800), dropout(?, 800), relu(?, 800), dropout(?, 800)], identity(?, 10)]`` ， ``?`` 代表任意batch size 都可以。
+你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
+若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
+
+所有TensorLayer层有如下的属性：
+
+ - ``layer.outputs`` : 一个 Tensor，当前层的输出。
+ - ``layer.all_params`` : 一列 Tensor, 神经网络每一个参数。
+ - ``layer.all_layers`` : 一列 Tensor, 神经网络每一层输出。
+ - ``layer.all_drop`` : 一个字典 {placeholder : 浮点数}, 噪声层的概率。
+
+所有TensorLayer层有如下的方法：
+
+ - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``sess.run(tf.initialize_all_variables())`` 之后）。
+                              另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
+ - ``layer.print_layers()`` : 打印出神经网络每一层输出的信息。
+ - ``layer.count_params()`` : 打印出神经网络参数的数量。
+
+.. code-block:: python
+
+  sess = tf.InteractiveSession()
+
+  x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
+  y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
+
+  network = tl.layers.InputLayer(x, name='input_layer')
+  network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu1')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu2')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
+  network = tl.layers.DenseLayer(network, n_units=10,
+                                  act = tl.activation.identity,
+                                  name='output_layer')
+
+  y = network.outputs
+  y_op = tf.argmax(tf.nn.softmax(y), 1)
+
+  cost = tl.cost.cross_entropy(y, y_)
+
+  train_params = network.all_params
+
+  train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
+                              epsilon=1e-08, use_locking=False).minimize(cost, var_list = train_params)
+
+  sess.run(tf.initialize_all_variables())
+
+  network.print_params()
+  network.print_layers()
+
+另外，``network.all_drop`` 是一个字典，它保存了噪声层（比如dropout）的 keeping 概率。
+在上面定义的神经网络中，它保存了三个dropout层的keeping概率。
+
+因此，在训练时如下启用dropout层。
+
+.. code-block:: python
+
+  feed_dict = {x: X_train_a, y_: y_train_a}
+  feed_dict.update( network.all_drop )
+  loss, _ = sess.run([cost, train_op], feed_dict=feed_dict)
+  feed_dict.update( network.all_drop )
+
+在测试时，如下关闭dropout层。
+
+.. code-block:: python
+
+  feed_dict = {x: X_val, y_: y_val}
+  feed_dict.update(dp_dict)
+  print("   val loss: %f" % sess.run(cost, feed_dict=feed_dict))
+  print("   val acc: %f" % np.mean(y_val ==
+                          sess.run(y_op, feed_dict=feed_dict)))
+
+更多细节，请看 MNIST 例子。
+
+创造自定义层
+------------------------
+
+理解Dense层
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Before creating your own TensorLayer layer, let's have a look at Dense layer.
+It creates a weights matrix and biases vector if not exists, then implement
+the output expression.
+At the end, as a layer with parameter, we also need to append the parameters into ``all_params``.
+
+
+.. code-block:: python
+
+  class DenseLayer(Layer):
+      """
+      The :class:`DenseLayer` class is a fully connected layer.
+
+      Parameters
+      ----------
+      layer : a :class:`Layer` instance
+          The `Layer` class feeding into this layer.
+      n_units : int
+          The number of units of the layer.
+      act : activation function
+          The function that is applied to the layer activations.
+      W_init : weights initializer
+          The initializer for initializing the weight matrix.
+      b_init : biases initializer
+          The initializer for initializing the bias vector.
+      W_init_args : dictionary
+          The arguments for the weights tf.get_variable.
+      b_init_args : dictionary
+          The arguments for the biases tf.get_variable.
+      name : a string or None
+          An optional name to attach to this layer.
+
+      def __init__(
+          self,
+          layer = None,
+          n_units = 100,
+          act = tf.nn.relu,
+          W_init = tf.truncated_normal_initializer(stddev=0.1),
+          b_init = tf.constant_initializer(value=0.0),
+          W_init_args = {},
+          b_init_args = {},
+          name ='dense_layer',
+      ):
+          Layer.__init__(self, name=name)
+          self.inputs = layer.outputs
+          if self.inputs.get_shape().ndims != 2:
+              raise Exception("The input dimension must be rank 2")
+          n_in = int(self.inputs._shape[-1])
+          self.n_units = n_units
+          print("  tensorlayer:Instantiate DenseLayer %s: %d, %s" % (self.name, self.n_units, act))
+          with tf.variable_scope(name) as vs:
+              W = tf.get_variable(name='W', shape=(n_in, n_units), initializer=W_init, **W_init_args )
+              b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
+          self.outputs = act(tf.matmul(self.inputs, W) + b)
+
+          # Hint : list(), dict() is pass by value (shallow).
+          self.all_layers = list(layer.all_layers)
+          self.all_params = list(layer.all_params)
+          self.all_drop = dict(layer.all_drop)
+          self.all_layers.extend( [self.outputs] )
+          self.all_params.extend( [W, b] )
+
+
+一个简单的层
+^^^^^^^^^^^^^^^
+
+To implement a custom layer in TensorLayer, you will have to write a Python class
+that subclasses Layer and implement the ``outputs`` expression.
+
+The following is an example implementation of a layer that multiplies its input by 2:
+
+.. code-block:: python
+
+  class DoubleLayer(Layer):
+      def __init__(
+          self,
+          layer = None,
+          name ='dense_layer',
+      ):
+          Layer.__init__(self, name=name)
+          self.inputs = layer.outputs
+          self.outputs = self.inputs * 2
+
+          self.all_layers = list(layer.all_layers)
+          self.all_params = list(layer.all_params)
+          self.all_drop = dict(layer.all_drop)
+          self.all_layers.extend( [self.outputs] )
+
+
+
 .. automodule:: tensorlayer.layers
 
 .. autosummary::
