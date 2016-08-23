@@ -1501,16 +1501,16 @@ Karpathy的博客这样描述Seq2seq的："(4) Sequence input and sequence outpu
 
 示例采用了softmax抽样(sampled softmax)来解决大规模词汇库规模输出的问题。
 在这种情况下，当 ``target_vocab_size=4000`` 并且词汇库规模小于 ``512`` 时，仅仅使用标准softmax损失可能时一种更好的主意。
-softmax抽样在这篇论文的小节3中有描述：
+softmax抽样在这篇论文的小节3中有描述:
  - `On Using Very Large Target Vocabulary for Neural Machine Translation <http://arxiv.org/abs/1412.2007>`_
 
 依照在这篇文章的描述，逆序输入(Reversing the inputs)和多层神经元已经在序列到序列翻译模型已经被成功使用：
  - `Sequence to Sequence Learning with Neural Networks <http://arxiv.org/abs/1409.3215>`_
 
-这篇文章描述了注意机制允许输入解码器更直接地访问输入数据：
+这篇文章描述了注意机制允许输入解码器更直接地访问输入数据:
  - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
-这篇文章提出该模型也可以用单层版本替代多层神经元来实现，但是必须要使用双向编码器(Bi-directional encoder)：
+这篇文章提出该模型也可以用单层版本替代多层神经元来实现，但是必须要使用双向编码器(Bi-directional encoder):
  - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
 实现
