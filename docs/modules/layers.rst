@@ -6,7 +6,7 @@ API - 神经网络层
 更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
 
-理解神经网络层
+了解神经网络层
 ---------------
 
 所有TensorLayer层有如下的属性：
