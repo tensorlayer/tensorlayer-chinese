@@ -1,4 +1,4 @@
-:mod:`tensorlayer.visualize`
+API - 数据与模型的可视化
 ============================
 
 TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <https://www.tensorflow.org/versions/master/how_tos/summaries_and_tensorboard/index.html>`_。
