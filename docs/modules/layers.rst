@@ -34,7 +34,7 @@ API - 神经网络层
 
 ``all_layers`` = [drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]
 
-其中``?`` 代表任意batch size都可以。
+其中 ``?`` 代表任意batch size都可以。
 你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
 若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
 
