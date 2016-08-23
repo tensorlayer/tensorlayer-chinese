@@ -8,6 +8,8 @@
 这可以说是神经网络的 "Hello World" 。
 对于强化学习，我们将让计算机从屏幕输入来学习打乒乓球。
 对于自然语言处理。我们从词嵌套(word embedding)开始，然后描述语言模型和机器翻译。
+此外，TensorLayer的Tutorial包含了TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow深度学习教程来学习 `[英文] <https://www.tensorflow.org/versions/master/tutorials/index.html>`_ `[极客学院中文翻译] <http://wiki.jikexueyuan.com/project/tensorflow-zh/>`_ 。
+
 
 .. note::
     对于专家们来说，阅读 ``InputLayer`` 和 ``DenseLayer`` 文档，您将会理解TensorLayer是如何工作的。
