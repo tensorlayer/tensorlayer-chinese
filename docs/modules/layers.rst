@@ -1,11 +1,9 @@
 API - 神经网络层
 =========================
 
-To make TensorLayer simple, we minimize the number of layer classes as much as
-we can. So we encourage you to use TensorFlow's function.
-For example, we do not provide layer for local response normalization, we suggest
-you to apply ``tf.nn.lrn`` on ``Layer.outputs``.
-More functions can be found in `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_
+为了尽可能地保持TensorLayer的简洁性，我们最小化Layer的数量，因此我们鼓励用户直接使用 TensorFlow官方的函数。
+例如，我们不提供local response normalization layer，用户可以在 ``Layer.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
 .. automodule:: tensorlayer.layers
 
