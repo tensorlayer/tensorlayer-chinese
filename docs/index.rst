@@ -16,12 +16,7 @@ TensorLayer易于扩展和修改，同时也适用于机器学习的研究与应
 深度强化学习和自然语言处理等内容的教程。
 
 .. note::
-    我们建议你在 `Github <https://github.com/zsdonghao/tensorlayer>`_ 上star和watch `官方项目 <https://github.com/zsdonghao/tensorlayer>`_ ，这样当官方有更新时，你会立即知道。本文档为 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_ 的翻译版，更新速度会比英文原版慢，若你的英文很好，我们建议你直接阅读 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_。
-
-
-   本文档为 `官方文档 <https://github.com/zsdonghao/tensorlayer>`_
-   的翻译版，更新速度会比英文原版慢，若你的英文很好，我们建议你直接阅读 `英文文档 <http://tensorlayer.readthedocs.io/>`_。
-   我们建议你在 `Github <https://github.com/zsdonghao/tensorlayer>`_ 上star和watch官方项目，这样当官方有更新时，你会立即知道。
+    我们建议你在 `Github <https://github.com/zsdonghao/tensorlayer>`_ 上star和watch `官方项目 <https://github.com/zsdonghao/tensorlayer>`_ ，这样当官方有更新时，你会立即知道。本文档为 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_ 的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_。
 
    如果你阅读在线中文文档时有什么问题，你可以在github上下载这个项目，
    然后去 ``/docs/cn/_build/html/index.html`` 阅读离线中文文档。
