@@ -26,8 +26,15 @@ API - 神经网络层
 
 神经网络的初始化是通过输入层实现的，然后我们可以像下面的代码那样把不同的层堆叠在一起，实现一个完整的神经网络，因此一个神经网络其实就是一个 ``Layer`` 类。
 神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
-其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则``all_params = [W1, b1, W2, b2, W_out, b_out]`` 。
-然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，``all_layers=[drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]`` ，``?`` 代表任意batch size都可以。
+其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则:
+
+`all_params = [W1, b1, W2, b2, W_out, b_out]`
+
+然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，则：
+
+``all_layers=[drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]`` 
+
+其中``?`` 代表任意batch size都可以。
 你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
 若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
 
