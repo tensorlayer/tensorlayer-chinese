@@ -36,6 +36,7 @@ TensorLayer用户指南说明了如何去安装TensorFlow,CUDA和cuDNN，
    user/tutorial
    user/example
    user/development
+   user/more
 
 API目录
 ----------
