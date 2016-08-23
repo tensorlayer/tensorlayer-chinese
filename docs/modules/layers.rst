@@ -177,7 +177,7 @@ API - 神经网络层
       def __init__(
           self,
           layer = None,
-          name ='dense_layer',
+          name ='double_layer',
       ):
           Layer.__init__(self, name=name)
           self.inputs = layer.outputs
