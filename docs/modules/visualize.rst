@@ -14,18 +14,22 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
    images2d
    tsne_embedding
 
-可视化权值
+可视化模型参数
 --------------------
 
 .. autofunction:: W
 
 .. autofunction:: CNN2d
 
+
+可视化数据
+----------------
+
 .. autofunction:: frame
 
 .. autofunction:: images2d
 
-可视化词向量矩阵
+可视化词嵌入矩阵
 --------------------
 
 .. autofunction:: tsne_embedding
