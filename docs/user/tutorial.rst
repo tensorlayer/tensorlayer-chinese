@@ -1137,7 +1137,7 @@ classified as expressing positive or negative sentiment). "
 
 
 
-运行翻译例子
+运行机器翻译例子
 ===================
 
 .. code-block:: python
@@ -1146,9 +1146,9 @@ classified as expressing positive or negative sentiment). "
 
 该脚本将训练一个神经网络来把英文翻译成法文。
 如果一切正常，您将看到：
-- 下载WMT英语-法语翻译数据，包括训练数据和测试数据。
-- 从英语和法语的训练数据中创建词汇库文件。
-- 创建符号化的训练数据和测试数据
+- 下载WMT英文-法文翻译数据库，包括训练集和测试集。
+- 通过训练集创建英文和法文的词汇表。
+- 把训练集和测试集的单词转换成数字ID表示。
 
 
 .. code-block:: bash
@@ -1184,22 +1184,22 @@ classified as expressing positive or negative sentiment). "
   ...
 
 首先，我们从WMT'15网站上下载英语-法语翻译数据。训练数据和测试数据如下。
-训练数据用于训练模型，测试数据用于XXXX。
+训练数据用于训练模型，测试数据用于评估该模型。
 
 .. code-block:: text
 
-  wmt/training-giga-fren.tar  <-- Training data for English-to-French (2.6GB)
-                                  giga-fren.release2.* are extracted from it.
-  wmt/dev-v2.tgz              <-- Testing data for different language (21.4MB)
-                                  newstest2013.* are extracted from it.
+  wmt/training-giga-fren.tar  <-- 英文－法文训练集 (2.6GB)
+                                  giga-fren.release2.* 从该文件解压出来
+  wmt/dev-v2.tgz              <-- 多种语言的测试集 (21.4MB)
+                                  newstest2013.* 从该文件解压出来
 
-  wmt/giga-fren.release2.fr   <-- Training data of French   (4.57GB)
-  wmt/giga-fren.release2.en   <-- Training data of English  (3.79GB)
+  wmt/giga-fren.release2.fr   <-- 法文训练集 (4.57GB)
+  wmt/giga-fren.release2.en   <-- 英文训练集 (3.79GB)
 
-  wmt/newstest2013.fr         <-- Testing data of French    (393KB)
-  wmt/newstest2013.en         <-- Testing data of English   (333KB)
+  wmt/newstest2013.fr         <-- 法文测试集 (393KB)
+  wmt/newstest2013.en         <-- 英文测试集 (333KB)
 
-``giga-fren.release2.*`` 是训练数据，以下是 ``giga-fren.release2.fr`` ：
+所有 ``giga-fren.release2.*`` 是训练数据， ``giga-fren.release2.fr`` 内容如下：
 
 .. code-block:: text
 
@@ -1217,7 +1217,7 @@ classified as expressing positive or negative sentiment). "
   Observatoires
   ...
 
-``giga-fren.release2.en`` 如下所示，我们可以看到单词或者句子用 ""|"" 或 "\n" 来分隔。
+``giga-fren.release2.en`` 内容如下，我们可以看到单词或者句子用 ``|`` 或 ``\n`` 来分隔。
 
 .. code-block:: text
 
@@ -1248,11 +1248,10 @@ classified as expressing positive or negative sentiment). "
   Les dirigeants républicains justifièrent leur politique par la nécessité de lutter contre la fraude électorale.
   Or, le Centre Brennan considère cette dernière comme un mythe, affirmant que la fraude électorale est plus rare aux États-Unis que le nombre de personnes tuées par la foudre.
 
-下载数据之后，它开始创建词汇库文件。
-从训练数据 ``giga-fren.release2.fr`` 和 ``giga-fren.release2.en``创建 ``vocab40000.fr`` 和 ``vocab40000.en`` 通常需要较长一段时间。
-``40000`` 反映了词汇库的规模。
+下载完数据之后，开始创建词汇表文件。
+从训练数据 ``giga-fren.release2.fr`` 和 ``giga-fren.release2.en``创建 ``vocab40000.fr`` 和 ``vocab40000.en`` 这个过程需要较长一段时间，数字 ``40000`` 代表了词汇库的大小。
 
-``vocab40000.fr`` (381KB) 按下列所示地按每行一个项地(one-item-per-line)方式存储。
+``vocab40000.fr`` (381KB) 按下列所示地按每行一个单词的方式存储（one-item-per-line）。
 
 .. code-block:: text
 
@@ -1289,7 +1288,7 @@ classified as expressing positive or negative sentiment). "
   a
   par
 
-``vocab40000.en`` (344KB) 按下列所示地按每行一个项地(one-item-per-line)方式存储。
+``vocab40000.en`` (344KB) 也是如此。
 
 .. code-block:: text
 
@@ -1326,7 +1325,7 @@ classified as expressing positive or negative sentiment). "
   are
   ;
 
-然后我们开始创建英语和法语的符号化的训练数据和测试数据。这也要较长一段时间。
+接着我们开始创建英文和法文的数字化（ID）训练集和测试集。这也要较长一段时间。
 
 .. code-block:: text
 
@@ -1352,27 +1351,28 @@ classified as expressing positive or negative sentiment). "
 
 .. code-block:: text
 
-  wmt/training-giga-fren.tar  <-- Compressed Training data for English-to-French (2.6GB)
-                                  giga-fren.release2.* are extracted from it.
-  wmt/dev-v2.tgz              <-- Compressed Testing data for different language (21.4MB)
-                                  newstest2013.* are extracted from it.
+  wmt/training-giga-fren.tar  <-- 英文－法文训练集 (2.6GB)
+                                  giga-fren.release2.* 从该文件解压出来
+  wmt/dev-v2.tgz              <-- 多种语言的测试集 (21.4MB)
+                                  newstest2013.* 从该文件解压出来
 
-  wmt/giga-fren.release2.fr   <-- Training data of French   (4.57GB)
-  wmt/giga-fren.release2.en   <-- Training data of English  (3.79GB)
+  wmt/giga-fren.release2.fr   <-- 法文训练集 (4.57GB)
+  wmt/giga-fren.release2.en   <-- 英文训练集 (3.79GB)
 
-  wmt/newstest2013.fr         <-- Testing data of French    (393KB)
-  wmt/newstest2013.en         <-- Testing data of English   (333KB)
+  wmt/newstest2013.fr         <-- 法文测试集 (393KB)
+  wmt/newstest2013.en         <-- 英文测试集 (333KB)
 
-  wmt/vocab40000.fr           <-- Vocabulary of French      (381KB)
-  wmt/vocab40000.en           <-- Vocabulary of English     (344KB)
+  wmt/vocab40000.fr           <-- 法文词汇表 (381KB)
+  wmt/vocab40000.en           <-- 英文词汇表 (344KB)
 
-  wmt/giga-fren.release2.ids40000.fr   <-- Tokenized Training data of French (2.81GB)
-  wmt/giga-fren.release2.ids40000.en   <-- Tokenized Training data of English (2.38GB)
+  wmt/giga-fren.release2.ids40000.fr   <-- 数字化法文训练集 (2.81GB)
+  wmt/giga-fren.release2.ids40000.en   <-- 数字化英文训练集 (2.38GB)
 
-  wmt/newstest2013.ids40000.fr         <-- Tokenized Testing data of French (268KB)
-  wmt/newstest2013.ids40000.en         <-- Tokenized Testing data of English (232KB)
+  wmt/newstest2013.ids40000.fr         <-- 数字化法文训练集 (268KB)
+  wmt/newstest2013.ids40000.en         <-- 数字化英文测试集 (232KB)
 
-现在，从桶(buckets)读入所有符号化的数据并且计算他们的大小。
+现在，把数字化的数据读入buckets中，并计算不同buckets中数据样本的个数。
+
 
 .. code-block:: text
 
@@ -1408,8 +1408,7 @@ classified as expressing positive or negative sentiment). "
   the num of training data: 17268326
   train_buckets_scale: [0.013847375825543252, 0.09169638099257565, 0.3951164693091849, 1.0]
 
-开始训练符号化的桶数据之后，训练可以通过终止程序来终止。
-当 ``steps_per_checkpoint = 10`` 时，您将看到：
+最后开始训练模型，当 ``steps_per_checkpoint = 10`` 时，您将看到：
 
 ``steps_per_checkpoint = 10``
 
@@ -1535,41 +1534,41 @@ classified as expressing positive or negative sentiment). "
     eval: bucket 3 perplexity 181.07
   ...
 
-经过350000轮训练模型之后，您可以将 ``main_train()`` 换为 ``main_decode()`` 来使用翻译器。
-您可以输入一个英文句子，程序将输出一个法文句子。
+经过350000轮训练模型之后，您可以将代码中的 ``main_train()`` 换为 ``main_decode()`` 来使用训练好的翻译器，
+您输入一个英文句子，程序将输出一个对应的法文句子。
 
 .. code-block:: text
 
-  Reading model parameters from wmt/translate.ckpt-340000
+  Reading model parameters from wmt/translate.ckpt-350000
   >  Who is the president of the United States?
   Qui est le président des États-Unis ?
 
 
-理解翻译器
+理解机器翻译
 ====================
 
 Seq2seq
 --------------
-序列到序列的模型通常被用来从一种语言到另一种语言的翻译。
-但实际上它能用了做很多您可能无法想象的事情，我们可以将一个长句翻译成短且简单的句子，
-例如，从莎士比亚的语言翻译成现代英语。用卷积神经网络(CNN)，我们也能将视频翻译成句子，即是视频字幕。
+序列到序列模型（Seq2seq）通常被用来转换一种语言到另一种语言。
+但实际上它能用来做很多您可能无法想象的事情，比如我们可以将一个长的句子翻译成意思一样但短且简单的句子，
+再比如，从莎士比亚的语言翻译成现代英语。若用上卷积神经网络(CNN)的话，我们能将视频翻译成句子，则自动看一段视频给出该视频的文字描述（Video captioning）。
 
-如果您只是想用Seq2seq，您唯一需要的时处理数据的格式，包括如何分词，如何符号化这些单词等等。
-在本教程中，我们介绍了很多关于数据格式化的内容。
+如果你只是想用 Seq2seq，你只需要考虑训练集的格式，比如如何切分单词、如何数字化单词等等。
+所以，在本教程中，我们将讨论很多如何整理训练集。
+
 
 基础
 ^^^^^^^^^
 
-序列到序列模型时一种多对多的模型，但和PTB教程中的同步序列输入与输出(Synced sequence input and output)不一样。
-Seq2seq在提供所有序列输入后生成序列输出。
-下列两种方法可以提高准确度：
-- 反向输入
-- 注意机制(Attention mechanism)
+序列到序列模型是一种多对多（Many to many）的模型，但与PTB教程中的同步序列输入与输出(Synced sequence input and output）不一样，Seq2seq是在输入了整个序列之后，才开始输出新的序列（非同步）。
+该教程用了下列两种最新的方法来提高准确度：
+- 把输入序列倒转输入（Reversing the inputs）
+- 注意机制（Attention mechanism）
 
-要加快计算速度，我们使用：
-- softmax取样(Sampled softmax)
+为了要加快训练速度，我们使用了：
+- softmax 抽样（Sampled softmax）
 
-Karpathy的博客这样描述Seq2seq的："(4) Sequence input and sequence output (e.g. Machine Translation: an RNN reads a sentence in English and then outputs a sentence in French)."
+Karpathy的博客是这样描述Seq2seq的："(4) Sequence input and sequence output (e.g. Machine Translation: an RNN reads a sentence in English and then outputs a sentence in French)."
 
 
 .. _fig_0601:
@@ -1578,7 +1577,7 @@ Karpathy的博客这样描述Seq2seq的："(4) Sequence input and sequence outpu
   :scale: 100 %
   :align: center
 
-如上图所示，编码器输入(encoder_input)，解码器输入(decoder_input)和目标(targets)是：
+如上图所示，编码器输入（encoder input），解码器输入（decoder input）以及输出目标（targets）如下：
 
 .. code-block:: text
 
@@ -1586,43 +1585,45 @@ Karpathy的博客这样描述Seq2seq的："(4) Sequence input and sequence outpu
    decoder_input =  <go> W    X    Y    Z
    targets       =  W    X    Y    Z    <eos>
 
-    Note：在实际的代码中，目标集的规模一个小于解码器输入的规模的数字，而不像这个数字。
+    Note：在代码实现中，targets的长度比decoder_input的长度小一，更多实现细节将在下文说明。
 
-论文
+文献
 ^^^^^^^^^^^
 
-英语-法语的例子实现了一个作为编码器多层回归神经网络和一个基于注意(Attention-based)解码器。
-它和这篇论文中描述的模型一样：
+该英语-法语的机器翻译例子使用了多层递归神经网络以及注意机制。
+该模型和如下论文中一样：
  - `Grammar as a Foreign Language <http://arxiv.org/abs/1412.7449>`_
 
-例子采用了softmax抽样(sampled softmax)来解决大规模词汇库规模输出的问题。
-在这种情况下，当 ``target_vocab_size=4000`` 并且词汇库规模小于 ``512`` 时，仅仅使用标准softmax损失可能时一种更好的主意。
-softmax抽样在这篇论文的小节3中有描述:
+该例子采用了 softmax 抽样（sampled softmax）来解决当词汇表很大时计算量大的问题。
+在该例子中，``target_vocab_size=4000`` ，若词汇量小于 ``512`` 时用普通的softmax cross entropy即可。
+Softmax 抽样在这篇论文的第三小节中描述:
  - `On Using Very Large Target Vocabulary for Neural Machine Translation <http://arxiv.org/abs/1412.2007>`_
 
-依照在这篇文章的描述，逆序输入(Reversing the inputs)和多层神经元已经在序列到序列翻译模型已经被成功使用：
+如下文章讲述了把输入序列倒转（Reversing the inputs）和多层神递归神经网络用在Seq2seq的翻译应用非常成功：
  - `Sequence to Sequence Learning with Neural Networks <http://arxiv.org/abs/1409.3215>`_
 
-这篇文章描述了注意机制允许输入解码器更直接地访问输入数据:
+如下文章讲述了注意机制（Attention Mechanism）让解码器可以更直接地得到每一个输入的信息：
  - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
-这篇文章提出该模型也可以用单层版本替代多层神经元来实现，但是必须要使用双向编码器(Bi-directional encoder):
+如下文章讲述了另一种Seq2seq模型，则使用双向编码器（Bi-directional encoder）：
  - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
-实现
+
+实现细节
 -------------
 
 Bucketing and Padding
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Bucketing是一种能有效处理不同长度句子的方法。
-当要将英文翻译成法文的时候，在输入栏中我们将得到不同的长度 ``L1`` 的英文句子。
-并且在输出栏法文句子的不同长度 ``L2`` 。
-我们原则上应该为一个英文和法文句子的长度的每一对 ``(L1,L2+1)`` (由一个GO符号作为前缀) 建立seq2seq模型。
+Bucketing 是一种能有效处理不同句子长度的方法，为什么使用Bucketing，在 `知乎 <https://www.zhihu.com/question/42057513>`_ 上已经有很好的回答了。
 
-为了找到对于每一对数最接近bucket，那么如果bucket比句子大，我们只能在句子的末尾用一个特殊的PAD记号，来标记每一个句子。
+当将英文翻译成法文的时，我们有不同长度的英文句子输入（长度为 ``L1 `` ），以及不同长度的法文句子输出，（长度为 ``L2`` ）。
+我们原则上要建立每一种长度的可能性，则有很多个 ``(L1, L2+1)`` ，其中 ``L2`` 加一是因为有 GO 标志符。
 
-我们使用几个buckets并且有效地把句子标记到最近的buckets。在这个例子中，我们使用4个buckets
+为了减少 bucket 的数量以及找到最合适的 bucket，若 bucket 大于句子的长度，我们则使用 PAD 标志符填充之。
+
+为了提高销量，我们使用几个 bucket，然后使用 padding 来让句子匹配到最相近的 bucket 中。
+在该例子中，我们用如下 4 个 buckets。
 
 .. code-block:: python
 
@@ -1702,7 +1703,7 @@ Bucketing是一种能有效处理不同长度句子的方法。
 
 所有的标点符号，类似于 ``. , ) (`` 在英文和法文数据库中的被全部保留下来。
 
-softmax抽样(Sampled softmax)
+Softmax抽样(Sampled softmax)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 softmax抽样是处理大量词汇库输出的时降低计算开销的一种方法。
@@ -1868,6 +1869,9 @@ Cost function                损失函数
 
 Regularization               规则化、正则化
 
+Tokenization                 数字化
+
+Truncated backpropagation    截断反向传播
 
 
 
