@@ -4,10 +4,10 @@
 教程 Tutorials
 ===================
 
-对于深度学习，这篇教程会引导您使用MNIST数据集构建一个手写数字的分类器，
+对于深度学习，该教程会引导您使用MNIST数据集构建不同的手写数字的分类器，
 这可以说是神经网络的 "Hello World" 。
-对于强化学习，我们将让计算机从屏幕输入来学习打乒乓球。
-对于自然语言处理。我们从词嵌套(word embedding)开始，然后描述语言模型和机器翻译。
+对于强化学习，我们将让计算机根据屏幕输入来学习打乒乓球。
+对于自然语言处理。我们从词嵌套（word embedding）开始，然后再实现语言建模和机器翻译。
 此外，TensorLayer的Tutorial包含了所有TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow深度学习教程来学习 `[英文] <https://www.tensorflow.org/versions/master/tutorials/index.html>`_ `[极客学院中文翻译] <http://wiki.jikexueyuan.com/project/tensorflow-zh/>`_ 。
 
 
@@ -42,7 +42,7 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 
 我们假设您已经按照 :ref:`installation` 安装过TensorLayer。
 如果您还没有，请复制一个TensorLayer的source目录到终端中进入该文件夹，
-然后运行 ``tutorial_mnist.py`` 示例脚本：
+然后运行 ``tutorial_mnist.py`` 例子脚本：
 
 .. code-block:: bash
 
@@ -114,7 +114,7 @@ If everything is set up correctly, you will get an output like the following:
     val acc: 0.983700
   ...
 
-示例脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络(Multi-Layer Perceptron)，
+例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络(Multi-Layer Perceptron)，
 Dropout, Dropconnect, Stacked Denoising Autoencoder and 卷积神经网络.
 
 .. code-block:: python
@@ -564,7 +564,7 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
 
 策略梯度下降法是一个end-to-end的算法，它直接学习从状态映射到动作的策略函数。
 一个近似最优的策略可以通过最大化预期的奖励来直接学习。
-策略函数的参数(例如，在乒乓球示例终使用的策略网络的参数)在预期奖励的近似值的引导下能够被训练和学习。
+策略函数的参数(例如，在乒乓球例子终使用的策略网络的参数)在预期奖励的近似值的引导下能够被训练和学习。
 换句话说，我们可以通过过更新它的参数来逐步调整策略函数，这样它能从给定的状态做出一系列行为来获得更高的奖励。
 
 策略迭代的一个替代算法就是深度Q-learning(DQN)。
@@ -836,33 +836,16 @@ Image by Andrey Karpathy
 PTB例子中的模型是一个典型的同步输入与输出，Karpathy 描述为
 “(5) 同步序列输入与输出(例如视频分类中我们希望对每一帧进行标记)。“
 
-模型的构建如下。首先通过查找嵌套矩阵，将词转换为词向量。
-在本教程中，没有在嵌套矩阵熵进行预训练。
-齐次，我们堆叠两个在嵌套层中使用退出率LSTM，LSTM层和正则化输出层。
-该模型在训练过程中提供 Softmax 输出的序列
+模型的构建如下，第一层是词嵌套层（嵌入），把每一个单词转换成对应的词向量，在该例子中没有使用预先训练好的
+嵌套矩阵。第二，堆叠两层LSTM，使用Dropout来实现规则化，防止overfitting。
+最后，使用全连接层输出一序列的softmax输出。
 
-第一层LSTM层为了和下一层的LSTM堆叠而输出[batch_size, num_steps, hidden_size]
-第二层LSTM层为了后下一层的稠密层而输出 [batch_size*num_steps, hidden_size]，
-然后计算每个实例的softmax输出，即n_examples = batch_size*num_steps。
+第一层LSTM的输出形状是 [batch_size, num_steps, hidden_size]，这是为了让下一层LSTM可以堆叠在其上面。
+第二层LSTM的输出形状是 [batch_size*num_steps, hidden_size]，这是为了让输出层（全连接层 Dense）可以堆叠在其上面。
+然后计算每个样本的softmax输出，样本总数为 n_examples = batch_size*num_steps。
 
-要理解PTB教程，您也可以阅读 `TensorFlow PTB tutorial
-<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_ 。
-
-The model is built as follow. Firstly, transfer the words into word vectors by
-looking up an embedding matrix. In this tutorial, no pre-training on embedding
-matrix. Secondly, we stacked two LSTMs together use dropout among the embedding
-layer, LSTM layers and output layer for regularization. The model provides
-a sequence of softmax outputs during training.
-
-The first LSTM layer outputs [batch_size, num_steps, hidden_size] for stacking
-another LSTM after it. The second LSTM layer outputs [batch_size*num_steps, hidden_size]
-for stacking DenseLayer after it, then compute the softmax outputs of each example,
-i.e. n_examples = batch_size*num_steps.
-
-To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
-<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_.
-
-
+若想要更进一步理解该PTB教程，您也可以阅读 `TensorFlow 官方的PTB教程
+<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_ ，中文翻译请见极客学院。
 
 
 .. code-block:: python
@@ -905,26 +888,26 @@ To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
               act = tl.activation.identity, name='output_layer')
 
 
-数据集迭代
+数据迭代
 ^^^^^^^^^^^^^^^^^
 
-批规模可以被视为并发计算的个数。
-如下面的示例所示，第一个批使用0到9学习序列。
-第二个批使用10到19学习序列。
-所以它忽略了9到10之间的信息。
-如果我们只设置bath_size=1，它才应该改考虑0到20之间的所有信息。
+batch_size 数值可以被视为并行计算的数量。
+如下面的例子所示，第一个 batch 使用 0 到 9 来学习序列信息。
+第二个 batch 使用 10 到 19 来学习序列。
+所以它忽略了 9 到 10 之间的信息。
+只当我们 bath_size 设为 1，它才使用 0 到 20 之间所有的序列信息来学习。
 
-这里的批规模(batch_size)的意思是不是和MNIST示例不一样。
-在MNIST示例，批规模反映在每次迭代中我们认为实例是多少，
-而在PTB的示例中，批规模是为加快运算速度的并行进程数。
+这里的 batch_size 的意思与 MNIST 例子略有不同。
+在 MNIST 例子，batch_size 是每次迭代中我们使用的样本数量，
+而在 PTB 的例子中，batch_size 是为加快训练速度的并行进程数。
 
-如果批规模>1，那么有些信息会被忽视。
-但是如果你的数据是足够长的(一个语料库通常有几十亿个字)，被忽略的信息将不影响最终的结果。
+虽然当 batch_size > 1 时有些信息将会被忽略，
+但是如果你的数据是足够长的（一个语料库通常有几十亿个字），被忽略的信息不会影响最终的结果。
 
-在PTB教程中，我们设置了批规模=20，所以，我们将数据拆分成20段。
-在每一轮(epoch)的开始，我们用20段初始化(复位)20个RNN状态，然后分别遍历这20段。
+在PTB教程中，我们设置了 batch_size = 20，所以，我们将数据拆分成 20 段（segment）。
+在每一轮（epoch）的开始时，我们要将 20 段LSTM的状态（State）初始化，然后分别对 20 段数据进行迭代。
 
-训练数据将按如下方式产生：
+训练数据迭代的例子如下：
 
 .. code-block:: python
 
@@ -951,7 +934,7 @@ To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
   ...  [17 18 19]]
 
 .. note::
-    这个示例可以当作词嵌套矩阵的预训练。
+    这个例子可以当作词嵌套矩阵的预训练。
 
 损失和更新公式
 ^^^^^^^^^^^^^^^^^^^^^
@@ -1063,7 +1046,7 @@ Karpathy的博客：
 classified as expressing positive or negative sentiment). "
 
 
-运行翻译示例
+运行翻译例子
 ===================
 
 .. code-block:: python
@@ -1521,7 +1504,7 @@ Karpathy的博客这样描述Seq2seq的："(4) Sequence input and sequence outpu
 它和这篇论文中描述的模型一样：
  - `Grammar as a Foreign Language <http://arxiv.org/abs/1412.7449>`_
 
-示例采用了softmax抽样(sampled softmax)来解决大规模词汇库规模输出的问题。
+例子采用了softmax抽样(sampled softmax)来解决大规模词汇库规模输出的问题。
 在这种情况下，当 ``target_vocab_size=4000`` 并且词汇库规模小于 ``512`` 时，仅仅使用标准softmax损失可能时一种更好的主意。
 softmax抽样在这篇论文的小节3中有描述:
  - `On Using Very Large Target Vocabulary for Neural Machine Translation <http://arxiv.org/abs/1412.2007>`_
@@ -1548,7 +1531,7 @@ Bucketing是一种能有效处理不同长度句子的方法。
 
 为了找到对于每一对数最接近bucket，那么如果bucket比句子大，我们只能在句子的末尾用一个特殊的PAD记号，来标记每一个句子。
 
-我们使用几个buckets并且有效地把句子标记到最近的buckets。在这个示例中，我们使用4个buckets
+我们使用几个buckets并且有效地把句子标记到最近的buckets。在这个例子中，我们使用4个buckets
 
 .. code-block:: python
 
@@ -1594,7 +1577,7 @@ Bucketing是一种能有效处理不同长度句子的方法。
 
 特别的语言标记(vocabulary symbols)，符号和数字。
 
-在这个示例中特别的语言标记是：
+在这个例子中特别的语言标记是：
 
 .. code-block:: python
 
