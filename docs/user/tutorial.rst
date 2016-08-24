@@ -1620,24 +1620,24 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
 当将英文翻译成法文的时，我们有不同长度的英文句子输入（长度为 ``L1 `` ），以及不同长度的法文句子输出，（长度为 ``L2`` ）。
 我们原则上要建立每一种长度的可能性，则有很多个 ``(L1, L2+1)`` ，其中 ``L2`` 加一是因为有 GO 标志符。
 
-为了减少 bucket 的数量以及找到最合适的 bucket，若 bucket 大于句子的长度，我们则使用 PAD 标志符填充之。
+为了减少 bucket 的数量以及为句子找到最合适的 bucket，若 bucket 大于句子的长度，我们则使用 PAD 标志符填充之。
 
-为了提高销量，我们使用几个 bucket，然后使用 padding 来让句子匹配到最相近的 bucket 中。
-在该例子中，我们用如下 4 个 buckets。
+为了提高效率，我们只使用几个 bucket，然后使用 padding 来让句子匹配到最相近的 bucket 中。
+在该例子中，我们使用如下 4 个 buckets。
 
 .. code-block:: python
 
   buckets = [(5, 10), (10, 15), (20, 25), (40, 50)]
 
-如果输入的是一个标记为 ``3`` 的英文句子,并且相应的输出是一个标记为 ``6`` 的法文句子，
-那么他们将被放在第一个bucket并且把编码器和解码器的输入栏(英文句子)，输出栏分别标为 ``5``，``10`` 。
-如果我们有一个标记为8的英文句子并且相应的法文句子被标记为18，那么他们将被放入 ``(20,25)`` bucket。
+如果输入的是一个有 ``3`` 个单词的英文句子，对应的法文输出有 ``6`` 个单词，
+那么改数据将被放在第一个 bucket 中并且把 encoder inputs 和 decoder inputs 通过 padding 来让其长度变成 ``5`` 和 ``10`` 。
+如果我们有 ``8`` 个单词的英文句子，及 ``18`` 个单词的法文句子，它们会被放到 ``(20, 25)`` 的 bucket 中。
 
-换句话说，bucket ``(I,O)`` 是 ``(编码器输入规模(encoder_input_size)，解码器输入规模(decoder_inputs_size))
+换句话说，bucket ``(I,O)`` 是 ``(编码器输入大小(encoder_input_size)，解码器输入大小(decoder_inputs_size))`` 。
 
-给出一对符号化格式的 ``[["I", "go", "."], ["Je", "vais", "."]]`` ，我们把它转换为 ``(5,10)`` 。
-编码器输入的训练数据  ``[PAD PAD "." "go" "I"]`` 并且解码器输入 ``[GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD]`` 。
-这些目标是解码器输入的一方面的转变。这些 ``目标权值(target_weights)`` 是 ``targets`` 的关键。
+给出一对数字化训练样本 ``[["I", "go", "."], ["Je", "vais", "."]]`` ，我们把它转换为 ``(5,10)`` 。
+编码器输入（encoder inputs）的训练数据为  ``[PAD PAD "." "go" "I"]`` ，而解码器的输入（decoder inputs）为 ``[GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD]`` 。
+而输出目标（targets）是解码器输入（decoder inputs）平移一位。 ``target_weights`` 是输出目标（targets）的掩码。
 
 . code-block:: text
 
@@ -1647,7 +1647,7 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
   target_weights = [1   1     1     1   0 0 0 0 0 0 0]          <-- 10 x batch_size
   targets        = ["Je" "vais" "." EOS PAD PAD PAD PAD PAD]    <-- 9  x batch_size
 
-在此脚本中，一个句子是由一列表示，因此我们假设 ``批规模=3`` ， ``bucket=(5,10)`` ，训练数据看起来像这个样子：
+在该代码中，一个句子是由一个列向量表示，假设 ``batch_size = 3`` ， ``bucket = (5, 10)`` ，训练集如下所示。
 
 .. code-block:: text
 
@@ -1667,9 +1667,14 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
 
 在训练过程中，解码器输入是目标，而在预测过程中，下一个解码器的输入是最后一个解码器的输出。
 
-特别的语言标记(vocabulary symbols)，符号和数字。
+在训练过程中，编码器输入（decoder inputs）就是目标输出（targets）；
+当使用模型时，下一个编码器输入（decoder inputs）是上一个解码器输出（ decoder output）。
 
-在这个例子中特别的语言标记是：
+
+特殊标志符、标点符号与阿拉伯数字
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+在这个例子中的特殊标志符是：
 
 .. code-block:: python
 
