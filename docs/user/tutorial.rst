@@ -1,8 +1,8 @@
 .. _tutorial:
 
-=======
+===================
 教程 Tutorials
-=======
+===================
 
 对于深度学习，这篇教程会引导您使用MNIST数据集构建一个手写数字的分类器，
 这可以说是神经网络的 "Hello World" 。
@@ -617,24 +617,28 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 虽然它有很合理的品质，但它的默认参数不会给你最好的代理人模型。
 这有一些您可以优化的内容。
 
-首先，与传统的MLP模型不同，比起  `Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_ 更好的是我们可以使用CNNs来采集屏幕信息
+首先，与传统的MLP模型不同，比起 `Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_ 更好的是我们可以使用CNNs来采集屏幕信息
 
 另外这个模型默认参数没有调整，您可以更改学习率，衰退率，或者用不同的方式来初始化您的模型的权重。
 
 最后，您可以尝试不同任务(游戏)的模型。
 
-运行 Word2Vec实例：
+
+
+
+运行 Word2Vec 实例：
 ====================
 
-在教程的这一部分，我们训练一个词的矩阵，其中每个词可以通过唯一的行向量来矩阵表示。
-在结束时，同样的话将会有类似的向量。
-然后就像我们把词在一个2为平面熵画出来一样，那些相似的词最终会彼此聚集在一起。
+在教程的这一部分，我们训练一个词嵌套矩阵，每个词可以通过矩阵中唯一的行向量来表示。
+在训练结束时，意思类似的单词会有相识的词向量。
+在代码的最后，我们通过把单词放到一个平面上来可视化，我们可以看到相似的单词会被聚集在一起。
+
 
 .. code-block:: bash
 
   python tutorial_word2vec_basic.py
 
-如果一切设置正确，您最后会得到一个输出。
+如果一切设置正确，您最后会得到如下的可视化图。
 
 .. _fig_0601:
 
@@ -645,12 +649,16 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 理解词嵌套(word embedding)
 =================================
 
-词嵌套
-----------------
+词嵌套（嵌入）
+-------------------
 
-董豪强烈建立您阅读Colah的博客 `Word Representations`_ 来理解为什么我们要使用向量来作为代表以及要如何计算这个向量。
+我们强烈建立您先阅读Colah的博客 `Word Representations`_ `[中文翻译] <http://dataunion.org/9331.html>`_ ，
+以理解为什么我们要使用一个向量来表示一个单词。更多Word2vec的细节可以在 `Word2vec Parameter Learning Explained <http://arxiv.org/abs/1411.2738>`_ 中找到。
 
-训练一个嵌套矩阵
+基本来说，训练一个嵌套矩阵是一个非监督学习的过程。一个单词使用唯一的ID来表示，而这个ID号就是嵌套矩阵的行号（row index），对应的行向量就是用来表示该单词的，使用向量来表示单词可以更好地表达单词的意思。比如，有4个单词的向量， ``woman − man = queen - king`` ，这个例子中可以看到，嵌套矩阵中有一个纬度是用来表示性别的。
+
+
+定义一个Word2vec词嵌套矩阵如下。
 
 .. code-block:: python
 
@@ -680,12 +688,12 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
       )
   cost = emb_net.nce_cost
 
-数据集迭代和损失
-^^^^^^^^^^^^^^^
-Word2vec使用负采样和Skip-gram模型进行训练。
-噪音对比估计损失(NCE)会帮助减少损失的计算。
-Skip-Gram 将文本和目标反转(Skip-Gram inverts context and targets)，尝试从目标单词预测每段文本单词。
-我们使用 ``tl.nlp.generate_skip_gram_batch`` 来生成训练数据，如下：
+数据迭代和损失函数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Word2vec使用负采样（Negative sampling）和Skip-gram模型进行训练。
+噪音对比估计损失（NCE）会帮助减少损失函数的计算量，加快训练速度。
+Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单词预测目标文本单词。
+我们使用 ``tl.nlp.generate_skip_gram_batch`` 函数来生成训练数据，如下：
 
 .. code-block:: python
 
@@ -704,10 +712,12 @@ Skip-Gram 将文本和目标反转(Skip-Gram inverts context and targets)，尝�
     _, loss_val = sess.run([train_op, cost], feed_dict=feed_dict)
 
 
-重载现有的嵌套矩阵
-^^^^^^^^^^^^^^^^^^^^^^^^
+加载已训练好的的词嵌套矩阵
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-在训练嵌套矩阵的最后，我们保存矩阵及其相应的词典。然后下一次，我们按如下可以重新载入这个矩阵和字典：
+在训练嵌套矩阵的最后，我们保存矩阵及其词汇表、单词转ID字典、ID转单词字典。
+然后，当下次做实际应用时，可以想下面的代码中那样加载这个已经训练好的矩阵和字典，
+参考 ``tutorial_generate_text.py`` 。
 
 .. code-block:: python
 
