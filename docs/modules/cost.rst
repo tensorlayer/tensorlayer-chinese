@@ -22,6 +22,7 @@ API - 损失函数
 
    cross_entropy
    mean_squared_error
+   cross_entropy_seq
    li_regularizer
    lo_regularizer
    maxnorm_regularizer
@@ -33,6 +34,7 @@ API - 损失函数
 
 .. autofunction:: cross_entropy
 .. autofunction:: mean_squared_error
+.. autofunction:: cross_entropy_seq
 
 
 规则化函数
