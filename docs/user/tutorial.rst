@@ -1831,10 +1831,15 @@ TensorLayer的源代码很容易理解，打开 :mod:`tensorlayer/layer.py` 并�
 ===============
 
 Stacked Denosing Autoencoder 堆栈式降噪自编吗器
+
 Word Embedding               词嵌套、词嵌入
+
 Iteration                    迭代
+
 Natural Language Processing  自然语言处理
+
 Sparse                       稀疏的
+
 Cost function                损失函数
 
 
