@@ -48,7 +48,7 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 
   python tutorial_mnist.py
 
-If everything is set up correctly, you will get an output like the following:
+如果所有设置都正确，您将得到下面的结果：
 
 .. code-block:: text
 
@@ -114,8 +114,8 @@ If everything is set up correctly, you will get an output like the following:
     val acc: 0.983700
   ...
 
-例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络(Multi-Layer Perceptron)，
-Dropout, Dropconnect, Stacked Denoising Autoencoder and 卷积神经网络.
+这个例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络(Multi-Layer Perceptron)，
+Dropout, Dropconnect, Stacked Denoising Autoencoder 和卷积神经网络。
 
 .. code-block:: python
 
@@ -129,7 +129,7 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder and 卷积神经网络.
 理解MNIST例子
 =====================
 
-现在，让我们研究它是怎么做到的！跟上脚步，打开源代码。
+现在，让我们研究它是怎么做到的！跟着下面的步骤，打开源代码。
 
 序言
 -----------
@@ -146,7 +146,7 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder and 卷积神经网络.
 
 
 正如我们所知，TensorLayer是建立在TensorFlow上的，目的是为某些任务的提供充分的帮助而不是取代它。
-您总会联用TensorLayer和一些普通的TensorFlw代码。当使用降噪自编码器(Denoising Autoencoder)时，
+您总会联用TensorLayer和一些普通的TensorFlow代码。当使用降噪自编码器(Denoising Autoencoder)时，
 ``set_keep`` 常用来访问保持概率(keep probabilities)的占位符。
 
 
