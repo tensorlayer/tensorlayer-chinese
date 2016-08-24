@@ -822,8 +822,8 @@ Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单
 运行PTB例子
 ==================
 
-Penn TreeBank（PTB）数据集被用在很多语言建模（Language Modeling）的论文中，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"，
-“Recurrent Neural Network Regularization”。它包括了929k个训练单词，73K个验证词和82k个测试单词。
+Penn TreeBank（PTB）数据集被用在很多语言建模（Language Modeling）的论文中，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"和
+“Recurrent Neural Network Regularization”。该数据集的训练集有929k个单词，验证集有73K个单词，测试集有82k个单词。
 在它的词汇表刚好有10k个单词。
 
 PTB例子是为了展示如何用递归神经网络（Recurrent Neural Network）来进行语言建模的。
@@ -877,8 +877,8 @@ PTB例子是为了展示如何用递归神经网络（Recurrent Neural Network�
   Epoch: 13 Valid Perplexity: 121.475
   Test Perplexity: 116.716
 
-PTB例子证明了递归神经网络能够实现语言进行建模，但是这个例子并没有做什么实际的事情。
-您应该浏览这个例子的代码和 “理解 LSTM” 来学好递归神经网络的基础。
+PTB例子证明了递归神经网络能够实现语言建模，但是这个例子并没有做什么实际的事情。
+在做具体应用之前，您应该浏览这个例子的代码和下一章 “理解 LSTM” 来学好递归神经网络的基础。
 之后，您将学习如何用递归神经网络来生成文本，如何实现语言翻译和问题应答系统。
 
 理解LSTM
@@ -895,12 +895,12 @@ PTB例子证明了递归神经网络能够实现语言进行建模，但是这�
 
 .. image:: my_figs/karpathy_rnn.jpeg
 
-Image by Andrey Karpathy
+图片由Andrey Karpathy提供
 
 同步输入与输出序列 (Synced sequence input and output)
 --------------------------------------------------------------
 
-PTB例子中的模型是一个典型的同步输入与输出，Karpathy 描述为
+PTB例子中的模型是一个典型的同步输入与输出，Karpathy 把它描述为
 “(5) 同步序列输入与输出(例如视频分类中我们希望对每一帧进行标记)。“
 
 模型的构建如下，第一层是词嵌套层（嵌入），把每一个单词转换成对应的词向量，在该例子中没有使用预先训练好的
@@ -971,8 +971,8 @@ batch_size 数值可以被视为并行计算的数量。
 虽然当 batch_size > 1 时有些信息将会被忽略，
 但是如果你的数据是足够长的（一个语料库通常有几十亿个字），被忽略的信息不会影响最终的结果。
 
-在PTB教程中，我们设置了 batch_size = 20，所以，我们将数据拆分成 20 段（segment）。
-在每一轮（epoch）的开始时，我们要将 20 段LSTM的状态（State）初始化，然后分别对 20 段数据进行迭代。
+在PTB教程中，我们设置了 batch_size = 20，所以，我们将整个数据集拆分成 20 段（segment）。
+在每一轮（epoch）的开始时，我们有 20 个初始化的 LSTM 状态（State），然后分别对 20 段数据进行迭代学习。
 
 训练数据迭代的例子如下：
 
@@ -1006,10 +1006,11 @@ batch_size 数值可以被视为并行计算的数量。
 损失和更新公式
 ^^^^^^^^^^^^^^^^^^^^^
 
-成本函数是每个最小规模的平均成本。
+损失函数是每个最小规模的平均成本。
 
 .. code-block:: python
 
+  # 请见 tensorlayer.cost.cross_entropy_seq()
   def loss_fn(outputs, targets, batch_size, num_steps):
       # Returns the cost function of Cross-entropy of two sequences, implement
       # softmax internally.
@@ -1841,6 +1842,8 @@ Natural Language Processing  自然语言处理
 Sparse                       稀疏的
 
 Cost function                损失函数
+
+Regularization               规则化、正则化
 
 
 
