@@ -28,6 +28,73 @@
 您不需要会它的全部，只要知道TensorFlow是如何工作的，就能够使用TensorLayer。
 如果您是TensorFlow的新手，建议你阅读整个教程。
 
+
+TensorLayer 很简单
+=======================
+
+下面的代码是TensorLayer的一个简单例子，来自 ``tutorial_mnist_simple.py`` 。
+我们提供了很多方便的函数（如： ``fit()`` ，``test()`` ），但如果你想成为机器学习专家，我们鼓励
+你尽可能地使用 ``sess.run()`` 来训练模型，请参考  ``tutorial_mnist.py`` 。
+
+.. code-block:: python
+
+  import tensorflow as tf
+  import tensorlayer as tl
+  import time
+
+  sess = tf.InteractiveSession()
+  X_train, y_train, X_val, y_val, X_test, y_test = \
+                                  tl.files.load_mnist_dataset(shape=(-1,784))
+  sess = tf.InteractiveSession()
+  # 定义 placeholder
+  x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
+  y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
+
+  # 定义模型
+  network = tl.layers.InputLayer(x, name='input_layer')
+  network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu1')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu2')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
+  network = tl.layers.DenseLayer(network, n_units=10,
+                                  act = tl.activation.identity,
+                                  name='output_layer')
+  # 定义损失函数和衡量指标
+  y = network.outputs
+  cost = tl.cost.cross_entropy(y, y_)
+  correct_prediction = tf.equal(tf.argmax(y, 1), y_)
+  acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+  y_op = tf.argmax(tf.nn.softmax(y), 1)
+
+  # 定义 optimizer
+  train_params = network.all_params
+  train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
+                              epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
+
+  # 初始化所有参数
+  sess.run(tf.initialize_all_variables())
+
+  # 列出模型信息
+  network.print_params()
+  network.print_layers()
+
+  # 训练模型
+  tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
+              acc=acc, batch_size=500, n_epoch=500, print_freq=5,
+              X_val=X_val, y_val=y_val, eval_train=False)
+
+  # 评估模型
+  tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
+
+  # 把模型保存成 .npz 文件
+  tl.files.save_npz(network.all_params , name='model.npz')
+  sess.close()
+
+
+
 运行MNIMST例子
 =====================
 
