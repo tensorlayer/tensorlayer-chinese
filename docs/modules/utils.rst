@@ -5,9 +5,22 @@ API - 实用函数
 
 .. autosummary::
 
+   fit
+   test
+   predict
    evaluation
    class_balancing_oversample
    dict_to_one
+
+
+训练、测试及预测
+-----------------------
+
+.. autofunction:: fit
+.. autofunction:: test
+.. autofunction:: predict
+
+
 
 评估函数
 ---------------------
