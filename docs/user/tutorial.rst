@@ -28,7 +28,7 @@
 您不需要会它的全部，只要知道TensorFlow是如何工作的，就能够使用TensorLayer。
 如果您是TensorFlow的新手，建议你阅读整个教程。
 
-运行MNIMST样例
+运行MNIMST例子
 =====================
 
 .. _fig_0601:
@@ -37,7 +37,7 @@
   :scale: 100 %
   :align: center
 
-在本教程的第一部分，我们仅仅运行TensorLayer内置的MNIST样例。
+在本教程的第一部分，我们仅仅运行TensorLayer内置的MNIST例子。
 MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用于训练各种图片识别系统。
 
 我们假设您已经按照 :ref:`installation` 安装过TensorLayer。
@@ -126,7 +126,7 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder and 卷积神经网络.
 
 
 
-理解MNIST样例
+理解MNIST例子
 =====================
 
 现在，让我们研究它是怎么做到的！跟上脚步，打开源代码。
@@ -427,16 +427,16 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
 下一步？
 ^^^^^^^^^^^^^^
 
-在 ``tutorial_cifar10.py`` 中我们也有更高级的图像分类的样例。
+在 ``tutorial_cifar10.py`` 中我们也有更高级的图像分类的例子。
 请阅读代码及注释，弄清楚如何产生更多的训练数据和什么是局部响应正则化。
 在这之后，尝试实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_
 *提示：您会用到Layer.outputs。*
 
 
-运行乒乓实例
+运行乒乓例子
 ====================
 
-在本教程的第二部分，我们将运行一个深度强化学习的实例，它在Karpathy的 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
+在本教程的第二部分，我们将运行一个深度强化学习的例子，它在Karpathy的 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
 
 .. code-block:: bash
 
@@ -626,7 +626,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 
 
 
-运行 Word2Vec 实例：
+运行 Word2Vec 例子：
 ====================
 
 在教程的这一部分，我们训练一个词嵌套矩阵，每个词可以通过矩阵中唯一的行向量来表示。
@@ -752,24 +752,23 @@ Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单
   tl.files.assign_params(sess, [load_params[0]], emb_net)
 
 
-运行PTB示例
+运行 PTB 例子
 ==================
 
-Penn树图资料库(Penn TreeBank)的数据集在许多语言建模(LANGUAGE MODELING)论文熵使用，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"。
-“Recurrent Neural Network Regularization”。它包括了929k个训练词，73K个验证词和82l个测试词。
-在它的词库中，它有10K个词。
+Penn TreeBank（PTB）数据集被用在很多语言建模（Language Modeling）的论文中，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"，
+“Recurrent Neural Network Regularization”。它包括了929k个训练单词，73K个验证词和82k个测试单词。
+在它的词汇表刚好有10k个单词。
 
-PTB示例试图展示在一个有挑战性的语言建模的任务如何训练一个递归神经网络。
+PTB例子是为了展示如何用递归神经网络（Recurrent Neural Network）来进行语言建模的。
 
-给一句"I am from Imperial College London", the model can learn to predict "Imperial College London" from "from Imperial College".
-换句话说，它在一篇给出前面单词的历史情况的文本中预测下一个单词。
-在这种情况下， ``num_step（序列长度）`` 是3。
+给一句话 "I am from Imperial College London", 这个模型可以从中学习出如何从“from Imperial College”来预测出“Imperial College London”。也就是说，它根据之前输入的单词序列来预测出下一步输出的单词序列，在刚才的例子中 ``num_steps (序列长度，sequence length)`` 为 3。
+
 
 .. code-block:: bash
 
   python tutorial_ptb_lstm.py
 
-该脚本提供三种设置(小，中，大),更大的模型有更好的性能，您可以在下面选项中选择不同的设置：
+该脚本提供三种设置(小，中，大)，越大的模型有越好的建模性能，您可以修改下面的代码片段来选择不同的模型设置。
 
 .. code-block:: python
 
@@ -778,7 +777,7 @@ PTB示例试图展示在一个有挑战性的语言建模的任务如何训练�
       "A type of model. Possible options are: small, medium, large.")
 
 
-如果您选择小设置，您会看到：
+如果您选择小设置，您将会看到：
 
 .. code-block:: text
 
@@ -811,19 +810,19 @@ PTB示例试图展示在一个有挑战性的语言建模的任务如何训练�
   Epoch: 13 Valid Perplexity: 121.475
   Test Perplexity: 116.716
 
-PTB示例证明了RNN能够对语言进行建模，但是这个示例并没有做什么实际的事情。
-但是，您应该浏览这个示例和 ``Understand LSTM`` 来理解RNN的基础。
-在这之后，您将学习如何生成文本，如何实现翻译语言和如何使用RNN建立问题应答系统。
+PTB例子证明了递归神经网络能够实现语言进行建模，但是这个例子并没有做什么实际的事情。
+您应该浏览这个例子的代码和 “理解 LSTM” 来学好递归神经网络的基础。
+之后，您将学习如何用递归神经网络来生成文本，如何实现语言翻译和问题应答系统。
 
 理解 LSTM
 =============
 
-递归神经网络(Recurrent Neural Network)
+递归神经网络 (Recurrent Neural Network)
 -------------------------------------------
 
-董豪个人人为Andrey Karpathy的博客是 `Understand Recurrent Neural Network`_ 最好的材料。
-读完这个之后，Colah的博客能帮你 `Understand LSTM Network`_ ，它能解决长期依赖(Long-Term Dependencies)的问题。
-我们不介绍更多关于RNN的内容，在你继续之前，请阅读这些博客。
+我们认为Andrey Karpathy的博客 `Understand Recurrent Neural Network`_ 是了解递归神经网络最好的材料。
+读完这个博客后，Colah的博客 `Understand LSTM Network`_ 能帮助你了解LSTM。
+我们在这里不介绍更多关于递归神经网络的内容，所以在你继续下面的内容之前，请先阅读我们建议阅读的博客。
 
 .. _fig_0601:
 
@@ -831,26 +830,39 @@ PTB示例证明了RNN能够对语言进行建模，但是这个示例并没有�
 
 Image by Andrey Karpathy
 
-同步序列的输入与输出(Synced sequence input and output)
+同步输入与输出序列 (Synced sequence input and output)
 --------------------------------------------------------------
 
-在PTB示例中的模型是一个典型的同步序列的输入与输出，它被Karpathy 描述为
-“(5) 同步序列输入与输出(例如视频分类，我们希望对视频的每一帧进行标记)。
-注意，在不同长度的序列，每一种情况都没有预先指定的约束条件。因为递归转变是固定的
-并且只要我们喜欢，可以被应用很多次。
+PTB例子中的模型是一个典型的同步输入与输出，Karpathy 描述为
+“(5) 同步序列输入与输出(例如视频分类中我们希望对每一帧进行标记)。“
 
 模型的构建如下。首先通过查找嵌套矩阵，将词转换为词向量。
 在本教程中，没有在嵌套矩阵熵进行预训练。
 齐次，我们堆叠两个在嵌套层中使用退出率LSTM，LSTM层和正则化输出层。
-该模型在训练过程中提供SOFTMAX输出的序列
+该模型在训练过程中提供 Softmax 输出的序列
 
 第一层LSTM层为了和下一层的LSTM堆叠而输出[batch_size, num_steps, hidden_size]
 第二层LSTM层为了后下一层的稠密层而输出 [batch_size*num_steps, hidden_size]，
 然后计算每个实例的softmax输出，即n_examples = batch_size*num_steps。
 
-
 要理解PTB教程，您也可以阅读 `TensorFlow PTB tutorial
 <https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_ 。
+
+The model is built as follow. Firstly, transfer the words into word vectors by
+looking up an embedding matrix. In this tutorial, no pre-training on embedding
+matrix. Secondly, we stacked two LSTMs together use dropout among the embedding
+layer, LSTM layers and output layer for regularization. The model provides
+a sequence of softmax outputs during training.
+
+The first LSTM layer outputs [batch_size, num_steps, hidden_size] for stacking
+another LSTM after it. The second LSTM layer outputs [batch_size*num_steps, hidden_size]
+for stacking DenseLayer after it, then compute the softmax outputs of each example,
+i.e. n_examples = batch_size*num_steps.
+
+To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
+<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_.
+
+
 
 
 .. code-block:: python
