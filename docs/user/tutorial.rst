@@ -753,7 +753,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
           nce_b_init_args = {},
           name ='word2vec_layer',
       )
-  cost = emb_net.nce_cost
+
 
 数据迭代和损失函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -764,6 +764,7 @@ Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单
 
 .. code-block:: python
 
+  # NCE损失函数由 Word2vecEmbeddingInputlayer 提供
   cost = emb_net.nce_cost
   train_params = emb_net.all_params
 
@@ -1006,11 +1007,11 @@ batch_size 数值可以被视为并行计算的数量。
 损失和更新公式
 ^^^^^^^^^^^^^^^^^^^^^
 
-损失函数是每个最小规模的平均成本。
+损失函数是一系列输出cross entropy的均值。
 
 .. code-block:: python
 
-  # 请见 tensorlayer.cost.cross_entropy_seq()
+  # 更多细节请见 tensorlayer.cost.cross_entropy_seq()
   def loss_fn(outputs, targets, batch_size, num_steps):
       # Returns the cost function of Cross-entropy of two sequences, implement
       # softmax internally.
@@ -1029,13 +1030,15 @@ batch_size 数值可以被视为并行计算的数量。
   # Cost for Training
   cost = loss_fn(network.outputs, targets, batch_size, num_steps)
 
-对于更新，这个例子在几轮(由 ``max_epoch`` 定义)学习之后通过复接一个 ``Ir_decay`` 会降低学习率。
-此外，截断的反向传播方法通过他们的范数的和的比例来逼近梯度的值(truncated backpropagation clips values of gradients by the ratio of the sum of
-their norms),可以用来简化学习过程。
+在训练时，该例子在若干个epoch之后（由 ``max_epoch`` 定义），才开始按比例下降学习率（learning rate），新学习率是前一个epoch的学习率乘以一个下降率（由 ``lr_decay`` 定义）。
+此外，截断反向传播（truncated backpropagation）截断了
+
+为使学习过程易于处理，通常的做法是将反向传播的梯度在（按时间）展开的步骤上照一个固定长度( ``num_steps`` )截断。 通过在一次迭代中的每个时刻上提供长度为 ``num_steps`` 的输入和每次迭代完成之后反向传导，这会很容易实现。
+
 
 .. code-block:: python
 
-  # Truncated Backpropagation for training
+  # 截断反响传播 Truncated Backpropagation for training
   with tf.variable_scope('learning_rate'):
       lr = tf.Variable(0.0, trainable=False)
   tvars = tf.trainable_variables()
@@ -1044,18 +1047,19 @@ their norms),可以用来简化学习过程。
   optimizer = tf.train.GradientDescentOptimizer(lr)
   train_op = optimizer.apply_gradients(zip(grads, tvars))
 
-然后在每轮的开始，我们分配一个新的学习速度：
+如果当前epoch值大于 ``max_epoch`` ，则把当前学习率乘以 ``lr_decay`` 来降低学习率。
 
 .. code-block:: python
 
   new_lr_decay = lr_decay ** max(i - max_epoch, 0.0)
   sess.run(tf.assign(lr, learning_rate * new_lr_decay))
 
-在每一个轮的开始，LSTM的所有状态需要被复位(初始化)，
-然后在每次迭代中，新的最终状态需要被置顶为下一次迭代的初始状态：
+在每一个epoch的开始之前，LSTM的状态要被重置为零状态；在每一个迭代之后，LSTM状态都会被改变，所以要把最新的LSTM状态
+作为下一个迭代的初始化状态。
 
 .. code-block:: python
 
+  # 在每一个epoch之前，把所有LSTM状态设为零状态
   state1 = tl.layers.initialize_rnn_state(lstm1.initial_state)
   state2 = tl.layers.initialize_rnn_state(lstm2.initial_state)
   for step, (x, y) in enumerate(tl.iterate.ptb_iterator(train_data,
@@ -1064,8 +1068,9 @@ their norms),可以用来简化学习过程。
                   lstm1.initial_state: state1,
                   lstm2.initial_state: state2,
                   }
-      # For training, enable dropout
+      # 启用dropout
       feed_dict.update( network.all_drop )
+      # 把新的状态作为下一个迭代的初始状态
       _cost, state1, state2, _ = sess.run([cost,
                                       lstm1.final_state,
                                       lstm2.final_state,
@@ -1077,41 +1082,59 @@ their norms),可以用来简化学习过程。
 预测
 ^^^^^^^^^^^^^
 
-在训练模型之后，我们不再考虑步长(序列的长度)，即 ``批规模，步数`` 为 ``1`` 。
-然后，我们可以一步步预测下一个单词，而不是从一个词序列预测另一个词序列。
-
+在训练完模型之后，当我们预测下一个输出时，我们不需要考虑序列长度了，因此 ``batch_size`` 和 ``num_steps`` 都设为 1 。
+然后，我们可以一步一步地输出下一个单词，而不是通过一序列的单词来输出一序列的单词。
 
 .. code-block:: python
 
-  state1 = tl.layers.initialize_rnn_state(lstm1.initial_state)
-  state2 = tl.layers.initialize_rnn_state(lstm2.initial_state)
-  for step, (x, y) in enumerate(tl.iterate.ptb_iterator(train_data,
-                                              batch_size, num_steps)):
-      feed_dict = {input_data: x, targets: y,
-                  lstm1.initial_state: state1,
-                  lstm2.initial_state: state2,
+  input_data_test = tf.placeholder(tf.int32, [1, 1])
+  targets_test = tf.placeholder(tf.int32, [1, 1])
+  ...
+  network_test, lstm1_test, lstm2_test = inference(input_data_test,
+                        is_training=False, num_steps=1, reuse=True)
+  ...
+  cost_test = loss_fn(network_test.outputs, targets_test, 1, 1)
+  ...
+  print("Evaluation")
+  # 测试
+  # go through the test set step by step, it will take a while.
+  start_time = time.time()
+  costs = 0.0; iters = 0
+  # 与训练时一样，设置所有LSTM状态为零状态
+  state1 = tl.layers.initialize_rnn_state(lstm1_test.initial_state)
+  state2 = tl.layers.initialize_rnn_state(lstm2_test.initial_state)
+  for step, (x, y) in enumerate(tl.iterate.ptb_iterator(test_data,
+                                          batch_size=1, num_steps=1)):
+      feed_dict = {input_data_test: x, targets_test: y,
+                  lstm1_test.initial_state: state1,
+                  lstm2_test.initial_state: state2,
                   }
-      # For training, enable dropout
-      feed_dict.update( network.all_drop )
-      _cost, state1, state2, _ = sess.run([cost,
-                                      lstm1.final_state,
-                                      lstm2.final_state,
-                                      train_op],
+      _cost, state1, state2 = sess.run([cost_test,
+                                      lstm1_test.final_state,
+                                      lstm2_test.final_state],
                                       feed_dict=feed_dict
                                       )
-      costs += _cost; iters += num_steps
+      costs += _cost; iters += 1
+  test_perplexity = np.exp(costs / iters)
+  print("Test Perplexity: %.3f took %.2fs" % (test_perplexity, time.time() - start_time))
+
 
 下一步？
 ------------
 
-现在您明白了同步序列输入和输出(Synced sequence input and output)。
-让我们思考写多对一(序列输入和一个输出),我们也能用 "I am from Imperial" 来正确预测下一个单词 "College"？
-请您尽可能建立一个文本生成器，给一些种子词(seed words)来生成文本。
-一些人甚至用多对一模型来自动生成论文！
+您已经明白了同步序列输入和序列输出（Synced sequence input and output）。
+现在让我们思考下序列输入单一输出的情况（Sequence input and one output），
+LSTM 也可以学会通过给定一序列输入如 “我来自北京，我会说.." 来输出
+一个单词 "中文"。
+
+请仔细阅读并理解 ``tutorial_generate_text.py`` 的代码，它讲了如何加载一个已经训练好的词嵌套矩阵，
+以及如何给定机器一个文档，让它来学习文字自动生成。
 
 Karpathy的博客：
 "(3) Sequence input (e.g. sentiment analysis where a given sentence is
 classified as expressing positive or negative sentiment). "
+
+
 
 
 运行翻译例子
