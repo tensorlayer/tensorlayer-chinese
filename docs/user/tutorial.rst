@@ -95,7 +95,7 @@ TensorLayer 很简单
 
 
 
-运行MNIMST例子
+运行MNIST例子
 =====================
 
 .. _fig_0601:
