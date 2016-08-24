@@ -29,7 +29,7 @@
 如果您是TensorFlow的新手，建议你阅读整个教程。
 
 
-TensorLayer 很简单
+TensorLayer很简单
 =======================
 
 下面的代码是TensorLayer的一个简单例子，来自 ``tutorial_mnist_simple.py`` 。
@@ -327,7 +327,7 @@ TensorLayer只需要几步就可以完成这个工作。TensorLayer允许您通�
 在这里，``network.outputs`` 是网络的10个特征的输出(按照一个热格式(hot format))。
 ``y_op`` 是代表类索引的整数输出， ``cost`` 是目标和预测标签的交叉熵。
 
-去噪自编码器(Denoising Autoencoder)
+降噪自编码器(Denoising Autoencoder)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 自编码器是一种能够提取具有代表性特征的无监督学习模型，
@@ -500,7 +500,7 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
 *提示：您会用到Layer.outputs。*
 
 
-运行乒乓例子
+运行乒乓球例子
 ====================
 
 在本教程的第二部分，我们将运行一个深度强化学习的例子，它在Karpathy的 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
@@ -693,7 +693,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 
 
 
-运行 Word2Vec 例子：
+运行Word2Vec例子
 ====================
 
 在教程的这一部分，我们训练一个词嵌套矩阵，每个词可以通过矩阵中唯一的行向量来表示。
@@ -819,7 +819,7 @@ Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单
   tl.files.assign_params(sess, [load_params[0]], emb_net)
 
 
-运行 PTB 例子
+运行PTB例子
 ==================
 
 Penn TreeBank（PTB）数据集被用在很多语言建模（Language Modeling）的论文中，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"，
@@ -881,7 +881,7 @@ PTB例子证明了递归神经网络能够实现语言进行建模，但是这�
 您应该浏览这个例子的代码和 “理解 LSTM” 来学好递归神经网络的基础。
 之后，您将学习如何用递归神经网络来生成文本，如何实现语言翻译和问题应答系统。
 
-理解 LSTM
+理解LSTM
 =============
 
 递归神经网络 (Recurrent Neural Network)
@@ -1100,7 +1100,7 @@ their norms),可以用来简化学习过程。
                                       )
       costs += _cost; iters += num_steps
 
-之后？
+下一步？
 ------------
 
 现在您明白了同步序列输入和输出(Synced sequence input and output)。
