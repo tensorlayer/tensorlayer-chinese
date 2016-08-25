@@ -12,8 +12,8 @@
 
 
 .. note::
-    对于专家们来说，阅读 ``InputLayer`` 和 ``DenseLayer`` 文档，您将会理解TensorLayer是如何工作的。
-    然后，我们建议您直接去教程的源代码。
+    若你已经对TensorFlow非常熟悉，阅读 ``InputLayer`` 和 ``DenseLayer`` 的源代码可让您很好地理解 TensorLayer 是如何工作的。
+
 
 在我们开始之前
 ==================
@@ -1663,7 +1663,7 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
                     0    0    0       0    0    0       0    0    0
                     0    0    0       0    0    0
 
-  where 0 : _PAD    1 : _GO     2 : _EOS      3 : _UNK
+  其中 0 : _PAD    1 : _GO     2 : _EOS      3 : _UNK
 
 在训练过程中，解码器输入是目标，而在预测过程中，下一个解码器的输入是最后一个解码器的输出。
 
@@ -1674,7 +1674,7 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
 特殊标志符、标点符号与阿拉伯数字
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-在这个例子中的特殊标志符是：
+该例子中的特殊标志符是：
 
 .. code-block:: python
 
@@ -1690,33 +1690,35 @@ Bucketing 是一种能有效处理不同句子长度的方法，为什么使用B
 
 .. code-block:: text
 
-          ID    MEANINGS
-  _PAD    0     Padding, empty word
-  _GO     1     1st element of decoder_inputs
-  _EOS    2     End of Sentence of targets
-  _UNK    3     Unknown word, words do not exist in vocabulary will be marked as 3
+          ID号    意义
+  _PAD    0       Padding, empty word
+  _GO     1       decoder_inputs 的第一个元素
+  _EOS    2       targets 的结束符
+  _UNK    3       不明单词（Unknown word），没有在词汇表出现的单词被标记为3
 
-对于数字，创建词汇库和符号化数据集的 ``normalize_digits`` 必须是一致的，
-如果是``True`` ，所有的数字将被 ``0`` 替代。比如 ``123`` 被 ``000`` 替代，``9`` 被 ``0``替代
-，``1990-05`` 被 ``0000-00` 替代，然后 ``000`` ， ``0`` ， ``0000-00`` 等将在词汇库中(看 ``vocab40000.en`` )
+对于阿拉伯数字，建立词汇表时与数字化数据集时的 ``normalize_digits`` 必须是一致的，若
+``normalize_digits=True`` 所有阿拉伯数字都将被 ``0`` 代替。比如 ``123`` 被 ``000`` 代替，``9`` 被 ``0``代替
+，``1990-05`` 被 ``0000-00` 代替，最后 ``000`` ， ``0`` ， ``0000-00`` 等将在词汇库中(看 ``vocab40000.en`` )。
 
-相反的，如果是 ``False`` 的话，不同的数字将在词汇集中被找到。
-那么词汇库规模将十分巨大。找到数字的正则表达式是 ``_DIGIT_RE = re.compile(br"\d")`` 。(详见 ``tl.nlp.create_vocabulary()`` 和 ``tl.nlp.data_to_token_ids()` )
+反之，如果 ``normalize_digits=False`` ，不同的阿拉伯数字将会放入词汇表中，那么词汇表就变得十分大了。
+本例子中寻找阿拉伯数字使用的正则表达式是 ``_DIGIT_RE = re.compile(br"\d")`` 。(详见 ``tl.nlp.create_vocabulary()`` 和 ``tl.nlp.data_to_token_ids()` )
 
-对词进行拆分，正则表达式 ``_WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")`` ，
-这意味着使用 ``[ . , ! ? " ' : ; ) ( ]`` 并且分隔这句话，``tl.nlp.basic_tokenizer()`` 是 ``tl.nlp.create_vocabulary()`` 和  ``tl.nlp.data_to_token_ids()``。
+对于分离句子成独立单词，本例子使用正则表达式 ``_WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")`` ，
+这意味着使用这几个标点符号 ``[ . , ! ? " ' : ; ) ( ]`` 以及空格来分割句子，详情请看 ``tl.nlp.basic_tokenizer()`` 。这个分割方法是 ``tl.nlp.create_vocabulary()`` 和  ``tl.nlp.data_to_token_ids()`` 的默认方法。
 
-所有的标点符号，类似于 ``. , ) (`` 在英文和法文数据库中的被全部保留下来。
 
-Softmax抽样(Sampled softmax)
+所有的标点符号，比如 ``. , ) (`` 在英文和法文数据库中都会被全部保留下来。
+
+Softmax 抽样 (Sampled softmax)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-softmax抽样是处理大量词汇库输出的时降低计算开销的一种方法。
-与计算大量输出的交叉熵不同的是，我们从 ``num_samples`` 的抽样中计算损失。
+softmax抽样是一种词汇表很大（Softmax 输出很多）的时候用来降低损失（cost）计算量的方法。
+与从所有输出中计算 cross-entropy 相比，这个方法只从 ``num_samples`` 个输出中计算 cross-entropy。
+
 
 损失和更新函数
 ^^^^^^^^^^^^^^^^^
-``EmbeddingAttentionSeq2seqWrapper`` 已经在SGD优化器上建立。
+``EmbeddingAttentionSeq2seqWrapper`` 内部实现了 SGD optimizer。
 
 下一步？
 ------------------
