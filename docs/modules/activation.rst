@@ -8,7 +8,7 @@ TensorFlow官方的函数，比如
 `这里 <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#activation-functions>`_.
 
 
-创造自定义激活函数
+自定义激活函数
 ---------------------------
 
 在TensorLayer中创造自定义激活函数非常简单。
@@ -33,7 +33,7 @@ TensorFlow官方的函数，比如
 
 
 
-激活函数
+激活函数 
 ---------------------
 
 .. autofunction:: identity
