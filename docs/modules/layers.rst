@@ -190,6 +190,51 @@ API - 神经网络层
 
 
 
+修改预训练行为
+-----------------------
+
+逐层贪婪预训练方法(Greedy layer-wise pretrain)是深度神经网络的初始化非常重要的一种方法，
+不过对不同的网络结构和应用，往往有不同的预训练的方法。
+
+
+
+For example, the pre-train process of `Vanilla Sparse Autoencoder <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_
+can be implemented by using KL divergence as the following code,
+but for `Deep Rectifier Network <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_,
+the sparsity can be implemented by using the L1 regularization of activation output.
+
+
+例如 `"普通"稀疏自编码器(Vanilla Sparse Autoencoder ) <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_ 如下面的代码所示，使用 KL divergence 实现（对应于sigmoid)，
+但是对于 `深度整流神经网络(Deep Rectifier Network) <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_ ，
+可以通过对神经元输出进行L1规则化来实现稀疏。
+
+
+.. code-block:: python
+
+  # Vanilla Sparse Autoencoder
+  beta = 4
+  rho = 0.15
+  p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)
+  KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat))
+          + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
+
+预训练的方法太多了，出于这个原因，TensorLayer 提供了一种简单的方法来自定义自己的预训练方法。
+对于自编码器，TensorLayer 使用 ``ReconLayer.__init__()`` 来定义重构层（reconstruction layer）和损失函数。
+要自定义自己的损失函数，只需要在 ``ReconLayer.__init__()`` 中修改 ``self.cost`` 就可以了。
+如何写出自己的损失函数，请阅读  `Tensorflow Math <https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html>`_ 。
+默认情况下， ``重构层(ReconLayer)`` 只使用 ``self.train_params = self.all _params[-4:]`` 来更新前一层的 Weights 和 Biases，这4个参数为 ``[W_encoder，b_encoder，W_decoder，b_decoder]`` ，其中 ``W_encoder，b_encoder`` 属于之前的 Dense 层，  ``W_decoder，b_decoder]`` 属于当前的重构层。
+此外，如果您想要同时更新前 2 层的参数，只需要修改 ``[-4:]`` 为 ``[-6:]``。
+
+.. code-block:: python
+
+  ReconLayer.__init__(...):
+      ...
+      self.train_params = self.all_params[-4:]
+      ...
+  	self.cost = mse + L1_a + L2_w
+
+
+
 .. automodule:: tensorlayer.layers
 
 .. autosummary::
