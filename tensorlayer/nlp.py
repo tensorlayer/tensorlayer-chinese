@@ -48,8 +48,7 @@ def generate_skip_gram_batch(data, batch_size, num_skips, skip_window, data_inde
     >>> In the same way, num_skips=4, skip_window=2 means use the nearby 4 words.
 
     >>> data = [1,2,3,4,5,6,7,8,9,10,11]
-    >>> batch, labels, data_index = tl.nlp.generate_skip_gram_batch(    \
-        data=data, batch_size=8, num_skips=2, skip_window=1, data_index=0)
+    >>> batch, labels, data_index = tl.nlp.generate_skip_gram_batch(data=data, batch_size=8, num_skips=2, skip_window=1, data_index=0)
     >>> print(batch)
     ... [2 2 3 3 4 4 5 5]
     >>> print(labels)
@@ -162,12 +161,12 @@ def sample_top(a=[], top_k=10):
 ## Vector representations of words
 def simple_read_words(filename="nietzsche.txt"):
     """Read context from file without any preprocessing.
-    
+
     Parameters
     ----------
     filename : a string
         A file path (like .txt file)
-    
+
     Returns
     --------
     The context in a string
@@ -210,8 +209,8 @@ def read_analogies_file(eval_file='questions-words.txt', word2id={}):
         The file name.
     word2id : a dictionary
         Mapping words to unique IDs.
-        
-        
+
+
     Return
     --------
     analogy_questions : a [n, 4] numpy array containing the analogy question's
@@ -219,7 +218,7 @@ def read_analogies_file(eval_file='questions-words.txt', word2id={}):
              questions_skipped: questions skipped due to unknown words.
 
     Examples
-    -------
+    ---------
     >>> eval_file should be in this format :
     >>> : capital-common-countries
     >>> Athens Greece Baghdad Iraq
@@ -305,7 +304,7 @@ def build_vocab(data):
 def build_reverse_dictionary(word_to_id):
     """Given a dictionary for converting word to integer id.
     Returns a reverse dictionary for converting a id to word.
-    
+
     Parameters
     ----------
     word_to_id : dictionary
@@ -315,7 +314,7 @@ def build_reverse_dictionary(word_to_id):
     --------
     reverse_dictionary : a dictionary
         mapping ids to words
-    
+
     """
     reverse_dictionary = dict(zip(word_to_id.values(), word_to_id.keys()))
     return reverse_dictionary
@@ -509,7 +508,7 @@ def basic_tokenizer(sentence, _WORD_SPLIT=re.compile(b"([.,!?\"':;)(])")):
   sentence : tensorflow.python.platform.gfile.GFile Object
   _WORD_SPLIT : regular expression for word spliting.
 
-  
+
   Examples
   --------
   >>> see create_vocabulary
@@ -608,7 +607,7 @@ def initialize_vocabulary(vocabulary_path):
         Id to word. The reversed vocabulary (a list, which reverses the vocabulary mapping).
 
   Examples
-  --------
+  ---------
   >>> Assume 'test' contains
   ... dog
   ... cat
@@ -621,7 +620,7 @@ def initialize_vocabulary(vocabulary_path):
 
   Raises
   -------
-  ValueError: if the provided vocabulary_path does not exist.
+  ValueError : if the provided vocabulary_path does not exist.
   """
   if gfile.Exists(vocabulary_path):
     rev_vocab = []
@@ -678,12 +677,12 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
 
   Parameters
   -----------
-  data_path: path to the data file in one-sentence-per-line format.
-  target_path: path where the file with token-ids will be created.
-  vocabulary_path: path to the vocabulary file.
-  tokenizer: a function to use to tokenize each sentence;
+  data_path : path to the data file in one-sentence-per-line format.
+  target_path : path where the file with token-ids will be created.
+  vocabulary_path : path to the vocabulary file.
+  tokenizer : a function to use to tokenize each sentence;
       if None, basic_tokenizer will be used.
-  normalize_digits: Boolean; if true, all digits are replaced by 0s.
+  normalize_digits : Boolean; if true, all digits are replaced by 0s.
 
   References
   ----------
