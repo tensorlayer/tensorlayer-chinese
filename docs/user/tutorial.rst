@@ -34,7 +34,7 @@ TensorLayer很简单
 
 下面的代码是TensorLayer的一个简单例子，来自 ``tutorial_mnist_simple.py`` 。
 我们提供了很多方便的函数（如： ``fit()`` ，``test()`` ），但如果你想了解更多实现细节，或想成为机器学习领域的专家，我们鼓励
-您尽可能地直接使用TensorFlow如 ``sess.run()`` 来训练模型，请参考  ``tutorial_mnist.py`` 。
+您尽可能地直接使用TensorFlow原本的方法如 ``sess.run()`` 来训练模型，请参考  ``tutorial_mnist.py`` 。
 
 .. code-block:: python
 
