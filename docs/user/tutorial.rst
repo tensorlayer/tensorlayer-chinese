@@ -183,8 +183,8 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
     val acc: 0.983700
   ...
 
-这个例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络(Multi-Layer Perceptron)，
-Dropout, Dropconnect, Stacked Denoising Autoencoder 和卷积神经网络。
+这个例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络（Multi-Layer Perceptron），
+Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoencoder）和卷积神经网络。
 
 .. code-block:: python
 
@@ -198,12 +198,12 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder 和卷积神经网络。
 理解MNIST例子
 =====================
 
-现在，让我们研究它是怎么做到的！跟着下面的步骤，打开源代码。
+现在就让我们看看它是如何做到的！跟着下面的步骤，打开源代码。
 
 序言
 -----------
 
-您第一件可能注意到的是除了TensorLayer之外，我们还导入了numpy和tensorflow：
+您可能会首先注意到，除TensorLayer之外，我们还导入了Numpy和TensorFlow：
 
 .. code-block:: python
 
@@ -214,17 +214,18 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder 和卷积神经网络。
   import time
 
 
-正如我们所知，TensorLayer是建立在TensorFlow上的，目的是为某些任务的提供充分的帮助而不是取代它。
-您总会联用TensorLayer和一些普通的TensorFlow代码。当使用降噪自编码器(Denoising Autoencoder)时，
-``set_keep`` 常用来访问保持概率(keep probabilities)的占位符。
+这是因为TensorLayer是建立在TensorFlow上的，TensorLayer设计的初衷是为了简化工作并提供帮助而不是取代TensorFlow。
+所以您会需要一起使用TensorLayer和一些常见的TensorFlow代码。
+
+注: 当使用降噪自编码器(Denoising Autoencoder)时，代码中的 ``set_keep`` 被当作用来访问保持概率(Keeping Probabilities)的占位符。
 
 
 载入数据
 -------------
 
-第一块代码定义了 ``load_mnist_dataset()`` 函数。
-其目的时下载MNIST数据集(如果它还没有被下载的话)并且返回标准numpy数列(numpy array)的格式。
-这完全没有涉及TensorLayer，所以出于这个教程的目的，我们可以把它看作：
+下面第一部分的代码首先定义了 ``load_mnist_dataset()`` 函数。
+其目的是为了下载MNIST数据集（如果还未下载），并且返回标准numpy数列通过numpy array的格式。
+到这里还没有涉及TensorLayer，所以我们可以把它简单看作：
 
 .. code-block:: python
 
@@ -232,19 +233,18 @@ Dropout, Dropconnect, Stacked Denoising Autoencoder 和卷积神经网络。
                     tl.files.load_mnist_dataset(shape=(-1,784))
 
 
-``X_train.shape`` 是 ``(50000,784)`` ，翻译过来就是50000张图片并且每张图片有784个像素点。
-``Y_train.shape`` 是 ``(50000,)`` ，它是一个和 ``X_train`` 长度一样的向量，给出了每幅图的标签
-——即0到9之间这张图片显示的数字(写这个数字的人注释的)
+``X_train.shape`` 为 ``(50000,784)``，可以理解成共有50000张图片并且每张图片有784个像素点。
+``Y_train.shape`` 为 ``(50000,)`` ，它是一个和 ``X_train`` 长度相同的向量，用于给出每幅图的数字标签，即这些图片所包含的位于0-9之间的数字（如果画这些数字的人没有想乱画别的东西）。
 
-对于卷积神经网络的例子，MNIST可以按下列的4D版本载入：
+另外对于卷积神经网络的例子，MNIST还可以按下面的4D版本来载入：
 
 .. code-block:: python
 
   X_train, y_train, X_val, y_val, X_test, y_test = \
               tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
 
-``X_train.shape`` 是 ``(50000,28,28,1)`` ，这代表了50000张图片，每张图片使用一个信道，28行，28列。
-信道为1是因为它是灰度图像，每个像素只能有一个值。
+``X_train.shape`` 是 ``(50000,28,28,1)`` ，这代表了50000张图片，每张图片使用一个通道(Channel)，28行，28列。
+通道为1是因为它是灰度图像，每个像素只能有一个值。
 
 建立模型
 ----------------
