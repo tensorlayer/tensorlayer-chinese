@@ -249,15 +249,17 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 建立模型
 ----------------
 
-TensorLayer只需要几步就可以完成这个工作。TensorLayer允许您通过创建，堆叠或者合并图层来定义任意结构的神经网络。
-由于每一层都知道它在一个网络中的直接输入层和（多个）输出接收层，就像xxxxx一样。
-通常这是我们唯一传递给其他代码的内容。
+到了这里，就轮到TensorLayer来一显身手了！TensorLayer允许您通过创建，堆叠或者合并图层(Layers)来定义任意结构的神经网络。
+由于每一层都知道它在一个网络中的直接输入层和（多个）输出接收层，[###]
+所以通常这是我们唯一要传递给其他代码的内容。
 
-如上所述， ``tutorial_mnist.py`` 支持四类模型，并且我们很容易通过改变同一接口的函数来实现模型。
-首先，我们仔细地按照步骤说明，定义一个生成一种固定结构的多层次感知器的函数。
-然后，我们将实现一个去噪自编码器(Denosing Autoencoding)。
-再之后，我们要将所有地去噪自编码器堆叠起来并且监督式地对他们进行微调。
-最后，我们将展示如何创建一个卷积神经网络(Convolutional Neural Network)。
+正如上文提到的， ``tutorial_mnist.py`` 支持四类模型，[###]。
+首先，我们将定义一个结构固定的多层次感知器（Multi-Layer Perceptron），所有的步骤都会详细的讲解。
+然后，我们会实现一个去噪自编码器(Denosing Autoencoding)。
+接着，我们要将所有去噪自编码器堆叠起来并对他们进行监督微调(Supervised Fine-tune)。
+最后，我们将展示如何去创建一个卷积神经网络(Convolutional Neural Network)。
+
+此外，如果您有兴趣，我们还提供了一个简化版的MNIST例子在 ``tutorial_mnist_simple.py`` 中，和一个对于CIFAR-10数据集的卷积神经网络(CNN)的例子在 ``tutorial_cifar10.py`` 中可供参考。
 
 多层神经网络 (Multi-Layer Perceptron)
 ------------------------------------------------
