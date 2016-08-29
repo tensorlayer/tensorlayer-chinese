@@ -354,12 +354,12 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 训练 ``DenseLayer`` ，只需要运行 ``ReconLayer.Pretrain()`` 即可。
 如果要使用去噪自编码器，腐蚀层(corrosion layer)(``DropoutLayer``)的名字需要按后面说的指定。
 如果要保存特征图像，设置 ``save`` 为 True 。
-灯具不同的架构和应用这里可以设置许多预训练的度量(metric)
+根据不同的架构和应用这里可以设置许多预训练的度量(metric)
 
 对于 sigmoid型激活函数来说，自编码器可以用KL散度来实现。
 而对于 整流器(rectifier)来说，对激活函数输出的L1正则化能使得输出投影到稀疏空间中。
 所以 ``ReconLayer`` 的默认行为只对整流激活函数提供sigmoid型激活函数，L1正则化激活输出和均方差的KLD和交叉熵
-我们建立您修改 ``ReconLayer`` 来实现自己的预训练度量。
+我们建议您修改 ``ReconLayer`` 来实现自己的预训练度量。
 
 .. code-block:: python
 
@@ -382,7 +382,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 最后，``main_test_cnn_layer()`` 脚本创建了两个CNN 层和最大汇流(max pooling stages)，一个全连接的隐藏层和一个全连接的输出层。
 
 首先，我们添加一个 :class:`Conv2dLayer<tensorlayer.layers.Conv2dLayer>` ，
-它顶部有32个5x5的滤波器，紧接着在两个2个向量的同尺寸的最大汇流。
+它顶部有32个5x5的滤波器，紧接着在两个2x2向量的同尺寸的最大汇流。
 
 
 .. code-block:: python
