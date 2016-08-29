@@ -498,10 +498,10 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
 下一步？
 ^^^^^^^^^^^^^^
 
-在 ``tutorial_cifar10.py`` 中我们也有更高级的图像分类的例子。
-请阅读代码及注释，弄清楚如何产生更多的训练数据和什么是局部响应正则化。
-在这之后，尝试实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_
-*提示：您会用到Layer.outputs。*
+在 ``tutorial_cifar10.py`` 中我们还有更高级的图像分类的例子。
+请阅读代码及注释，用以明白如何来生成更多的训练数据以及什么是局部响应正则化。
+在这之后，您可以尝试着去实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_。
+*小提示：您可能会用到Layer.outputs。*
 
 
 运行乒乓球例子
