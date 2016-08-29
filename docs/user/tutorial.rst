@@ -429,13 +429,13 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 训练模型
 ----------------
 
-在 ``tutorial_mnist.py`` 脚本的其余部分对在MNIST数据上只使用交叉熵的循环训练进行了设置并且运行
+在 ``tutorial_mnist.py`` 脚本的其余部分，在MNIST数据上对于只使用交叉熵的循环训练进行了设置并且运行[###]。
 
 数据集迭代
 ^^^^^^^^^^^^^
 
-一个在给定的项目数的最小批规模下的输入特征及其对应的标签的两Numpy数列依次同步的迭代函数。
-更多的迭代函数可以在 ``tensorlayer.iterate`` 中找到。
+一个在给定的项目数的最小批规模下的输入特征及其对应的标签的两个Numpy数列依次同步的迭代函数[###]。
+更多有关迭代函数的说明，可以在 ``tensorlayer.iterate`` 中找到。
 
 .. code-block:: python
 
@@ -451,18 +451,18 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
     y_op = tf.argmax(tf.nn.softmax(y), 1)
     cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
 
-采用 ``main_test_layers()`` 更多的成本或者正则化方法可以被应用在这里。
-例如:要在权重矩阵中应用最大模(max-norm)方法，你可以添加下列行：
+举 ``main_test_layers()`` 这个例子来说，更多的成本或者正则化方法可以被应用在这里。
+如果要在权重矩阵中应用最大模(max-norm)方法，你可以添加下列代码：
 
 .. code-block:: python
 
     cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) +
                   tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
 
-根据您要解决的问题，您会需要不同的损失函数，更多的损失函数请见： `tensorlayer.cost`
+根据要解决的问题，您会需要使用不同的损失函数，更多有关损失函数的说明请见： `tensorlayer.cost`
 
 有了模型和定义的损失函数之后，我们就可以创建用于训练网络的更新公式。
-TensorLayer不自身提供优化，我们使用TensorFlow的优化。
+接下去，我们将使用TensorFlow的优化器如下：
 
 .. code-block:: python
 
@@ -470,7 +470,7 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
     train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
         epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-为了训练网络，我们要提供数据和保持概率给 ``feed_dict``。
+为了训练网络，我们需要提供数据和保持概率给 ``feed_dict``。
 
 .. code-block:: python
 
@@ -478,8 +478,9 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
     feed_dict.update( network.all_drop )
     sess.run(train_op, feed_dict=feed_dict)
 
-同时为了进行验证和测试，我们采用略有不同的方法。
-所有的退出，退连(dropconnect)，腐蚀层(corrosion layers)都要被禁用。
+同时为了进行验证和测试，我们这里用了略有不同的方法。
+所有的Dropout，退连(DropConnect)，腐蚀层(Corrosion Layers)都将被禁用。
+``tl.utils.dict_to_one`` 将会设置所有 ``network.all_drop`` 值为1。
 
 .. code-block:: python
 
@@ -488,7 +489,7 @@ TensorLayer不自身提供优化，我们使用TensorFlow的优化。
     feed_dict.update(dp_dict)
     err, ac = sess.run([cost, acc], feed_dict=feed_dict)
 
-作为一个额外的监测量，我们创建一个分类准确度的公式：
+最后，作为一个额外的监测量，我们需要创建一个分类准确度的公式：
 
 .. code-block:: python
 
