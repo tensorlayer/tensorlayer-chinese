@@ -120,6 +120,6 @@ NVIDA提供了一个对常见神经网络操作的库，特别是加快卷积神
 另外，在注册为开发人员之后(它需要一点时间)，它可以从NVIDA网站上得到：
 `cuDNN install <https://developer.nvidia.com/cuda-downloads>`_
 
-要安装它，复制 ``*.h`` 文件到 ``/usr/local/cuda/include`` 并且 复制``lib*`` 到
+要安装它，复制 ``*.h`` 文件到 ``/usr/local/cuda/include`` 并且 复制 ``lib*`` 到
 ``/usr/local/cuda/lib64`` 。
 
