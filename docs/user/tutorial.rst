@@ -442,6 +442,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
     tl.iterate.minibatches(inputs, targets, batchsize, shuffle=False)
 
 损失和更新公式
+^^^^^^^^^^^^^^
 
 我们继续创建一个在训练中被最小化的损失表达式：
 
