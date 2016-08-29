@@ -82,7 +82,7 @@ TensorLayer
 
 .. code-block:: bash
 
-  cd to the root of the git tree
+进入git clone出来的目录，(cd tensorlayer)
   pip3 install . -e
 
 此命令将运行 ``setup.py`` 来安装TensorLayer。
