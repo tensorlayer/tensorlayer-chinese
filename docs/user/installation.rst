@@ -88,7 +88,7 @@ Step 3 : TensorLayer
 
 
 
-Step 3 : GPU 加速
+Step 4 : GPU 加速
 ==========================
 
 非常感谢 NVIDIA 的支持，在 GPU 上训练全连接神经网络比在 CPU 上训练往往要快 10~20 倍。
