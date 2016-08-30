@@ -16,9 +16,16 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 
   # 保存模型为 .npz
   tl.files.save_npz(network.all_params , name='model.npz')
+  
   # 从 .npz 加载模型
   load_params = tl.files.load_npz(path='', name='model.npz')
   tl.files.assign_params(sess, load_params, network)
+
+  # 此外，你可以这样加载预训练的参数
+  # 加载第一个参数
+  tl.files.assign_params(sess, [load_params[0]], network)
+  # 加载前三个参数
+  tl.files.assign_params(sess, load_params[:3], network)
 
 
 .. automodule:: tensorlayer.files
