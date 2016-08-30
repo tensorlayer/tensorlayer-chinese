@@ -1,35 +1,30 @@
-.. _installation
+.. _installation:
 
-=================
-安装 Setup
-=================
+======================
+安装 Installation
+======================
 
-TensorLayer有许多需要先安装的先决条件，包括 `TensorFlow <https://www.tensorflow.org>`_ ,
-numpy和matplotlib。对于GPU的支持，CUDA和cuDNN是必须的。
+TensorLayer 需要一些预安装库，如 `TensorFlow`_ ， numpy 和 matplotlib。
+对于 GPU 加速，需要安装 CUDA 和 cuDNN。
 
-如果您遇到了任何麻烦，请您查看 `TensorFlow installation instructions <https://www.tensorflow.org/versions/master/get_started/os_setup.html>`_
-它包含了可安装Tensorflow的一系列可选操作系统，包括 Mac OX和Linux。
+如果你遇到麻烦，可以查看 `TensorFlow 安装手册 <https://www.tensorflow.org/versions/master/get_started/os_setup.html>`_
+，它包含了在不同系统中安装 TensorFlow 的步骤。或发邮件到 `hao.dong11@imperial.ac.uk <hao.dong11@imperial.ac.uk>`_ 询问。
 
-如果您在运行是出现了错误，请检查 `TensorFlow installation instructions <https://www.tensorflow.org/versions/master/get_started/os_setup.html>`_
-它包含了可安装Tensorflow的一系列可选操作系统，包括 Mac OX和Linux。
-或者在 `hao.dong11@imperial.ac.uk <hao.dong11@imperial.ac.uk>`_ 上寻求帮助。
 
-先决条件
-===========
 
-Python + pip
--------------
+步骤 1 : numpy 和 matplotlib
+=================================
 
-TensorLayer是基于 Python-version TensorFlow。请您首先安装python。
+TensorLayer 是运行在 python 版本的 TensorFlow 之上的，所以请先安装 python。
+
 
 .. note::
-    为了未来着想，我们强烈建议使用python3而不是python2来编程。
+    着眼于未来，我们建议使用 python3 而不是 python2
 
-python中包括为了安装附加模块 ``pip`` 命令。此外，一个虚拟环境 <http://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/>`_
-通过 ``virtualenv`` 可以协助管理您的python包。
+Python 的 ``pip`` 可以帮助您很快地安装库，此外 `虚拟环境(Virtual environment)
+<http://www.dabapps.com/blog/introduction-to-pip-and-virtualenv-python/>`_ 如 ``virtualenv`` 可以帮助你管理 python 包。
 
-以python3为例，安装python带 ``pip`` 运行命令如下：
-
+以 python3 和 Ubuntu 为例，可如下安装 python 及 ``pip``:
 
 .. code-block:: bash
 
@@ -37,7 +32,7 @@ python中包括为了安装附加模块 ``pip`` 命令。此外，一个虚拟�
   sudo apt-get install python3-pip
   sudo pip3 install virtualenv
 
-要构建一个需您的环境和安装matplotlib和numpy，运行下列命令：
+建立虚拟环境，并安装 matplotlib 和 numpy 到虚拟环境如下:
 
 .. code-block:: bash
 
@@ -45,81 +40,100 @@ python中包括为了安装附加模块 ``pip`` 命令。此外，一个虚拟�
   env/bin/pip install matplotlib
   env/bin/pip install numpy
 
-检查已安装的软件包。运行下列命令：
+安装完后，若无报错，可以如下在命令窗口中显示列出安装好的包:
 
 .. code-block:: bash
 
   env/bin/pip list
 
-TensorFlow
----------------
 
-TensorFlow 网站就能看到很详细的安装说明。不过也有一些需要考虑的东西。
+最后，你可以用虚拟环境中的 python 来运行 python 代码，如下:
 
-TensorFlow release
-========================
+.. code-block:: bash
 
-TensorFlow
------------
+  env/bin/python *.py
 
 
-`TensorFlow <https://www.tensorflow.org/versions/master/get_started/os_setup.html>`_ 官方目前仅支持Linux和Mac OX GPU
-如果您想使用GPU和Mac OX，您需要从源代码编译TensorFlow。
+
+
+Step 2 : TensorFlow
+=========================
+
+TensorFlow 的安装步骤在 `TensorFlow`_  官网中有非常详细的说明，不国有一些东西是需要考虑的。
+如 `TensorFlow`_ 官方目前只支持 Linux 和 Mac OX 系统。
 
 .. warning::
-    对于ARM架构的处理器，您需要可以从源代码重新编译安装TensotFlow
+  对于使用 ARM 架构的机器，你需要用源码来编译安装 TensorFlow。
 
-TensorLayer
------------
 
-安装TensorLayer最简单的方法如下：
+Step 3 : TensorLayer
+=========================
+
+最便捷安装 TensorLayer 只需要一个指令，如下:
 
 .. code-block:: bash
 
   pip install git+https://github.com/zsdonghao/tensorlayer.git
 
-如果您要修改或者扩展TensorLayer，您可以下载源代码，然后按如下所示安装它：
+不过，若你是高级玩家，你想要在 TensorLayer 的基础上拓展或修改源码，你可以从 `Github`_ 中把整个项目下载下来，
+然后如下安装。
 
 .. code-block:: bash
 
-  cd to the root of the git tree
-  pip3 install . -e
+  cd 到项目文件
+  pip install . -e
 
-此命令将运行 ``setup.py`` 来安装TensorLayer。
-``-e`` 允许您可以编辑``tensorlayer``文件中的脚本，
-它能让您扩展和修改TensorLayer更加容易。
+这个命令会运行 ``setup.py`` 来安装 TensorLayer。 其中， ``-e`` 代表
+可编辑的（editable），因此你可以直接修改 ``tensorlayer`` 文件夹中的源代码，然后 ``import`` 该文件夹来使用修改后的 TensorLayer。
 
-GPU支持
-============
 
-得益于NVIDA的支持，用GPU训练一个全连接的神经网络可能比用CPU训练它们要快10到20倍。
-对于卷积神经网络，可能会快50倍。这要求一个支持CUDA和cuDNN的NVIDA GPU。
 
-TensorFlow网站也教如何安装CUDA和cuDNN，请点击：
-`TensorFlow: CUDA install <https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux>`_.
+Step 3 : GPU 加速
+==========================
 
-从NVIDA网站上安装最新版本的CUDA和cuDNN：
+非常感谢 NVIDIA 的支持，在 GPU 上训练全连接神经网络比在 CPU 上训练往往要快 10~20 倍。
+对于卷积神经网络，往往会快 50 倍。这需要有一个 NIVIDA 的 GPU，以及安装 CUDA 和 cuDNN。
 
-`CUDA install <https://developer.nvidia.com/cuda-downloads>`_
 
-`cuDNN install <https://developer.nvidia.com/cuda-downloads>`_
 
-在安装完毕后，请确保 ``/usr/local/cuda/bin`` 是您的 ``PATH``（使用 ``echo #PATH`` 来查看),并且 ``nvcc--version`` 工作无误。
-此外要确保 ``/usr/local/cuda/lib64`` 是您的 ``LD_LIBRARY_PATH`` ，这样CUDA库才可以被发现。
+CUDA
+----
 
-如果CUDA设置正确，下面的命令应该会在终端上打印一些GPU信息：
+TensorFlow 官网讲了如何安装 CUDA 和 cuDNN，`TensorFlow GPU 支持 <https://www.tensorflow.org/versions/master/get_started/os_setup.html#optional-install-cuda-gpus-on-linux>`_。
+
+可在 NIVIDIA 官网下载与安装最新版本的 CUDA。
+
+ - `CUDA 下载与安装 <https://developer.nvidia.com/cuda-downloads>`_
+
+
+..
+  After installation, make sure ``/usr/local/cuda/bin`` is in your ``PATH`` (use ``echo #PATH`` to check), and
+  ``nvcc --version`` works. Also ensure ``/usr/local/cuda/lib64`` is in your
+  ``LD_LIBRARY_PATH``, so the CUDA libraries can be found.
+
+若 CUDA 被正确地安装，下面的指令可以在命令窗口中打印出 GPU 的信息。
 
 .. code-block:: bash
 
   python -c "import tensorflow"
 
+
 cuDNN
-------------
+--------
 
-NVIDA提供了一个对常见神经网络操作的库，特别是加快卷积神经网络(CNNs)的训练速度。
-另外，在注册为开发人员之后(它需要一点时间)，它可以从NVIDA网站上得到：
-`cuDNN install <https://developer.nvidia.com/cuda-downloads>`_
+出了 CUDA，NVIDIA 还专门提供另一个库来加速神经网络的运算，特别是用来加速卷积神经网络。
+这个库也可以从 NIVIDIA 官网中下载安装，但你要先注册为 NIVIDA 开发者（这需要一些审核时间）。
+下载时，请在 Deep Learning Framework 处在 Other 中输入 TensorLayer。
 
-要安装它，复制 ``*.h`` 文件到 ``/usr/local/cuda/include`` 并且 复制 ``lib*`` 到
-``/usr/local/cuda/lib64`` 。
 
+最新 cuDNN 下载与安装链接：
+
+ - `cuDNN 下载与安装 <https://developer.nvidia.com/cudnn>`_
+
+
+下载后, 复杂 ``*.h`` 文件到 ``/usr/local/cuda/include`` 以及复制
+``lib*`` 文件到 ``/usr/local/cuda/lib64``。
+
+.. _TensorFlow: https://www.tensorflow.org/versions/master/get_started/os_setup.html
+.. _GitHub: https://github.com/zsdonghao/tensorlayer
+.. _TensorLayer: https://github.com/zsdonghao/tensorlayer/
