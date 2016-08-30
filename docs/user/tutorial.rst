@@ -379,10 +379,10 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 卷积神经网络(Convolutional Neural Network)
 ----------------------------------------------------------
 
-最后，``main_test_cnn_layer()`` 脚本创建了两个CNN 层和最大汇流(max pooling stages)，一个全连接的隐藏层和一个全连接的输出层。
+最后，``main_test_cnn_layer()`` 脚本创建了两个CNN层和最大汇流阶段(max pooling stages)，一个全连接的隐藏层和一个全连接的输出层。
 
-首先，我们添加一个 :class:`Conv2dLayer<tensorlayer.layers.Conv2dLayer>` ，
-它顶部有32个5x5的滤波器，紧接着在两个2个向量的同尺寸的最大汇流。
+首先，我们需要添加一个 :class:`Conv2dLayer<tensorlayer.layers.Conv2dLayer>` ，
+它顶部有32个5x5的过滤器，紧接着在两个2个向量的同尺寸的最大汇流。[###]
 
 
 .. code-block:: python
