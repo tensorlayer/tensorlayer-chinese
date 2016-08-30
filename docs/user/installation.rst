@@ -131,7 +131,7 @@ cuDNN
  - `cuDNN 下载与安装 <https://developer.nvidia.com/cudnn>`_
 
 
-下载后, 复杂 ``*.h`` 文件到 ``/usr/local/cuda/include`` 以及复制
+下载后, 复制 ``*.h`` 文件到 ``/usr/local/cuda/include`` 以及复制
 ``lib*`` 文件到 ``/usr/local/cuda/lib64``。
 
 .. _TensorFlow: https://www.tensorflow.org/versions/master/get_started/os_setup.html
