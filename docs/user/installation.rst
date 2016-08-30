@@ -67,7 +67,7 @@ TensorFlow
 如果您想使用GPU和Mac OX，您需要从源代码编译TensorFlow。
 
 .. warning::
-    对于ARM架构的处理器，您也可以从源代码安装TensotFlow
+    对于ARM架构的处理器，您需要可以从源代码重新编译安装TensotFlow
 
 TensorLayer
 -----------
