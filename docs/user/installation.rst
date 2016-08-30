@@ -56,7 +56,7 @@ Python 的 ``pip`` 可以帮助您很快地安装库，此外 `虚拟环境(Virt
 
 
 
-Step 2 : TensorFlow
+步骤 2 : TensorFlow
 =========================
 
 TensorFlow 的安装步骤在 `TensorFlow`_  官网中有非常详细的说明，不国有一些东西是需要考虑的。
@@ -66,7 +66,7 @@ TensorFlow 的安装步骤在 `TensorFlow`_  官网中有非常详细的说明�
   对于使用 ARM 架构的机器，你需要用源码来编译安装 TensorFlow。
 
 
-Step 3 : TensorLayer
+步骤 3 : TensorLayer
 =========================
 
 最便捷安装 TensorLayer 只需要一个指令，如下:
@@ -88,7 +88,7 @@ Step 3 : TensorLayer
 
 
 
-Step 4 : GPU 加速
+步骤 4 : GPU 加速
 ==========================
 
 非常感谢 NVIDIA 的支持，在 GPU 上训练全连接神经网络比在 CPU 上训练往往要快 10~20 倍。
