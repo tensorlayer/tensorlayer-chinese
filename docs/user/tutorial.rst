@@ -509,7 +509,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 运行乒乓球例子
 ====================
 
-在本教程的第二部分，我们将运行一个深度强化学习的例子，它在Karpathy的 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
+在本教程的第二部分，我们将运行一个深度强化学习的例子，它在Karpathy的两篇博客 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
 
 .. code-block:: bash
 
@@ -572,7 +572,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
   render = False
   resume = False
 
-如果您想显示游戏的环境，那就设置 `render` 为 `True` 。
+如果您想显示游戏过程，那就设置 `render` 为 `True` 。
 当您再次运行该代码，您可以设置 `resume` 为 `True`,那么代码将加载现有的模型并且会基于它进行训练。
 
 .. _fig_0601:
@@ -587,7 +587,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 乒乓球
 -------------
 
-要理解强化学习，我们要让电脑学习如何从初始的屏幕输入打乒乓球。
+要理解强化学习，我们要让电脑学习如何从原始的屏幕输入(像素输入)打乒乓球。
 在我们开始之前，我们强烈建议您去浏览一个著名的博客叫做 `Deep Reinforcement Learning:pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ ,
 这是使用python numpy库和OpenAI gym environment=来实现的一个深度强化学习的最简实现。
 
@@ -600,8 +600,8 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 ---------------------------
 
 在深度强化学习中，Policy Network 等同于 深度神经网络。
-它是我们的选手(或者说“代理人(agent)”），它的输出行为告诉我们应该做什么(向上移动或向下移动)：
-在Karpathy的代码中，他值定理了2个动作，向上移动和向下移动，并且仅使用单个simgoid输出：
+它是我们的选手(或者说“代理人(agent)”），它的输出告诉我们应该做什么(向上移动或向下移动)：
+在Karpathy的代码中，他只定义了2个动作，向上移动和向下移动，并且仅使用单个simgoid输出：
 为了使我们的教程更具有普遍性，我们使用3个SOFTMAX输出来定义向上移动，向下移动和停止(什么都不做)3个动作。
 
 .. code-block:: python
@@ -648,6 +648,15 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 
 您可以阅读以下文档，来得到对强化学习更好的理解：
 
+ - `Reinforcement Learning: An Introduction. Richard S. Sutton and Andrew G. Barto <https://webdocs.cs.ualberta.ca/~sutton/book/the-book.html>`_
+ - `Deep Reinforcement Learning. David Silver, Google DeepMind <http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf>`_
+ - `UCL Course on RL <http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html>`_
+
+强化深度学习近些年来最成功的应用就是让模型去学习玩Atari的游戏。 AlphaGO同时也是使用类似的策略逼近方法来训练他们的策略网络而战胜了世界级的专业围棋选手。
+
+ - `Atari - Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_
+ - `Atari - Human-level control through deep reinforcement learning <http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html>`_
+ - `AlphaGO - Mastering the game of Go with deep neural networks and tree search <http://www.nature.com/nature/journal/v529/n7587/full/nature16961.html>`_
 
 
 数据集迭代
