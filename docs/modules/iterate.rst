@@ -10,6 +10,7 @@ API - 迭代函数
 
    minibatches
    seq_minibatches
+   seq_minibatches2
    ptb_iterator
 
 
@@ -22,4 +23,5 @@ API - 迭代函数
 --------------------
 
 .. autofunction:: seq_minibatches
+.. autofunction:: seq_minibatches2
 .. autofunction:: ptb_iterator
