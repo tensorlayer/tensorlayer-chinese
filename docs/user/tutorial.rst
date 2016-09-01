@@ -65,6 +65,7 @@ TensorLayer很简单
                                   act = tl.activation.identity,
                                   name='output_layer')
   # 定义损失函数和衡量指标
+  # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
   y = network.outputs
   cost = tl.cost.cross_entropy(y, y_)
   correct_prediction = tf.equal(tf.argmax(y, 1), y_)
