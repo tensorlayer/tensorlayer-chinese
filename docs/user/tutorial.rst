@@ -110,9 +110,9 @@ TensorLayer很简单
 在本教程的第一部分，我们仅仅运行TensorLayer内置的MNIST例子。
 MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用于训练各种图片识别系统。
 
-我们假设您已经按照 :ref:`installation` 安装过TensorLayer。
-如果您还没有，请复制一个TensorLayer的source目录到终端中进入该文件夹，
-然后运行 ``tutorial_mnist.py`` 例子脚本：
+我们假设您已经按照 :ref:`installation` 安装好了TensorLayer。
+如果您还没有，请复制一个TensorLayer的source目录到终端中，并进入该文件夹，
+然后运行 ``tutorial_mnist.py`` 这个例子脚本：
 
 .. code-block:: bash
 
@@ -185,7 +185,7 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
   ...
 
 这个例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络（Multi-Layer Perceptron），
-Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoencoder）和卷积神经网络。
+退出（Dropout），退出连接（DropConnect），堆栈式降噪自编码器（Stacked Denoising Autoencoder）和卷积神经网络（CNN）。
 
 .. code-block:: python
 
@@ -218,7 +218,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 这是因为TensorLayer是建立在TensorFlow上的，TensorLayer设计的初衷是为了简化工作并提供帮助而不是取代TensorFlow。
 所以您会需要一起使用TensorLayer和一些常见的TensorFlow代码。
 
-注: 当使用降噪自编码器(Denoising Autoencoder)时，代码中的 ``set_keep`` 被当作用来访问保持概率(Keeping Probabilities)的占位符。
+请注意，当使用降噪自编码器(Denoising Autoencoder)时，代码中的 ``set_keep`` 被当作用来访问保持概率(Keeping Probabilities)的占位符。
 
 
 载入数据
@@ -244,13 +244,13 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
   X_train, y_train, X_val, y_val, X_test, y_test = \
               tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
 
-``X_train.shape`` 是 ``(50000,28,28,1)`` ，这代表了50000张图片，每张图片使用一个通道(Channel)，28行，28列。
+``X_train.shape`` 为 ``(50000,28,28,1)`` ，这代表了50000张图片，每张图片使用一个通道（Channel），28行，28列。
 通道为1是因为它是灰度图像，每个像素只能有一个值。
 
 建立模型
 ----------------
 
-到了这里，就轮到TensorLayer来一显身手了！TensorLayer允许您通过创建，堆叠或者合并图层(Layers)来定义任意结构的神经网络。
+来到这里，就轮到TensorLayer来一显身手了！TensorLayer允许您通过创建，堆叠或者合并图层(Layers)来定义任意结构的神经网络。
 由于每一层都知道它在一个网络中的直接输入层和（多个）输出接收层，[###]
 所以通常这是我们唯一要传递给其他代码的内容。
 
