@@ -335,9 +335,9 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 降噪自编码器(Denoising Autoencoder)
 ------------------------------------------------
 
-自编码器是一种能够提取具有代表性特征的无监督(Unsupervised)学习模型，
-它已经广泛使用于数据生成模式的学习与逐层贪婪的预训练(Greedy layer-wise pre-train)。
-有关Vanilla自编码器，详见教程 `Deeplearning Tutorial`_。
+自编码器是一种无监督学习（Unsupervisered Learning）模型，可从数据中学习出更好的表达，
+目前已经用于逐层贪婪的预训练（Greedy layer-wise pre-train）。
+有关Vanilla自编码器，请参考教程 `Deeplearning Tutorial`_。
 
 脚本 ``main_test_denoise_AE()`` 实现了有50%的腐蚀率(corrosion rate)的去噪自编码器。
 这个自编码器可以按如下方式定义，这里的 ``DenseLayer`` 代表了一个自编码器：
