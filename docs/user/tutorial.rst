@@ -265,21 +265,21 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 多层神经网络 (Multi-Layer Perceptron)
 ------------------------------------------------
 
-第一个脚本 ``main_test_layers()`` ,创建了一个具有两个隐藏层，每层800个单元的多层次感知器并且具有10个单元的SOFTMAX输出层紧随其后。
+第一个脚本 ``main_test_layers()`` ，创建了一个具有两个隐藏层，每层800个单元的多层次感知器，并且具有10个单元的SOFTMAX输出层紧随其后。
 它对输入数据采用20%的退出率(dropout)并且对隐藏层应用50%的退出率(dropout)。
 
-为了喂数据给这个网络，TensorFlow占位符需要按如下定义。
+为了提供数据给这个网络，TensorFlow占位符(placeholder)需要按如下定义。
 在这里 ``None`` 是指在编译之后，网络将接受任意批规模(batchsize)的数据
 ``x`` 是用来存放 ``X_train`` 数据的并且 ``y_`` 是用来存放 ``y_train`` 数据的。
-如果实现知道批规模，那就不需要这种灵活性了。您可以在这里给出批规模，特别是对于卷积层，这样可以让TensorFlow得到一些优化。
+如果你已经知道批规模，那就不需要这种灵活性了。您可以在这里给出批规模，特别是对于卷积层，这样可以运用TensorFlow一些优化功能。
 
 .. code-block:: python
 
     x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
     y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 
-在TensorLayer中每个神经网络的基础是一个 :class:`InputLayer <tensorlayer.layers.InputLayer>` 实例。它代表了将要喂给网络的输入数据。
-值得注意的是 ``InputLayer`` 并不依赖任何特定的数据的。
+在TensorLayer中每个神经网络的基础是一个 :class:`InputLayer <tensorlayer.layers.InputLayer>` 实例。它代表了将要提供(feed)给网络的输入数据。
+值得注意的是 ``InputLayer`` 并不依赖任何特定的数据。
 
 .. code-block:: python
 
@@ -292,19 +292,19 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 
     network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
 
-注意！构造函数的第一个参数是输入层，第二个参数是激活值的保持概率(keeping probability for the activation value)
+请注意构造函数的第一个参数是输入层，第二个参数是激活值的保持概率(keeping probability for the activation value)
 现在我们要继续构造第一个800个单位的全连接的隐藏层。
-尤其是当要堆叠一个 :class:`DenseLayer <tensorlayer.layers.DenseLayer>` 时要注意这个。
+尤其是当要堆叠一个 :class:`DenseLayer <tensorlayer.layers.DenseLayer>` 时，要特别注意。
 
 .. code-block:: python
 
     network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu1')
 
-同样，构造函数的顶一个参数以为这我们正在 ``network`` 之上堆叠 ``network`` 。
-``n_units`` 仅仅时给出了全连接层的单位数。
-``act`` 给出了一个激活函数，这里是 :mod:`tensorflow.nn` 和  `tensorlayer.activation` 中所定义的几个函数。
-我们在这里选择了整流器(rectifier)，所以我们将得到ReLUs
-我们现在添加50%的退出率，对于另一个800单位的稠密层(dense layer)，我们也添加50%的退出率：
+同样，构造函数的第一个参数意味着这我们正在 ``network`` 之上堆叠 ``network`` 。
+``n_units`` 简明得给出了全连接层的单位数。
+``act`` 指定了一个激活函数，这里的激活函数有一部分已经被定义在了 :mod:`tensorflow.nn` 和  `tensorlayer.activation` 中。
+我们在这里选择了整流器(rectifier)，我们将得到ReLUs。
+我们现在来添加50%的退出率，以及另外800个单位的稠密层(dense layer)，和50%的退出率：
 
 .. code-block:: python
 
@@ -312,7 +312,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
     network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 
-最后，我们加入 ``n_units`` 等于分类个数的全连接的输出层。注意， ``cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))`` 在内部实现 Softmax，以提高计算效率，因此最后一层的输出设为 identity 即可，更多细节请参考 ``tl.cost.cross_entropy()`` 。
+最后，我们加入 ``n_units`` 等于分类个数的全连接的输出层。注意， ``cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))`` 在内部实现 Softmax，以提高计算效率，因此最后一层的输出为 identity ，更多细节请参考 ``tl.cost.cross_entropy()`` 。
 
 .. code-block:: python
 
@@ -321,7 +321,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
                                   act = tl.activation.identity,
                                   name='output_layer')
 
-如上所述，每层被链接到它的输入层,所以我们只需要在TensorLayer中将输出层接入一个网络：
+如上所述，因为每一层都被链接到了它的输入层，所以我们只需要在TensorLayer中将输出层接入一个网络：
 
 .. code-block:: python
 
@@ -329,17 +329,18 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
     y_op = tf.argmax(tf.nn.softmax(y), 1)
     cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
 
-在这里，``network.outputs`` 是网络的10个特征的输出(按照一个热格式(hot format))。
+在这里，``network.outputs`` 是网络的10个特征的输出(按照一个热门的格式)。
 ``y_op`` 是代表类索引的整数输出， ``cost`` 是目标和预测标签的交叉熵。
 
 降噪自编码器(Denoising Autoencoder)
 ------------------------------------------------
 
-自编码器是一种能够提取具有代表性特征的无监督学习模型，
+自编码器是一种能够提取具有代表性特征的无监督(Unsupervised)学习模型，
 它已经广泛使用于数据生成模式的学习与逐层贪婪的预训练(Greedy layer-wise pre-train)。
+有关Vanilla自编码器，详见教程 `Deeplearning Tutorial`_。
 
 脚本 ``main_test_denoise_AE()`` 实现了有50%的腐蚀率(corrosion rate)的去噪自编码器。
-这个自编码器可以按如下方式定义，这里一个 ``DenseLayer`` 代表一个 自编码器：
+这个自编码器可以按如下方式定义，这里的 ``DenseLayer`` 代表了一个自编码器：
 
 .. code-block:: python
 
@@ -355,11 +356,11 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
 训练 ``DenseLayer`` ，只需要运行 ``ReconLayer.Pretrain()`` 即可。
 如果要使用去噪自编码器，腐蚀层(corrosion layer)(``DropoutLayer``)的名字需要按后面说的指定。
 如果要保存特征图像，设置 ``save`` 为 True 。
-灯具不同的架构和应用这里可以设置许多预训练的度量(metric)
+根据不同的架构和应用这里可以设置许多预训练的度量(metric)
 
 对于 sigmoid型激活函数来说，自编码器可以用KL散度来实现。
-而对于 整流器(rectifier)来说，对激活函数输出的L1正则化能使得输出投影到稀疏空间中。
-所以 ``ReconLayer`` 的默认行为只对整流激活函数提供sigmoid型激活函数，L1正则化激活输出和均方差的KLD和交叉熵
+而对于整流器(Rectifier)来说，对激活函数输出的L1正则化能使得输出变得稀疏。
+所以 ``ReconLayer`` 的默认只对整流激活函数提供sigmoid型激活函数，L1正则化激活输出和均方差的KLD和交叉熵
 我们建立您修改 ``ReconLayer`` 来实现自己的预训练度量。
 
 .. code-block:: python
