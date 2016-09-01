@@ -312,7 +312,7 @@ Dropout，DropConnect，堆栈式降噪自编码器（Stacked Denoising Autoenco
     network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 
-最后，我们加入 ``n_units`` 等于分类个数的全连接的输出层。
+最后，我们加入 ``n_units`` 等于分类个数的全连接的输出层。注意， ``cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))`` 在内部实现 Softmax，以提高计算效率，因此最后一层的输出设为 identity 即可。
 
 .. code-block:: python
 
