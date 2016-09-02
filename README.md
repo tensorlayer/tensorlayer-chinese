@@ -336,11 +336,7 @@ rho = 0.15
 p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)
 KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat)) + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
 ```
-
-For this reason, TensorLayer provides a simple way to modify or design your own pre-train metrice. For Autoencoder, TensorLayer uses **ReconLayer.*__*init__()** to define the reconstruction layer and cost function, to define your own cost function, just simply modify the **self.cost** in **ReconLayer.*__*init__()**. To creat your own cost expression please read *[Tensorflow Math](https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html)*. By default, **ReconLayer** only updates the weights and biases of previous 1 layer by using **self.train_params = self.all _params[-4:]**, where the 4 parameters are [W_encoder, b_encoder, W_decoder, b_decoder]. If you want to update the parameters of previous 2 layers, simply modify **[-4:]** to **[-6:]**.
-
-TensorLayer提供了更加简便的方式来修改或者自定义您自己的方法来分析预训练。对于普通稀疏自编码器，TensorLayer用**ReconLayer.*__*init__()**方法来定义
-
+TensorLayer提供了更加简便的方式来修改或者自定义您自己的方法来分析预训练。对于普通稀疏自编码器，TensorLayer用**ReconLayer.*__*init__()**方法来定义重构的层和算是函数。如果您需要定义自己的损失函数，只需要更改在**ReconLayer.*__*init__()**中修改**self.cost**。创建自定义的损失函数表达式，请参见*[Tensorflow Math](https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html)*。默认情况下**ReconLayer** 仅仅是通过**self.train_params = self.all _params[-4:]**使用更新之前一层的权值和偏置，在这里4个参数是[W_encoder, b_encoder, W_decoder, b_decoder]. 如果您想更新前两层的参数，只需要做以下更改**[-4:]** to **[-6:]**。
 
 ```python    
 ReconLayer.__init__(...):
