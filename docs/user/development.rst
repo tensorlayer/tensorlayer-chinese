@@ -1,14 +1,9 @@
 开发 Development
-===============
+================
 
-TensorLayer项目由帝国理工董豪于2016年6月发起的，
-核心团队包括(按字母顺序:
-`Akara Supratak <https://github.com/akaraspt>`_,
-`Hao Dong <https://github.com/zsdonghao>`_,
-`Simiao Yu <https://github.com/zsdonghao>`_）
-以及 `GitHub`_ 的贡献者。
+TensorLayer始于一个帝国理工的研究项目，目前由数位 `GitHub`_ 的贡献者负责维护和进行改进。
 
-正如一个为研究员和工程师开发的开源项目，我们诚挚地欢迎您为对项目提供帮助。
+作为一个为研究员和工程师开发的开源项目，我们诚挚地欢迎您为对项目提供帮助。
 每个微小的支持都会帮助我们并且会被记录下来。
 
 
