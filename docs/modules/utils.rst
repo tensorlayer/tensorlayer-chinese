@@ -11,6 +11,7 @@ API - 实用函数
    evaluation
    class_balancing_oversample
    dict_to_one
+   flatten_list
 
 
 训练、测试及预测
@@ -19,8 +20,6 @@ API - 实用函数
 .. autofunction:: fit
 .. autofunction:: test
 .. autofunction:: predict
-
-
 
 评估函数
 ---------------------
@@ -38,3 +37,4 @@ API - 实用函数
 --------------------
 
 .. autofunction:: dict_to_one
+.. autofunction:: flatten_list
