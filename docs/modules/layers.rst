@@ -248,11 +248,13 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DropoutLayer
    DropconnectDenseLayer
    Conv2dLayer
+   Conv3dLayer
    PoolLayer
    RNNLayer
    FlattenLayer
    ConcatLayer
    ReshapeLayer
+   MultiplexerLayer
    EmbeddingAttentionSeq2seqWrapper
    flatten_reshape
    clear_layers_name
@@ -315,17 +317,41 @@ Dropconnect层
 卷积层
 --------------------
 
+1D卷积层
+^^^^^^^^^^
+
+我们不直接提供 1D 卷积层，事实上 TensorFlow 只有 `tf.nn.conv2d` 和 `tf.nn.conv3d` ，
+所以想实现 1D 卷积，可以如下使用  Reshape 实现。
+
+.. code-block:: python
+
+  x = tf.placeholder(tf.float32, shape=[None, 500], name='x')
+  network = tl.layers.ReshapeLayer(x, shape=[-1, 500, 1, 1], name='reshape')
+  network = tl.layers.Conv2dLayer(network,
+                      act = tf.nn.relu,
+                      shape = [10, 1, 1, 16], # 16 features
+                      strides=[1, 2, 1, 1],   # stride of 2
+                      padding='SAME',
+                      name = 'cnn')
+
+
+
 2D卷积层
 ^^^^^^^^^^
 
 .. autoclass:: Conv2dLayer
 
+3D卷积层
+^^^^^^^^^^
+
+.. autoclass:: Conv3dLayer
+
 
 池化层
 --------------------
 
-Max或Mean池化层
-^^^^^^^^^^^^^^^^
+各种纬度的Max或Mean池化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: PoolLayer
 
@@ -355,6 +381,11 @@ Reshape层
 
 .. autoclass:: ReshapeLayer
 
+流控制层
+-----------
+
+.. autoclass:: MultiplexerLayer
+
 包装器(Wrapper)
 ----------------
 
@@ -364,30 +395,6 @@ Reshape层
 .. autoclass:: EmbeddingAttentionSeq2seqWrapper
   :members:
 
-开发中与待测试
--------------------------
-
-欢迎大家一起开发与测试，每一点贡献都会署名。
-
-3D卷积层
-^^^^^^^^^
-
-.. autoclass:: Conv3dLayer
-
-Maxout层
-^^^^^^^^^
-
-.. autoclass:: MaxoutLayer
-
-高斯噪声层
-^^^^^^^^^^^^
-
-.. autoclass:: GaussianNoiseLayer
-
-双向递归层
-^^^^^^^^^^^
-
-.. autoclass:: BidirectionalRNNLayer
 
 辅助函数
 ----------------
