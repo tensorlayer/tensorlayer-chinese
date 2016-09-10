@@ -46,19 +46,19 @@ API目录
 
 .. toctree::
   :maxdepth: 2
-
+  
   modules/layers
-  modules/activation
+  modules/cost
+  modules/iterate
+  modules/utils
   modules/nlp
   modules/rein
-  modules/iterate
-  modules/cost
-  modules/visualize
   modules/files
-  modules/utils
-  modules/init
+  modules/visualize
   modules/preprocess
   modules/ops
+  modules/activation
+
 
 索引与附录
 ==================
