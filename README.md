@@ -124,7 +124,7 @@ sess.close()
 TensorLayer 起初是帝国理工大学的内部项目，用来帮助研究人员验证新的算法。现在它鼓励全世界的人工智能爱好者们参与开发，以促进学术和应用交流。您可以和我们联系讨论您的想法，或者在官方 Github 上发起 Fork 与 Pull 请求。
 
 - 🇬🇧 If you are in London, we can discuss in person
-- 🇨🇳 我们有官方的 [中文文档](http://tensorlayercn.readthedocs.io/zh/latest/). 与此同时, 我们建立了多种交流渠道，如[QQ 群](img/img_qq.png) ，加入微信群需要您可把个人介绍和微信号发送到 haodong_cs@163.com 申请
+- 🇨🇳 我们有官方的 [中文文档](http://tensorlayercn.readthedocs.io/zh/latest/). 与此同时, 我们建立了多种交流渠道，如[QQ 群](https://github.com/zsdonghao/tensorlayer/blob/master/img/img_qq.png) ，加入微信群需要您可把个人介绍和微信号发送到 haodong_cs@163.com 申请
 - 🇹🇭 เราขอเรียนเชิญนักพัฒนาคนไทยทุกคนที่สนใจจะเข้าร่วมทีมพัฒนา TensorLayer ติดต่อสอบถามรายละเอียดเพิ่มเติมได้ที่ haodong_cs@163.com
 
 # 版权
