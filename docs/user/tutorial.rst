@@ -62,7 +62,7 @@ TensorLayer很简单
                                   act = tf.nn.relu, name='relu2')
   network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
   network = tl.layers.DenseLayer(network, n_units=10,
-                                  act = tl.activation.identity,
+                                  act = tf.identity,
                                   name='output_layer')
   # 定义损失函数和衡量指标
   # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
