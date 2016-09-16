@@ -28,7 +28,7 @@ TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度�
 
 # 译者注
 
-简单来讲 TensorLayer 是一个适用于不同水平用户使用的库。对于初学者，TensorLayer 提供大量简单的API和大量的教程；对于中级用户，TensorLayer 的灵活性和透明性优势能过大大体现出来（V1.2版本是很好的例子）；对于高级用户，高运行速度和跨平台优势会体现出来。这样的好处是作为用户，我们不需要因为在不同的学习阶段，而去学不同的库了。
+简单来讲 TensorLayer 是一个适用于不同水平用户使用的库。对于初学者，TensorLayer 提供大量简单的API和大量的教程；对于中级用户，TensorLayer 的灵活性和透明性优势能大大体现出来（V1.2版本是很好的例子）；对于高级用户，运行速度快和跨平台优势会体现出来。这样的好处是作为用户，我们不需要因为在不同的学习阶段，而去学不同的库了。
 
 🌞🌞🌞 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)
 
