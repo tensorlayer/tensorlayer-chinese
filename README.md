@@ -23,10 +23,12 @@ TensorLayer grow out from a need to combine the power of TensorFlow with the rig
 - **Flexibility**: developing an effective DL algorithm for a specific domain typically requires careful tunings from many aspects. Without the loss of simplicity, TensorLayer allows users to customize their modules by manipulating the native APIs of TensorFlow (e.g., training parameters, iteration control and tensor components).
 - **Performance**: TensorLayer aims to provide zero-cost abstraction for TensorFlow. With its first-class support for TensorFlow, it can easily run on either heterogeneous platforms or multiple computation nodes without compromise in performance.
 
-关于 TensorLayer 一个最常见的问题就是为什么我们需要开发一个新的库，而不使用先有的库如 [Keras](https://github.com/fchollet/keras) 和 [Tflearn](https://github.com/tflearn/tflearn)。
+关于 TensorLayer 一个最常见的问题就是为什么我们需要开发一个新的库，而不使用现有的库如 [Keras](https://github.com/fchollet/keras) 和 [Tflearn](https://github.com/tflearn/tflearn)。
 TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度学习用户会发现使用 Keras 和 Tflearn 能够非常快的上手（当然 TensorLayer 也提供与它们类似的简单 APIs），这些库提供高层抽象的API，对开发者隐藏了深度学习引擎的细节。这会让用户很难从底层中修改和优化，而这往往在特定领域时需要考虑的。尽管如此，灵活性不会导致效率的降低，TensorLayer 可以分布式和多样化部署以最优化运行速度。
 
-翻译者注：简单来讲 TensorLayer 是一个适用于不同水平用户使用的库。对于初学者，TensorLayer 提供大量简单的API和大量的教程；对于中级用户，TensorLayer 的灵活性和透明性优势能过大大体现出来（V1.2版本是很好的例子）；对于高级用户，高运行速度和跨平台优势会体现出来。这样的好处是作为用户，我们不需要因为在不同的学习阶段，而去学不同的库了。
+# 译者注
+
+简单来讲 TensorLayer 是一个适用于不同水平用户使用的库。对于初学者，TensorLayer 提供大量简单的API和大量的教程；对于中级用户，TensorLayer 的灵活性和透明性优势能过大大体现出来（V1.2版本是很好的例子）；对于高级用户，高运行速度和跨平台优势会体现出来。这样的好处是作为用户，我们不需要因为在不同的学习阶段，而去学不同的库了。
 
 🌞🌞🌞 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)
 
