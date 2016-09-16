@@ -14,45 +14,34 @@
 </a>
 
 
-# TensorLayer: 面向研究人员和工程师的深度学习和强化学习库  
 
-TensorLayer 是为研究人员和工程师设计的一款基于[Google TensorFlow](https://www.tensorflow.org)开发的深度学习与强化学习库。 
-它提供高级别的（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度，也能够减少工程师在实际开发当中的重复工作。
-TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。此外，TensorLayer 提供了大量示例和教程来帮助初学者理解深度学习，并提供大量的官方例子程序方便开发者快速找到适合自己项目的例子。
+TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
-阅读TensorLayer Readthedocs 文档您不仅可以学会如何使用这个库，也会了解不同类型的神经网络、深度学习、强化学习，还有自然语言处理等内容。此外，TensorLayer的Tutorial包含了所有TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow深度学习教程来学习[[英文]](https://www.tensorflow.org/versions/master/tutorials/index.html)[[极客学院中文翻译]](http://wiki.jikexueyuan.com/project/tensorflow-zh/)。
+TensorLayer grow out from a need to combine the power of TensorFlow with the right building modules for deep neural networks. According to our years of research and practical experiences of tackling real-world machine learning problems, we come up with three design goals for TensorLayer:
 
-不过，与其它基于TensorFlow开发的傻瓜式API不同，TensorLayer需要使用者有基本的神经网络知识。了解TensorFlow的基础，可以让你非常熟练地使用它。
+- **Simplicity**: we make TensorLayer easy to work with by providing mass tutorials that can be deployed and run through in minutes. A TensorFlow user may find it easier to bootstrap with the simple, high-level APIs provided by TensorLayer, and then deep dive into their implementation details if need. 
+- **Flexibility**: developing an effective DL algorithm for a specific domain typically requires careful tunings from many aspects. Without the loss of simplicity, TensorLayer allows users to customize their modules by manipulating the native APIs of TensorFlow (e.g., training parameters, iteration control and tensor components).
+- **Performance**: TensorLayer aims to provide zero-cost abstraction for TensorFlow. With its first-class support for TensorFlow, it can easily run on either heterogeneous platforms or multiple computation nodes without compromise in performance.
+
+关于 TensorLayer 一个最常见的问题就是为什么我们需要开发一个新的库，而不使用先有的库如 [Keras](https://github.com/fchollet/keras) 和 [Tflearn](https://github.com/tflearn/tflearn)。
+TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度学习用户会发现使用 Keras 和 Tflearn 能够非常快的上手（当然 TensorLayer 也提供与它们类似的简单 APIs），这些库提供高层抽象的API，对开发者隐藏了深度学习引擎的细节。这会让用户很难从底层中修改和优化，而这往往在特定领域时需要考虑的。尽管如此，灵活性不会导致效率的降低，TensorLayer 可以分布式和多样化部署以最优化运行速度。
+
+翻译者注：简单来讲 TensorLayer 是一个适用于不同水平用户使用的库。对于初学者，TensorLayer 提供大量简单的API和大量的教程；对于中级用户，TensorLayer 的灵活性和透明性优势能过大大体现出来（V1.2版本是很好的例子）；对于高级用户，高运行速度和跨平台优势会体现出来。这样的好处是作为用户，我们不需要因为在不同的学习阶段，而去学不同的库了。
 
 🌞🌞🌞 我们建议你在[Github](http://github.com/zsdonghao/tensorlayer) 上star和watch[官方项目](http://github.com/zsdonghao/tensorlayer)，这样当官方有更新时，你会立即知道。本文档为[官方RTD文档](https://github.com/zsdonghao/tensorlayer)的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读[官方RTD文档](https://github.com/zsdonghao/tensorlayer)
 
 ❤️❤️❤️ TensorLayer首批开发者包括中国人，我们承诺将一直支持中国社区
 
--
-
-
-TensorLayer 在兼顾 TensorFlow 的灵活性的同时，又能为使用者提供合适的操作粒度来建立和训练神经网络。TensorLayer的开发遵循以下几个原则：
-
-- 透明性：用户可以直接使用 TensorFlow 的方法来操作所有有的训练，迭代，初始化过程，我们鼓励用户尽可能多的在TensorLayer中使用TensorFlow的方法，利用TensorFlow所提供的便利。
-- Tensor：张量是一个可用来表示在一些向量、标量和其他张量之间的线性关系的多线性函数。TensorFlow 使用这种数据结构来表示神经网络所需要的数据。
-- 教程：TensorLayer提供了大量的连贯教程，让用户可以循序渐进的学习使用TensorLayer和深度学习了解，教程的内容覆盖了 Dropout, DropConnect, Denoising Autoencoder, LSTM, CNN 等等。
-- TPU：Tensor Process Unit 是为了针对 TensorFlow 深度学习打造的定制化ASIC芯片。
-- 分布式：TensorFlow 默认支持分布式系统。
-- 兼容性：单层网络的建立被抽象成正则化，成本和每一层的输出，方便与其他基于TensorFlow的库协作。
-- 简洁：易于使用，扩展与修改，以便在研究和工程中使用。
-- 高速：在GPU的支持下运行速度与纯TensorFlow脚本速度一致。简洁但不牺牲性能。
-
-让我们在 [overview](#overview) 中看看TensorLayer强大的功能吧!!!
 
 # 安装
 
-TensorLayer has install prerequisites including TensorFlow, numpy and matplotlib. For GPU support, CUDA and cuDNN are required. Please check [here](http://tensorlayer.readthedocs.io/en/latest/user/installation.html) for detailed instructions.
+TensorLayer 运行需要 TensorFlow, numpy 和 matplotlib。 对于 GPU 加速，需要安装 CUDA 和 cuDNN。请在 [这里](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html) 查看更多安装细节。
 
-If you already had the pre-requisites ready, the simplest way to install TensorLayer in your python program is: 
+如果您已经安装过 TensorFlow，最简单的安装命令如下：
 
 ```python
 pip install tensorlayer
-or
+或
 pip install git+https://github.com/zsdonghao/tensorlayer.git
 ```
 
