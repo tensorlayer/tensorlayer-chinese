@@ -4,6 +4,7 @@
 例子 Examples
 ============
 
+更多例子请访问 `英文文档 <http://tensorlayer.readthedocs.io/en/latest/user/example.html>`_ .
 
 基础经典
 ============
