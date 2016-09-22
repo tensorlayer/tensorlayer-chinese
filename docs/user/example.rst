@@ -17,7 +17,8 @@
  - Stacked Denoising Autoencoder and Fine-Tuning (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist.py`` on `GitHub`_.
  - Convolutional Network (MNIST). A Convolutional neural network implementation for classifying MNIST dataset, see ``tutorial_mnist.py`` on `GitHub`_.
  - Convolutional Network (CIFAR-10). A Convolutional neural network implementation for classifying CIFAR-10 dataset, see ``tutorial_cifar10.py`` on `GitHub`_.
-
+ - VGG 16 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg16.py`` on `GitHub`_.
+ - VGG 19 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg19.py`` on `GitHub`_.
 
 自然语言处理
 ==============================
@@ -33,26 +34,27 @@
 
  - Deep Reinforcement Learning - Pong Game. Teach a machine to play Pong games, see ``tutorial_atari_pong.py`` on `GitHub`_.
 
-应用
-=============
-
-There are some good applications implemented by TensorLayer.
-You may able to find some useful examples for your project.
-If you want to share your application, please contact hao.dong11@imperial.ac.uk.
-
-1D CNN + LSTM for Biosignal
----------------------------------
-
-作者 : `Akara Supratak <https://akaraspt.github.io>`_
-
-简介
-^^^^^^^^^^^^
-
-实现
-^^^^^^^^^^^^^^
-
-引用
-^^^^^^^^
+..
+ 应用
+ =============
+ 
+ There are some good applications implemented by TensorLayer.
+ You may able to find some useful examples for your project.
+ If you want to share your application, please contact hao.dong11@imperial.ac.uk.
+ 
+ 1D CNN + LSTM for Biosignal
+ ---------------------------------
+ 
+ 作者 : `Akara Supratak <https://akaraspt.github.io>`_
+ 
+ 简介
+ ^^^^^^^^^^^^
+ 
+ 实现
+ ^^^^^^^^^^^^^^
+ 
+ 引用
+ ^^^^^^^^
 
 
 
