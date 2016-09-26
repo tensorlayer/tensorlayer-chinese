@@ -54,7 +54,6 @@ pip install git+https://github.com/zsdonghao/tensorlayer.git
 ```python
 import tensorflow as tf
 import tensorlayer as tl
-import time
 
 sess = tf.InteractiveSession()
 
