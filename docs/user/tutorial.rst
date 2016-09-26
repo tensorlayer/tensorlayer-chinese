@@ -40,7 +40,6 @@ TensorLayer很简单
 
   import tensorflow as tf
   import tensorlayer as tl
-  import time
 
   sess = tf.InteractiveSession()
   
