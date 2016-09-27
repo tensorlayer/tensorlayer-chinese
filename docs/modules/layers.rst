@@ -249,6 +249,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DropconnectDenseLayer
    Conv2dLayer
    Conv3dLayer
+   DeConv3dLayer
    PoolLayer
    RNNLayer
    FlattenLayer
@@ -345,7 +346,7 @@ Dropconnect层
 ^^^^^^^^^^
 
 .. autoclass:: Conv3dLayer
-
+.. autoclass:: DeConv3dLayer
 
 池化层
 --------------------
