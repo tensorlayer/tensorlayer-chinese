@@ -393,7 +393,7 @@ Reshape层
 .. autoclass:: ReshapeLayer
 
 合并 TF-Slim
-^^^^^^^^^^^^^^^
+---------------
 
 没错！TF-Slim 可以和 TensorLayer 无缝对接！所有 Google 预训练好的模型都可以直接使用！
 模型请见 `Slim-model <https://github.com/tensorflow/models/tree/master/slim#Install>`_ 。
