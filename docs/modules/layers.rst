@@ -255,6 +255,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    FlattenLayer
    ConcatLayer
    ReshapeLayer
+   SlimNetsLayer
    MultiplexerLayer
    EmbeddingAttentionSeq2seqWrapper
    flatten_reshape
@@ -342,10 +343,19 @@ Dropconnect层
 
 .. autoclass:: Conv2dLayer
 
+2D反卷积层
+^^^^^^^^^^
+
+.. autoclass:: DeConv2dLayer
+
 3D卷积层
 ^^^^^^^^^^
 
 .. autoclass:: Conv3dLayer
+
+3D反卷积层
+^^^^^^^^^^
+
 .. autoclass:: DeConv3dLayer
 
 池化层
@@ -381,6 +391,15 @@ Reshape层
 ^^^^^^^^^^^
 
 .. autoclass:: ReshapeLayer
+
+合并 TF-Slim
+^^^^^^^^^^^^^^^
+
+没错！TF-Slim 可以和 TensorLayer 无缝对接！所有 Google 预训练好的模型都可以直接使用！
+模型请见 `Slim-model <https://github.com/tensorflow/models/tree/master/slim#Install>`_ 。
+
+.. autoclass:: SlimNetsLayer
+
 
 流控制层
 -----------
