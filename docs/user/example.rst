@@ -20,6 +20,8 @@
  - Convolutional Network (CIFAR-10). A Convolutional neural network implementation for classifying CIFAR-10 dataset, see ``tutorial_cifar10.py`` on `GitHub`_.
  - VGG 16 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg16.py`` on `GitHub`_.
  - VGG 19 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg19.py`` on `GitHub`_.
+ - InceptionV3 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
+
 
 自然语言处理
 ==============================
@@ -34,6 +36,14 @@
 ==============================
 
  - Deep Reinforcement Learning - Pong Game. Teach a machine to play Pong games, see ``tutorial_atari_pong.py`` on `GitHub`_.
+
+特殊例子
+=================
+
+ - Merge TF-Slim into TensorLayer. ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
+ - MultiplexerLayer. ``tutorial_mnist_multiplexer.py`` on `GitHub`_.
+
+
 
 ..
  应用
