@@ -154,7 +154,7 @@ API - 神经网络层
           with tf.variable_scope(name) as vs:
               W = tf.get_variable(name='W', shape=(n_in, n_units), initializer=W_init, **W_init_args )
               b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
-          self.outputs = act(tf.matmul(self.inputs, W) + b)
+              self.outputs = act(tf.matmul(self.inputs, W) + b)
 
           # 提示 : list(), dict() 是浅复制。
           self.all_layers = list(layer.all_layers)
@@ -248,6 +248,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DropoutLayer
    DropconnectDenseLayer
    Conv2dLayer
+   DeConv2dLayer
    Conv3dLayer
    DeConv3dLayer
    PoolLayer
