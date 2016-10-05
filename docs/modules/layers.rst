@@ -121,11 +121,11 @@ API - 神经网络层
       n_units : 一个整数
           The number of units of the layer.
       act : 激活函数 （activation function）
-          The function that is applied to the layer activations.
+          TensorFlow 激活函数。
       W_init : Weights初始化器（weights initializer）
-          The initializer for initializing the weight matrix.
+          Weight matrix的初始化器。
       b_init : Biases初始化器（biases initializer）
-          The initializer for initializing the bias vector.
+          Bias vector 的初始化器，若为None，则无 bias。
       W_init_args : 一个字典（dictionary）
           Weights 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
       b_init_args : 一个字典（dictionary）
@@ -144,7 +144,6 @@ API - 神经网络层
           b_init_args = {},
           name ='dense_layer',
       ):
-          Layer.__init__(self, name=name)
           self.inputs = layer.outputs
           if self.inputs.get_shape().ndims != 2:
               raise Exception("The input dimension must be rank 2")
@@ -153,15 +152,21 @@ API - 神经网络层
           print("  tensorlayer:Instantiate DenseLayer %s: %d, %s" % (self.name, self.n_units, act))
           with tf.variable_scope(name) as vs:
               W = tf.get_variable(name='W', shape=(n_in, n_units), initializer=W_init, **W_init_args )
-              b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
-              self.outputs = act(tf.matmul(self.inputs, W) + b)
+              if b_init:
+                  b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
+                  self.outputs = act(tf.matmul(self.inputs, W) + b)#, name=name)
+              else:
+                  self.outputs = act(tf.matmul(self.inputs, W))
 
-          # 提示 : list(), dict() 是浅复制。
+          # Hint : list(), dict() is pass by value (shallow).
           self.all_layers = list(layer.all_layers)
           self.all_params = list(layer.all_params)
           self.all_drop = dict(layer.all_drop)
           self.all_layers.extend( [self.outputs] )
-          self.all_params.extend( [W, b] )
+          if b_init:
+             self.all_params.extend( [W, b] )
+          else:
+             self.all_params.extend( [W] )
 
 
 一个简单的层
@@ -253,6 +258,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DeConv3dLayer
    PoolLayer
    RNNLayer
+   DynamicRNNLayer
    FlattenLayer
    ConcatLayer
    ReshapeLayer
@@ -362,18 +368,22 @@ Dropconnect层
 池化层
 --------------------
 
-各种纬度的Max或Mean池化层
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+该池化层可以实现各种纬度（1D，2D，3D）以及各种池化方法（Mean，Max）。
 
 .. autoclass:: PoolLayer
 
 递归层
 ----------------
 
-可实现任意cell的递归层(LSTM, GRU等)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+所有递归层可实现任意 RNN 内核，只需输入不同的 cell 函数。
 
+定长递归层
+^^^^^^^^^^^^
 .. autoclass:: RNNLayer
+
+动态递归层
+^^^^^^^^^^^^
+.. autoclass:: DynamicRNNLayer
 
 形状修改层
 ----------------
