@@ -23,8 +23,8 @@ TensorLayer grow out from a need to combine the power of TensorFlow with the rig
 - **Flexibility**: developing an effective DL algorithm for a specific domain typically requires careful tunings from many aspects. Without the loss of simplicity, TensorLayer allows users to customize their modules by manipulating the native APIs of TensorFlow (e.g., training parameters, iteration control and tensor components).
 - **Performance**: TensorLayer aims to provide zero-cost abstraction for TensorFlow. With its first-class support for TensorFlow, it can easily run on either heterogeneous platforms or multiple computation nodes without compromise in performance.
 
-关于 TensorLayer 一个最常见的问题就是为什么我们需要开发一个新的库，而不使用现有的库如 [Keras](https://github.com/fchollet/keras) 和 [Tflearn](https://github.com/tflearn/tflearn)。
-TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度学习用户会发现使用 Keras 和 Tflearn 能够非常快的上手（当然 TensorLayer 也提供与它们类似的简单 APIs），这些库提供高层抽象的API，对开发者隐藏了深度学习引擎的细节。这会让用户很难从底层中修改和优化，而这往往在特定领域时需要考虑的。尽管如此，灵活性不会导致效率的降低，TensorLayer 可以分布式和多样化部署以最优化运行速度。
+关于 TensorLayer 一个最常见的问题就是为什么我们需要开发这个库，与其他库如 [Keras](https://github.com/fchollet/keras) 和 [Tflearn](https://github.com/tflearn/tflearn)有什么区别。
+TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度学习用户会发现使用 Keras 和 Tflearn 能够非常快的上手（当然 TensorLayer 也提供与它们类似的简单 APIs），这些库提供高层抽象的API，对开发者隐藏了深度学习引擎的细节。这会让用户很难从底层中修改和优化，而这往往在特定领域时需要考虑的。尽管如此，灵活性不会导致效率的降低，TensorLayer 可以分布式和多样化部署以最优化运行速度。此外，TensorLayer 还能和很多库无缝使用，如 [TF-Slim](https://github.com/tensorflow/models/tree/master/slim) 等等。
 
 # 译者注
 
@@ -120,11 +120,18 @@ sess.close()
 
 # 贡献指南
 
+<!--
 TensorLayer 起初是帝国理工大学的内部项目，用来帮助研究人员验证新的算法。现在它鼓励全世界的人工智能爱好者们参与开发，以促进学术和应用交流。您可以和我们联系讨论您的想法，或者在官方 Github 上发起 Fork 与 Pull 请求。
+ -->
+TensorLayer is a major ongoing research project in Data Science Institute, Imperial College London.
+The goal of the project is to develop a compositional language while complex learning systems
+can be build through composition of neural network modules.
+The whole development is now participated by numerous contributors [here](https://github.com/zsdonghao/tensorlayer/releases).
 
-- 🇬🇧 If you are in London, we can discuss in person
-- 🇨🇳 我们有官方的 [中文文档](http://tensorlayercn.readthedocs.io/zh/latest/). 与此同时, 我们建立了多种交流渠道，如[QQ 群](https://github.com/zsdonghao/tensorlayer/blob/master/img/img_qq.png) ，加入微信群需要您可把个人介绍和微信号发送到 haodong_cs@163.com 申请
-- 🇹🇭 เราขอเรียนเชิญนักพัฒนาคนไทยทุกคนที่สนใจจะเข้าร่วมทีมพัฒนา TensorLayer ติดต่อสอบถามรายละเอียดเพิ่มเติมได้ที่ haodong_cs@163.com
+
+- 🇬🇧 If you are in London, we can discuss in person. Drop us an email to organize a meetup: tensorlayer@gmail.com.
+- 🇨🇳 我们有官方的 [中文文档](http://tensorlayercn.readthedocs.io/zh/latest)。另外, 我们建立了多种交流渠道，如[QQ 群](img/img_qq.png)和微信群*（申请入群时请star该项目，并告知github用户名）*. 需加入微信群，请将个人介绍和微信号发送到 tensorlayer@gmail.com.
+- 🇹🇭 เราขอเรียนเชิญนักพัฒนาคนไทยทุกคนที่สนใจจะเข้าร่วมทีมพัฒนา TensorLayer ติดต่อสอบถามรายละเอียดเพิ่มเติมได้ที่ tensorlayer@gmail.com.
 
 # 版权
 
