@@ -55,7 +55,7 @@ API目录
   modules/rein
   modules/files
   modules/visualize
-  modules/preprocess
+  modules/prepro
   modules/ops
   modules/activation
 
