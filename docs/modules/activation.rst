@@ -28,7 +28,7 @@ TensorFlow官方的函数，比如
 
    identity
    ramp
-
+   leaky_relu
 
 
 
@@ -38,3 +38,4 @@ TensorFlow官方的函数，比如
 
 .. autofunction:: identity
 .. autofunction:: ramp
+.. autofunction:: leaky_relu
