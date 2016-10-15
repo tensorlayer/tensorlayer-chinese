@@ -40,12 +40,11 @@ TensorLayer 和这些库最大的区别在于灵活性和运行速度。深度�
 
 TensorLayer 运行需要 TensorFlow, numpy 和 matplotlib。 对于 GPU 加速，需要安装 CUDA 和 cuDNN。请在 [这里](http://tensorlayercn.readthedocs.io/zh/latest/user/installation.html) 查看更多安装细节。
 
-如果您已经安装过 TensorFlow，最简单的安装命令如下：
+如果您已经安装过 TensorFlow，最简单的安装命令如下 (以英文[Github](http://github.com/zsdonghao/tensorlayer)为准)：
 
-```python
-pip install tensorlayer
-或
-pip install git+https://github.com/zsdonghao/tensorlayer.git
+```bash
+[for stable version] pip install tensorlayer==1.2.2b    
+[for master version] pip install git+https://github.com/zsdonghao/tensorlayer.git
 ```
 
 # 您第一个程序
