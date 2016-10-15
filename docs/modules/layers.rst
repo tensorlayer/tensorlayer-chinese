@@ -2,7 +2,7 @@ API - 神经网络层
 =========================
 
 为了尽可能地保持TensorLayer的简洁性，我们最小化Layer的数量，因此我们鼓励用户直接使用 TensorFlow官方的函数。
-例如，我们不提供local response normalization layer，用户可以在 ``Layer.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+例如，我们不提供local response normalization layer，用户可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
 更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
 
@@ -257,6 +257,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    Conv3dLayer
    DeConv3dLayer
    PoolLayer
+   BatchNormLayer
    RNNLayer
    DynamicRNNLayer
    FlattenLayer
@@ -371,6 +372,13 @@ Dropconnect层
 该池化层可以实现各种纬度（1D，2D，3D）以及各种池化方法（Mean，Max）。
 
 .. autoclass:: PoolLayer
+
+规范化层
+----------
+
+我们不提供local response normalization layer，因为它不包含任何参数，也没有复杂的设置。用户可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+
+.. autoclass:: BatchNormLayer
 
 递归层
 ----------------
