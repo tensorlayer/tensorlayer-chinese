@@ -19,9 +19,9 @@ from . import layers
 from . import ops
 from . import utils
 from . import visualize
-from . import prepro
+from . import prepro        # was preprocesse
 from . import nlp
 from . import rein
 
 
-__version__ = "1.1.dev1"
+__version__ = "1.2.3"

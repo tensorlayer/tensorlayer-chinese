@@ -31,6 +31,7 @@ def load_mnist_dataset(shape=(-1,784)):
     Examples
     --------
     >>> X_train, y_train, X_val, y_val, X_test, y_test = tl.files.load_mnist_dataset(shape=(-1,784))
+    >>> X_train, y_train, X_val, y_val, X_test, y_test = tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
     """
     # We first define a download function, supporting both Python 2 and 3.
     if sys.version_info[0] == 2:
@@ -101,6 +102,12 @@ def load_mnist_dataset(shape=(-1,784)):
 
     # We just return all the arrays in order, as expected in main().
     # (It doesn't matter how we do this as long as we can read them again.)
+    X_train = np.asarray(X_train, dtype=np.float32)
+    y_train = np.asarray(y_train, dtype=np.int32)
+    X_val = np.asarray(X_val, dtype=np.float32)
+    y_val = np.asarray(y_val, dtype=np.int32)
+    X_test = np.asarray(X_test, dtype=np.float32)
+    y_test = np.asarray(y_test, dtype=np.int32)
     return X_train, y_train, X_val, y_val, X_test, y_test
 
 def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
@@ -147,7 +154,7 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
     ----------
     `CIFAR website <https://www.cs.toronto.edu/~kriz/cifar.html>`_
 
-    `Code download link <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>`_
+    `Data download link <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>`_
 
     `Code references <https://teratail.com/questions/28932>`_
     """
@@ -296,7 +303,11 @@ def load_ptb_dataset():
     after 14 epochs they start to reduce the learning rate by a factor of 1.15
     after each epoch. They clip the norm of the gradients (normalized by
     minibatch size) at 10.
-    
+
+    Returns
+    --------
+    train_data, valid_data, test_data, vocabulary size
+
     Examples
     --------
     >>> train_data, valid_data, test_data, vocab_size = tl.files.load_ptb_dataset()
@@ -491,7 +502,7 @@ def load_imbd_dataset(path="imdb.pkl", nb_words=None, skip_top=0,
 def load_nietzsche_dataset():
     """Load Nietzsche dataset.
     Returns a string.
-    
+
     Examples
     --------
     >>> see tutorial_generate_text.py
@@ -606,12 +617,12 @@ def load_wmt_en_fr_dataset(data_dir="wmt"):
 
 
 ## Load and save network
-def save_npz(save_dict={}, name='model.npz'):
+def save_npz(save_list=[], name='model.npz'):
     """Input parameters and the file name, save parameters into .npz file. Use tl.utils.load_npz() to restore.
 
     Parameters
     ----------
-    save_dict : a dictionary
+    save_list : a list
         Parameters want to be saved.
     name : a string or None
         The name of the .npz file.
@@ -627,7 +638,11 @@ def save_npz(save_dict={}, name='model.npz'):
     ... Loading param3, (800,)
     ... Loading param4, (800, 10)
     ... Loading param5, (10,)
-    >>> put parameters into a TLayer network, please see assign_params()
+    >>> put parameters into a TensorLayer network, please see assign_params()
+
+    Note
+    -----
+    If you got session issues, you can change the value.eval() to value.eval(session=sess)
 
     References
     ----------
@@ -640,10 +655,10 @@ def save_npz(save_dict={}, name='model.npz'):
     # np.savez(name, **rename_dict)
     # print('Model is saved to: %s' % name)
     ## save params into a list
-    save_list = []
-    for k, value in enumerate(save_dict):
-        save_list.append( value.eval() )
-    np.savez(name, params=save_list)
+    save_list_var = []
+    for k, value in enumerate(save_list):
+        save_list_var.append( value.eval() )
+    np.savez(name, params=save_list_var)
     print('Model is saved to: %s' % name)
 
 def load_npz(path='', name='model.npz'):
@@ -688,12 +703,12 @@ def load_npz(path='', name='model.npz'):
     # return d.items()[0][1]['params']
 
 def assign_params(sess, params, network):
-    """Assign the given parameters to the TLayer network.
+    """Assign the given parameters to the TensorLayer network.
 
     Parameters
     ----------
     sess : TensorFlow Session
-    params : list
+    params : a list
         A list of parameters in order.
     network : a :class:`Layer` class
         The network to be assigned
@@ -740,8 +755,12 @@ def load_npy_to_any(path='', name='any.npy'):
     ---------
     see save_any_to_npy()
     """
-    npz = np.load(path+name).item()
-    return npz
+    try:
+        npy = np.load(path+name).item()
+    except:
+        npy = np.load(path+name)
+    finally:
+        return npy
 
 
 # Visualizing npz files

@@ -48,6 +48,7 @@ def fit(sess, network, train_op, cost, X_train, y_train, x, y_, acc=None, batch_
     ...            acc=acc, batch_size=500, n_epoch=200, print_freq=5,
     ...            X_val=X_val, y_val=y_val, eval_train=False)
     """
+    assert X_train.shape[0] >= batch_size, "Number of training examples should be bigger than the batch size"
     print("Start training the network ...")
     start_time_begin = time.time()
     for epoch in range(n_epoch):
@@ -98,7 +99,7 @@ def fit(sess, network, train_op, cost, X_train, y_train, x, y_, acc=None, batch_
                     print("   val acc: %f" % (val_acc/ n_batch))
             else:
                 print("Epoch %d of %d took %fs, loss %f" % (epoch + 1, n_epoch, time.time() - start_time, loss_ep))
-    print("Total training time: %f" % (time.time() - start_time_begin))
+    print("Total training time: %fs" % (time.time() - start_time_begin))
 
 
 def test(sess, network, acc, X_test, y_test, x, y_, batch_size, cost=None):
@@ -235,6 +236,22 @@ def dict_to_one(dp_dict={}):
     >>> feed_dict.update(dp_dict)
     """
     return {x: 1 for x in dp_dict}
+
+def flatten_list(list_of_list=[[],[]]):
+    """
+    Input a list of list, return a list that all items are in a list
+
+    Parameters
+    ----------
+    list_of_list : a list of list
+
+    Examples
+    --------
+    >>> tl.utils.flatten_list([[1, 2, 3],[4, 5],[6]])
+    ... [1, 2, 3, 4, 5, 6]
+    """
+    return sum(list_of_list, [])
+
 
 def class_balancing_oversample(X_train=None, y_train=None, printable=True):
     """Input the features and labels, return the features and labels after oversampling.
