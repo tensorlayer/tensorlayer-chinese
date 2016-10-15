@@ -5,7 +5,6 @@
 import tensorflow as tf
 import tensorlayer as tl
 from tensorlayer.layers import set_keep
-from tensorflow.models.rnn.ptb import reader
 import numpy as np
 import time
 
@@ -102,7 +101,6 @@ PTB dataset from Tomas Mikolov's webpage:
 
 $ wget http://www.fit.vutbr.cz/~imikolov/rnnlm/simple-examples.tgz
 $ tar xvf simple-examples.tgz
-
 
 A) use the zero_state function on the cell object
 
@@ -237,7 +235,7 @@ def main(_):
                         n_units=vocab_size,
                         W_init=tf.random_uniform_initializer(-init_scale, init_scale),
                         b_init=tf.random_uniform_initializer(-init_scale, init_scale),
-                        act = tl.activation.identity, name='output_layer')
+                        act = tf.identity, name='output_layer')
         return network, lstm1, lstm2
 
     # Inference for Training

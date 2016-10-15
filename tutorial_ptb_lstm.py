@@ -5,7 +5,6 @@
 import tensorflow as tf
 import tensorlayer as tl
 from tensorlayer.layers import set_keep
-from tensorflow.models.rnn.ptb import reader
 import numpy as np
 import time
 
@@ -66,7 +65,6 @@ $ RNN for PTB : https://www.tensorflow.org/versions/master/tutorials/recurrent/i
 $ Seq2seq : https://www.tensorflow.org/versions/master/tutorials/seq2seq/index.html#sequence-to-sequence-models
 $ translation : tensorflow/models/rnn/translate
 
-tensorflow (0.9.0)
 """
 
 """Example / benchmark for building a PTB LSTM model.
@@ -237,7 +235,7 @@ def main(_):
                         n_units=vocab_size,
                         W_init=tf.random_uniform_initializer(-init_scale, init_scale),
                         b_init=tf.random_uniform_initializer(-init_scale, init_scale),
-                        act = tl.activation.identity, name='output_layer')
+                        act = tf.identity, name='output_layer')
         return network, lstm1, lstm2
 
     # Inference for Training

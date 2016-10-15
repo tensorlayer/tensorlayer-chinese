@@ -8,9 +8,12 @@ from tensorlayer.layers import set_keep
 import numpy as np
 import time
 
-"""Example of CNN
+"""Example of CNN, CIFAR-10
 
-tensorflow (0.9.0)
+main_test_cnn_naive       : No distorted image / Low accuracy
+main_test_cnn_advanced    : Uses distorted image / High accurcy but Slow
+tutorial_cifar10_tfrecord : Preparing distorted image with Queue and Thread
+                            / High accurcy and Fast
 """
 
 
@@ -46,7 +49,7 @@ def main_test_cnn_naive():
     network = tl.layers.InputLayer(x, name='input_layer')
     network = tl.layers.Conv2dLayer(network,
                         act = tf.nn.relu,
-                        shape = [5, 5, 3, 64],  # 64 features for each 8x8x3 patch
+                        shape = [5, 5, 3, 64],  # 64 features for each 5x5x3 patch
                         strides=[1, 1, 1, 1],
                         padding='SAME',
                         name ='cnn_layer1')     # output: (?, 32, 32, 64)
@@ -55,7 +58,7 @@ def main_test_cnn_naive():
                         strides=[1, 2, 2, 1],
                         padding='SAME',
                         pool = tf.nn.max_pool,
-                        name ='pool_layer1',)   # output: (?, 16, 16, 64)
+                        name ='pool_layer1')   # output: (?, 16, 16, 64)
     # local response normalization, you can also try batch normalization.
     # References: ImageNet Classification with Deep Convolutional Neural Networks
     #   it increases the accuracy but consume more time.
@@ -76,7 +79,7 @@ def main_test_cnn_naive():
                         strides=[1, 2, 2, 1],
                         padding='SAME',
                         pool = tf.nn.max_pool,
-                        name ='pool_layer2',)   # output: (?, 8, 8, 64)
+                        name ='pool_layer2')   # output: (?, 8, 8, 64)
 
     network = tl.layers.FlattenLayer(network, name='flatten_layer')
                                                             # output: (?, 4096)
@@ -85,7 +88,7 @@ def main_test_cnn_naive():
     network = tl.layers.DenseLayer(network, n_units=192,
                             act = tf.nn.relu, name='relu2') # output: (?, 192)
     network = tl.layers.DenseLayer(network, n_units=10,
-                            act = tl.activation.identity,
+                            act = tf.identity,
                             name='output_layer')            # output: (?, 10)
 
     y = network.outputs
@@ -188,8 +191,9 @@ def main_test_cnn_advanced():
     .. Randomly distort the image brightness.
     .. Randomly distort the image contrast.
 
-    To do
-    ------
+    Speed Up
+    ---------
+    see `tutorial_cifar10_tfrecord.py`
     Reading images from disk and distorting them can use a non-trivial amount
     of processing time. To prevent these operations from slowing down training,
     we run them inside 16 separate threads which continuously fill a TensorFlow queue.
@@ -220,9 +224,9 @@ def main_test_cnn_advanced():
     y_ = tf.placeholder(tf.int32, shape=[batch_size,])
 
     ## distorted images for training.
-    distorted_images_op = tl.preprocess.distorted_images(images=x, height=24, width=24)
+    distorted_images_op = tl.prepro.distorted_images(images=x, height=24, width=24)
     ## crop the central of images and whiten it for evaluation.
-    central_images_op = tl.preprocess.crop_central_whiten_images(images=x, height=24, width=24)
+    central_images_op = tl.prepro.crop_central_whiten_images(images=x, height=24, width=24)
 
     ## You can display the distorted images and evaluation images as follow:
     # sess.run(tf.initialize_all_variables())
@@ -287,7 +291,7 @@ def main_test_cnn_advanced():
                         W_init_args={},
                         b_init=tf.constant_initializer(value=0.1),
                         b_init_args={}, name='relu2')       # output: (batch_size, 192)
-    network = tl.layers.DenseLayer(network, n_units=10, act = tl.activation.identity,
+    network = tl.layers.DenseLayer(network, n_units=10, act = tf.identity,
                         W_init=tf.truncated_normal_initializer(stddev=1/192.0),
                         W_init_args={},
                         b_init = tf.constant_initializer(value=0.0),
