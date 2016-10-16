@@ -32,3 +32,8 @@ GPU 配置函数
 .. autofunction:: disable_print
 .. autofunction:: enable_print
 .. autoclass::  temporary_disable_print
+
+包信息
+--------------------
+
+.. autofunction:: get_site_packages_directory

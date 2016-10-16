@@ -12,6 +12,11 @@ API - 自然语言处理
    sample
    sample_top
 
+   SimpleVocabulary
+   Vocabulary
+   process_sentence
+   create_vocab
+
    simple_read_words
    read_words
    read_analogies_file
@@ -42,8 +47,17 @@ API - 自然语言处理
 .. autofunction:: sample_top
 
 
-词的向量表示 
+词的向量表示
 -------------------------------
+
+词汇类 (class)
+^^^^^^^^^^^^^^^^^
+
+.. autoclass:: SimpleVocabulary
+.. autoclass:: Vocabulary
+.. autofunction:: process_sentence
+.. autofunction:: create_vocab
+
 
 从文件中读取文本
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
