@@ -264,6 +264,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    ConcatLayer
    ReshapeLayer
    SlimNetsLayer
+   PReluLayer
    MultiplexerLayer
    EmbeddingAttentionSeq2seqWrapper
    flatten_reshape
@@ -419,6 +420,10 @@ Reshape层
 
 .. autoclass:: SlimNetsLayer
 
+带参数的激活函数
+------------------
+
+.. autoclass:: PReluLayer
 
 流控制层
 -----------
