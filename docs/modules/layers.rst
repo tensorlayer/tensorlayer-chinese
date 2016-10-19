@@ -259,6 +259,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    PoolLayer
    BatchNormLayer
    RNNLayer
+   BiRNNLayer
    DynamicRNNLayer
    FlattenLayer
    ConcatLayer
@@ -389,6 +390,7 @@ Dropconnect层
 定长递归层
 ^^^^^^^^^^^^
 .. autoclass:: RNNLayer
+.. autoclass:: BiRNNLayer
 
 动态递归层
 ^^^^^^^^^^^^
