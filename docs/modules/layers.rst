@@ -239,6 +239,8 @@ the sparsity can be implemented by using the L1 regularization of activation out
   	self.cost = mse + L1_a + L2_w
 
 
+层预览表
+---------
 
 .. automodule:: tensorlayer.layers
 
