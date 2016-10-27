@@ -79,7 +79,7 @@ API - 数据预处理
 .. autofunction:: zoom
 .. autofunction:: zoom_multi
 
-通道b位移
+通道位移
 ^^^^^^^^^^^^^^
 .. autofunction:: channel_shift
 .. autofunction:: channel_shift_multi
