@@ -259,7 +259,8 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 接着，我们要将所有去噪自编码器堆叠起来并对他们进行监督微调(Supervised Fine-tune)。
 最后，我们将展示如何去创建一个卷积神经网络(Convolutional Neural Network)。
 
-此外，如果您有兴趣，我们还提供了一个简化版的MNIST例子在 ``tutorial_mnist_simple.py`` 中，和一个对于CIFAR-10数据集的卷积神经网络(CNN)的例子在 ``tutorial_cifar10.py`` 中可供参考。
+此外，如果您有兴趣，我们还提供了一个简化版的MNIST例子在 ``tutorial_mnist_simple.py`` 中，和一个对于
+-10数据集的卷积神经网络(CNN)的例子在 ``tutorial_cifar10_tfrecord.py`` 中可供参考。
 
 多层神经网络 (Multi-Layer Perceptron)
 ------------------------------------------------
