@@ -43,11 +43,11 @@ API - 数据预处理
 .. autofunction:: threading_data
 
 
-图片
+图像
 -----------
 
-- All functions have argument ``is_random``.
-- All functions end with `multi` , usually be used for image segmentation i.e. the input and output image should be matched.
+- 所有函数都有一个 ``is_random`` 。
+- 所有结尾是 `multi` 的函数通常用于图像分隔，因为输入和输出的图像必需是匹配的。
 
 旋转
 ^^^^^^^^^
