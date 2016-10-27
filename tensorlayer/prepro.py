@@ -16,18 +16,57 @@ import threading
 import Queue
 
 from six.moves import range
+import scipy
 from scipy import linalg
 import scipy.ndimage as ndi
+
+from skimage import exposure
+
+# linalg https://docs.scipy.org/doc/scipy/reference/linalg.html
+# ndimage https://docs.scipy.org/doc/scipy/reference/ndimage.html
 
 ## Threading
 def threading_data(data=None, fn=None, **kwargs):
     """Return a batch of result by given data.
     Usually be used for data augmentation.
 
+    Parameters
+    -----------
+    data : numpy array or zip of numpy array, see Examples below.
+    fn : the function for data processing.
+    more args : the args for fn, see Examples below.
+
     Examples
     --------
-    >>> X = [n_example, row, col, channel]
-    >>> results = threading_data(X, zoom, zoom_range=[0.5, 1], is_random=False)
+    - Single array
+    >>> X --> [batch_size, row, col, 1] greyscale
+    >>> results = threading_data(X, zoom, zoom_range=[0.5, 1], is_random=True)
+    ... results --> [batch_size, row, col, channel]
+    >>> tl.visualize.images2d(images=np.asarray(results), second=0.01, saveable=True, name='after', dtype=None)
+    >>> tl.visualize.images2d(images=np.asarray(X), second=0.01, saveable=True, name='before', dtype=None)
+
+    - List of array (e.g. functions with ``multi``)
+    >>> X, Y --> [batch_size, row, col, 1]  greyscale
+    >>> data = threading_data([_ for _ in zip(X, Y)], zoom_multi, zoom_range=[0.5, 1], is_random=True)
+    ... data --> [batch_size, 2, row, col, 1]
+    >>> X_, Y_ = data.transpose((1,0,2,3,4))
+    ... X_, Y_ --> [batch_size, row, col, 1]
+    >>> tl.visualize.images2d(images=np.asarray(X_), second=0.01, saveable=True, name='after', dtype=None)
+    >>> tl.visualize.images2d(images=np.asarray(Y_), second=0.01, saveable=True, name='before', dtype=None)
+
+    - Customized function for image segmentation
+    >>> def distort_img(data):
+    ...     x, y = data
+    ...     x, y = flip_axis_multi([x, y], axis=0, is_random=True)
+    ...     x, y = flip_axis_multi([x, y], axis=1, is_random=True)
+    ...     x, y = rotation_multi([x, y], rg=180, is_random=True)
+    ...     x, y = shear_multi([x, y], 0.2, is_random=True)
+    ...     x, y = zoom_multi([x, y], zoom_range=[0.8, 1.2], is_random=True)
+    ...     return x, y
+    >>> X, Y --> [batch_size, row, col, channel]
+    >>> data = threading_data([_ for _ in zip(X, Y)], distort_img)
+    >>> X_, Y_ = data.transpose((1,0,2,3,4))
+
 
     References
     ----------
@@ -43,7 +82,7 @@ def threading_data(data=None, fn=None, **kwargs):
         q.put(result)
     ## start threading
     q = Queue.Queue()
-    for i in range(data.shape[0]):
+    for i in range(len(data)):
         d = threading.Thread(
                         name='threading_and_return',
                         target=function,
@@ -52,43 +91,10 @@ def threading_data(data=None, fn=None, **kwargs):
         d.start()
     ## get results
     results = []
-    for i in range(data.shape[0]):
+    for i in range(len(data)):
         result = q.get()
         results.append(result)
-        # print(np.max(result))
     return np.asarray(results)
-
-# def threading_data_multi(data=None, data2=None, fn=None, **kwargs):
-#     """Return a batch of result by given data.
-#     Usually be used for data augmentation for image segmentation.
-#
-#     References
-#     ----------
-#     - `python Queue <https://pymotw.com/2/Queue/index.html#module-Queue>`_
-#     """
-#     ## plot function info
-#     # for name, value in kwargs.items():
-#     #     print('{0} = {1}'.format(name, value))
-#     # exit()
-#     ## define function for threading
-#     def function(q, data, kwargs):
-#         result = fn(data, **kwargs)
-#         q.put(result)
-#     ## start threading
-#     q = Queue.Queue()
-#     for i in range(data.shape[0]):
-#         d = threading.Thread(
-#                         name='test',
-#                         target=function,
-#                         args=(q, [data, data2], kwargs)
-#                         )
-#         d.start()
-#     ## get results
-#     results = []
-#     for i in range(data.shape[0]):
-#         result = q.get()
-#         results.append(result)
-#     return np.asarray(results)
 
 
 ## Image
@@ -107,11 +113,17 @@ def rotation(x, rg=20, is_random=False, row_index=0, col_index=1, channel_index=
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+
+    Examples
+    ---------
+    >>> x --> [row, col, 1] greyscale
+    >>> x = rotation(x, rg=40, is_random=False)
+    >>> tl.visualize.frame(x[:,:,0], second=0.01, saveable=True, name='temp',cmap='gray')
     """
     if is_random:
         theta = np.pi / 180 * np.random.uniform(-rg, rg)
@@ -136,6 +148,13 @@ def rotation_multi(x, rg=20, is_random=False, row_index=0, col_index=1, channel_
     x : list of numpy array
         List of images with dimension of [n_images, row, col, channel] (default).
     others : see ``rotation``.
+
+    Examples
+    --------
+    >>> x, y --> [row, col, 1]  greyscale
+    >>> x, y = rotation_multi([x, y], rg=90, is_random=False)
+    >>> tl.visualize.frame(x[:,:,0], second=0.01, saveable=True, name='x',cmap='gray')
+    >>> tl.visualize.frame(y[:,:,0], second=0.01, saveable=True, name='y',cmap='gray')
     """
     if is_random:
         theta = np.pi / 180 * np.random.uniform(-rg, rg)
@@ -296,7 +315,7 @@ def shift(x, wrg=0.1, hrg=0.1, is_random=False, row_index=0, col_index=1, channe
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
@@ -353,13 +372,14 @@ def shear(x, intensity=0.1, is_random=False, row_index=0, col_index=1, channel_i
     x : numpy array
         An image with dimension of [row, col, channel] (default).
     intensity : float
-        Percentage of shear, usually -0.5 ~ 0.5.
+        Percentage of shear, usually -0.5 ~ 0.5 (is_random==True), 0 ~ 0.5 (is_random==False),
+        you can have a quick try by shear(X, 1).
     is_random : boolean, default False
         If True, randomly shear.
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
@@ -378,7 +398,7 @@ def shear(x, intensity=0.1, is_random=False, row_index=0, col_index=1, channel_i
     x = apply_transform(x, transform_matrix, channel_index, fill_mode, cval)
     return x
 
-def shear_multi(x, intensity, is_random=False, row_index=0, col_index=1, channel_index=2,
+def shear_multi(x, intensity=0.1, is_random=False, row_index=0, col_index=1, channel_index=2,
                  fill_mode='nearest', cval=0.):
     """Shear images with the same arguments, randomly or non-randomly.
     Usually be used for image segmentation which x=[X, Y], X and Y should be matched.
@@ -422,7 +442,7 @@ def zoom(x, zoom_range=(0.9, 1.1), is_random=False, row_index=0, col_index=1, ch
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
@@ -485,6 +505,202 @@ def zoom_multi(x, zoom_range=(0.9, 1.1), is_random=False,
     for data in x:
         results.append( apply_transform(data, transform_matrix, channel_index, fill_mode, cval))
     return np.asarray(results)
+
+# image = tf.image.random_brightness(image, max_delta=32. / 255.)
+# image = tf.image.random_saturation(image, lower=0.5, upper=1.5)
+# image = tf.image.random_hue(image, max_delta=0.032)
+# image = tf.image.random_contrast(image, lower=0.5, upper=1.5)
+
+
+
+# brightness
+def brightness(x, gamma=1, gain=1, is_random=False):
+    """Change the brightness of a single image, randomly or non-randomly.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    gamma : float, small than 1 means brighter.
+        Non negative real number. Default value is 1.
+        If is_random is True, gamma in a range of (1-gamma, 1+gamma).
+    gain : float
+        The constant multiplier. Default value is 1.
+    is_random : boolean, default False
+        If True, randomly change brightness.
+
+    References
+    -----------
+    - `skimage.exposure.adjust_gamma <http://scikit-image.org/docs/dev/api/skimage.exposure.html>`_
+    - `chinese blog <http://www.cnblogs.com/denny402/p/5124402.html>`_
+    """
+    if is_random:
+        gamma = np.random.uniform(1-gamma, 1+gamma)
+    x = exposure.adjust_gamma(x, gamma, gain)
+    return x
+
+def brightness_multi(x, gamma=1, gain=1, is_random=False):
+    """Change the brightness of multiply images, randomly or non-randomly.
+    Usually be used for image segmentation which x=[X, Y], X and Y should be matched.
+
+    Parameters
+    -----------
+    x : list of numpy array
+        List of images with dimension of [n_images, row, col, channel] (default).
+    others : see ``brightness``.
+    """
+    if is_random:
+        gamma = np.random.uniform(1-gamma, 1+gamma)
+
+    results = []
+    for data in x:
+        results.append( exposure.adjust_gamma(data, gamma, gain) )
+    return np.asarray(results)
+
+
+# contrast
+def constant(x, cutoff=0.5, gain=10, inv=False, is_random=False):
+    # TODO
+    x = exposure.adjust_sigmoid(x, cutoff=cutoff, gain=gain, inv=inv)
+    return x
+
+def constant_multi():
+    #TODO
+    pass
+
+# resize
+def imresize(x, size=[100, 100], interp='bilinear', mode=None):
+    """Resize an image by given output size and method.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    size : int, float or tuple (h, w)
+        - int, Percentage of current size.
+        - float, Fraction of current size.
+        - tuple, Size of the output image.
+    interp : str, optional
+    Interpolation to use for re-sizing (‘nearest’, ‘lanczos’, ‘bilinear’, ‘bicubic’ or ‘cubic’).
+    mode : str, optional
+    The PIL image mode (‘P’, ‘L’, etc.) to convert arr before resizing.
+
+    Returns
+    --------
+    imresize : ndarray
+    The resized array of image.
+
+    References
+    ------------
+    - `scipy.misc.imresize <https://docs.scipy.org/doc/scipy/reference/generated/scipy.misc.imresize.html>`_
+    """
+    if x.shape[-1] == 1:
+        # greyscale
+        x = scipy.misc.imresize(x[:,:,0], size, interp=interp, mode=mode)
+        return x[:, :, np.newaxis]
+    elif x.shape[-1] == 3:
+        # rgb, bgr ..
+        return scipy.misc.imresize(x, size, interp=interp, mode=mode)
+    else:
+        raise Exception("Unsupported channel %d" % x.shape[-1])
+
+# normailization
+def samplewise_norm(x, rescale=None, samplewise_center=False, samplewise_std_normalization=False,
+            channel_index=2, epsilon=1e-7):
+    """Normalize an image by rescale, samplewise centering and samplewise centering in order.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    rescale : rescaling factor.
+            If None or 0, no rescaling is applied, otherwise we multiply the data by the value provided (before applying any other transformation)
+    samplewise_center : set each sample mean to 0.
+    samplewise_std_normalization : divide each input by its std.
+    epsilon : small position value for dividing standard deviation.
+
+    Examples
+    --------
+    >>> x = samplewise_norm(x samplewise_center=True, samplewise_std_normalization=True)
+    >>> print(x.shape, np.mean(x), np.std(x))
+    ... (160, 176, 1), 0.0, 1.0
+
+    Notes
+    ------
+    When samplewise_center and samplewise_std_normalization are True.
+    - For greyscale image, every pixels are subtracted and divided by the mean and std of whole image.
+    - For RGB image, every pixels are subtracted and divided by the mean and std of this pixel i.e. the mean and std of a pixel is 0 and 1.
+    """
+    if rescale:
+        x *= rescale
+
+    if x.shape[channel_index] == 1:
+        # greyscale
+        if samplewise_center:
+            x = x - np.mean(x)
+        if samplewise_std_normalization:
+            x = x / np.std(x)
+        return x
+    elif x.shape[channel_index] == 3:
+        # rgb
+        if samplewise_center:
+            x = x - np.mean(x, axis=channel_index, keepdims=True)
+        if samplewise_std_normalization:
+            x = x / (np.std(x, axis=channel_index, keepdims=True) + epsilon)
+        return x
+    else:
+        raise Exception("Unsupported channels %d" % x.shape[channel_index])
+
+def featurewise_norm(x, mean=None, std=None, epsilon=1e-7):
+    """Normalize every pixels by the same given mean and std, which are usually
+    compute from all examples.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    mean : value for subtraction.
+    std : value for division.
+    epsilon : small position value for dividing standard deviation.
+    """
+    if mean:
+        x = x - mean
+    if std:
+        x = x / (std + epsilon)
+    return x
+
+# whitening
+def get_zca_whitening_principal_components_img(X):
+    """Return the ZCA whitening principal components matrix.
+
+    Parameters
+    -----------
+    x : numpy array
+        Batch of image with dimension of [n_example, row, col, channel] (default).
+    """
+    flatX = np.reshape(X, (X.shape[0], X.shape[1] * X.shape[2] * X.shape[3]))
+    print("zca : computing sigma ..")
+    sigma = np.dot(flatX.T, flatX) / flatX.shape[0]
+    print("zca : computing U, S and V ..")
+    U, S, V = linalg.svd(sigma)
+    print("zca : computing principal components ..")
+    principal_components = np.dot(np.dot(U, np.diag(1. / np.sqrt(S + 10e-7))), U.T)
+    return principal_components
+
+def zca_whitening(x, principal_components):
+    """Apply ZCA whitening on an image by given principal components matrix.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    principal_components : matrix from ``get_zca_whitening_principal_components_img``.
+    """
+    # flatx = np.reshape(x, (x.size))
+    flatx = np.reshape(x, (x.shape))
+    whitex = np.dot(flatx, principal_components)
+    x = np.reshape(whitex, (x.shape[0], x.shape[1], x.shape[2]))
+    return x
 
 # developing
 # def barrel_transform(x, intensity):
@@ -593,7 +809,7 @@ def apply_transform(x, transform_matrix, channel_index=2, fill_mode='nearest', c
     channel_index : int
         Index of channel, default 2.
     fill_mode : string
-        Default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
         - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
