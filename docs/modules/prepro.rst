@@ -111,7 +111,7 @@ Numpy 与 PIL
 Tensor Opt
 ------------
 
-These functions will be deprecated, see ``tutorial_cifar10_tfrecord.py`` for new information.
+这几个函数将被弃用， 关于如何使用 Tensor Operator 请参考 ``tutorial_cifar10_tfrecord.py`` 。
 
 .. autofunction:: distorted_images
 .. autofunction:: crop_central_whiten_images
