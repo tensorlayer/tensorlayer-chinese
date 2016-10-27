@@ -84,7 +84,7 @@ API - 数据预处理
 .. autofunction:: channel_shift
 .. autofunction:: channel_shift_multi
 
-手动变幻
+手动变换
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: transform_matrix_offset_center
 .. autofunction:: apply_transform
