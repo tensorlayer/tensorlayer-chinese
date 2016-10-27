@@ -25,6 +25,15 @@ API - 数据预处理
    shear_multi
    zoom
    zoom_multi
+   
+   brightness
+   brightness_multi
+
+   imresize
+
+   samplewise_norm
+   featurewise_norm
+
    channel_shift
    channel_shift_multi
    transform_matrix_offset_center
@@ -78,6 +87,20 @@ API - 数据预处理
 ^^^^^^^^^
 .. autofunction:: zoom
 .. autofunction:: zoom_multi
+
+亮度
+^^^^^^^^^^^^
+.. autofunction:: brightness
+.. autofunction:: brightness_multi
+
+调整大小
+^^^^^^^^^^^^
+.. autofunction:: imresize
+
+正规化
+^^^^^^^^^^^^^^^
+.. autofunction:: samplewise_norm
+.. autofunction:: featurewise_norm
 
 通道位移
 ^^^^^^^^^^^^^^
