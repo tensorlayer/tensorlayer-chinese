@@ -12,8 +12,8 @@ TensorLayer 需要一些预安装库，如 `TensorFlow`_ ， numpy 和 matplotli
 
 
 
-步骤 1 : numpy 和 matplotlib
-=================================
+步骤 1 : 安装依赖库 dependencies
+====================================
 
 TensorLayer 是运行在 python 版本的 TensorFlow 之上的，所以请先安装 python。
 
@@ -32,13 +32,15 @@ Python 的 ``pip`` 可以帮助您很快地安装库，此外 `虚拟环境(Virt
   sudo apt-get install python3-pip
   sudo pip3 install virtualenv
 
-建立虚拟环境，并安装 matplotlib 和 numpy 到虚拟环境如下:
+建立虚拟环境，并安装包到虚拟环境如下:
 
 .. code-block:: bash
 
   virtualenv env
   env/bin/pip install matplotlib
   env/bin/pip install numpy
+  env/bin/pip install scipy
+  env/bin/pip install scikit-image
 
 安装完后，若无报错，可以如下在命令窗口中显示列出安装好的包:
 
