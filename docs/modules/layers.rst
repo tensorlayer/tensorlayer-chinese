@@ -266,6 +266,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    FlattenLayer
    ConcatLayer
    ReshapeLayer
+   LambdaLayer
    ElementwiseLayer
    SlimNetsLayer
    PReluLayer
@@ -415,6 +416,10 @@ Concat层
 Reshape层
 ^^^^^^^^^^^
 .. autoclass:: ReshapeLayer
+
+LambdaLayer层
+^^^^^^^^^^^^^^^
+.. autoclass:: LambdaLayer
 
 逻辑层
 ----------
