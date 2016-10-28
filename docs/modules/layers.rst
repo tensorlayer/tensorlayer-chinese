@@ -418,7 +418,7 @@ Reshape层
 .. autoclass:: ReshapeLayer
 
 Lambda层
-^^^^^^^^^^^^^^^
+-----------
 .. autoclass:: LambdaLayer
 
 逻辑层
