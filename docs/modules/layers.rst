@@ -417,7 +417,7 @@ Reshape层
 .. autoclass:: ReshapeLayer
 
 逻辑层
-^^^^^^^^^^^
+----------
 .. autoclass:: ElementwiseLayer
 
 合并 TF-Slim
