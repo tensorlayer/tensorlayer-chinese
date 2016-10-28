@@ -29,13 +29,27 @@ TensorFlow官方的函数，比如
    identity
    ramp
    leaky_relu
-
+   pixel_wise_softmax
 
 
 
 激活函数 
 ---------------------
 
+Identity
+^^^^^^^^^^
 .. autofunction:: identity
+
+Ramp
+^^^^^
 .. autofunction:: ramp
+
+Leaky Relu
+^^^^^^^^^^^
 .. autofunction:: leaky_relu
+
+
+Pixel-wise Softmax
+^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: pixel_wise_softmax
