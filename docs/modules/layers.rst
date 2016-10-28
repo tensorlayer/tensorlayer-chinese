@@ -417,7 +417,7 @@ Reshape层
 ^^^^^^^^^^^
 .. autoclass:: ReshapeLayer
 
-LambdaLayer层
+Lambda层
 ^^^^^^^^^^^^^^^
 .. autoclass:: LambdaLayer
 
