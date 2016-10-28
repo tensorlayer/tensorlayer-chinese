@@ -100,6 +100,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    cross_entropy
    binary_cross_entropy
    mean_squared_error
+   dice_coe
    cross_entropy_seq
    li_regularizer
    lo_regularizer
@@ -113,6 +114,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
 .. autofunction:: cross_entropy
 .. autofunction:: binary_cross_entropy
 .. autofunction:: mean_squared_error
+.. autofunction:: dice_coe
 .. autofunction:: cross_entropy_seq
 
 
