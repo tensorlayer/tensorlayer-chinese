@@ -36,8 +36,11 @@ API - 数据预处理
 
    channel_shift
    channel_shift_multi
+   
    transform_matrix_offset_center
    apply_transform
+   projective_transform_by_points
+   
    array_to_img
 
    pad_sequences
@@ -112,6 +115,7 @@ API - 数据预处理
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: transform_matrix_offset_center
 .. autofunction:: apply_transform
+.. autofunction:: projective_transform_by_points
 
 
 Numpy 与 PIL
