@@ -12,7 +12,8 @@ API - 操作系统管理
    set_gpu_fraction
    disable_print
    enable_print
-   temporary_disable_print
+   suppress_stdout
+   get_site_packages_directory
 
 TensorFlow 操作函数
 ---------------------------
@@ -31,7 +32,7 @@ GPU 配置函数
 
 .. autofunction:: disable_print
 .. autofunction:: enable_print
-.. autoclass::  temporary_disable_print
+.. autofunction:: suppress_stdout
 
 包信息
 --------------------
