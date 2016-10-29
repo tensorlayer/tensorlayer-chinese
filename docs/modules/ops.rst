@@ -14,6 +14,7 @@ API - 操作系统管理
    enable_print
    suppress_stdout
    get_site_packages_directory
+   empty_trash
 
 TensorFlow 操作函数
 ---------------------------
@@ -38,3 +39,7 @@ GPU 配置函数
 --------------------
 
 .. autofunction:: get_site_packages_directory
+
+垃圾管理
+--------------------
+.. autofunction:: empty_trash
