@@ -402,9 +402,9 @@ Dropconnect层
 
 动态递归的高级 Ops 函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: advanced_indexing_op
-.. autoclass:: retrieve_seq_length_op
-.. autoclass:: retrieve_seq_length_op2
+.. autofunction:: advanced_indexing_op
+.. autofunction:: retrieve_seq_length_op
+.. autofunction:: retrieve_seq_length_op2
 
 动态递归层
 ^^^^^^^^^^^^
