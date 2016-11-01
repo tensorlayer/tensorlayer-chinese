@@ -262,6 +262,9 @@ the sparsity can be implemented by using the L1 regularization of activation out
    BatchNormLayer
    RNNLayer
    BiRNNLayer
+   advanced_indexing_op
+   retrieve_seq_length_op
+   retrieve_seq_length_op2 
    DynamicRNNLayer
    FlattenLayer
    ConcatLayer
@@ -395,6 +398,13 @@ Dropconnect层
 ^^^^^^^^^^^^
 .. autoclass:: RNNLayer
 .. autoclass:: BiRNNLayer
+
+
+动态递归的高级 Ops 函数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: advanced_indexing_op
+.. autoclass:: retrieve_seq_length_op
+.. autoclass:: retrieve_seq_length_op2
 
 动态递归层
 ^^^^^^^^^^^^
