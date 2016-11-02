@@ -402,6 +402,9 @@ Dropconnect层
 
 动态递归的高级 Ops 函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+这些函数通常在使用 Dynamic RNN layer 时使用，他们用以计算不同情况下的 sequence length，以及已知 sequence length 时对
+输出进行索引。
+
 .. autofunction:: advanced_indexing_op
 .. autofunction:: retrieve_seq_length_op
 .. autofunction:: retrieve_seq_length_op2
