@@ -30,6 +30,7 @@ API - 神经网络层
 
 ``all_params`` = [W1, b1, W2, b2, W_out, b_out]
 
+若需要取出特定的参数，您可以通过 ``network.all_params[2:3]`` 或 ``get_variables_with_name()`` 函数。
 然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，则：
 
 ``all_layers`` = [drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]
@@ -281,6 +282,15 @@ the sparsity can be implemented by using the L1 regularization of activation out
    print_all_variables
    initialize_rnn_state
 
+名称与参数复用
+---------------------------------
+
+这些函数用以帮助您在不同的 graph 中复用相同的参数，以及如何通过一个名字来获取相应的参数列表。
+更多关于 TensorFlow parameters sharing 请点击 `这里 <https://www.tensorflow.org/versions/master/how_tos/variable_scope/index.html>`_。
+
+.. autofunction:: get_variables_with_name
+.. autofunction:: set_name_reuse
+.. autofunction:: print_all_variables
 
 Basic 层
 ----------------
@@ -471,6 +481,4 @@ Lambda层
 
 .. autofunction:: flatten_reshape
 .. autofunction:: clear_layers_name
-.. autofunction:: set_name_reuse
-.. autofunction:: print_all_variables
 .. autofunction:: initialize_rnn_state
