@@ -281,6 +281,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    set_name_reuse
    print_all_variables
    initialize_rnn_state
+   list_remove_repeat
 
 名称与参数复用
 ---------------------------------
@@ -482,3 +483,4 @@ Lambda层
 .. autofunction:: flatten_reshape
 .. autofunction:: clear_layers_name
 .. autofunction:: initialize_rnn_state
+.. autofunction:: list_remove_repeat
