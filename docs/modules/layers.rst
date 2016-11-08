@@ -2,7 +2,7 @@ API - 神经网络层
 =========================
 
 为了尽可能地保持TensorLayer的简洁性，我们最小化Layer的数量，因此我们鼓励用户直接使用 TensorFlow官方的函数。
-例如，我们不提供local response normalization layer，用户可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+例如，虽然我们提供local response normalization layer，但用户也可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
 更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
 
