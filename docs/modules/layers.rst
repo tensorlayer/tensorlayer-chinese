@@ -409,18 +409,22 @@ Dropconnect层
 
 2D卷积层
 ^^^^^^^^^
+
 .. autofunction:: Conv2d
 
 2D反卷积层
 ^^^^^^^^^^^
+
 .. autofunction:: DeConv2d
 
 2D Max池化层
 ^^^^^^^^^^^^^
+
 .. autofunction:: MaxPool2d
 
 2D Mean池化层
 ^^^^^^^^^^^^^^
+
 .. autofunction:: MeanPool2d
 
 池化层
