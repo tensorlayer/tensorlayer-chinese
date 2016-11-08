@@ -246,40 +246,58 @@ the sparsity can be implemented by using the L1 regularization of activation out
 .. automodule:: tensorlayer.layers
 
 .. autosummary::
+   get_variables_with_name
+   set_name_reuse
+   print_all_variables
 
    Layer
+
    InputLayer
    Word2vecEmbeddingInputlayer
    EmbeddingInputlayer
+
    DenseLayer
    ReconLayer
    DropoutLayer
    DropconnectDenseLayer
+
+   Conv1dLayer
    Conv2dLayer
    DeConv2dLayer
    Conv3dLayer
    DeConv3dLayer
    PoolLayer
+   UpSampling2dLayer
+   AtrousConv2dLayer
+   LocalResponseNormLayer
+
+   Conv2d
+   DeConv2d
+
    BatchNormLayer
    RNNLayer
    BiRNNLayer
    advanced_indexing_op
    retrieve_seq_length_op
-   retrieve_seq_length_op2 
+   retrieve_seq_length_op2
    DynamicRNNLayer
+
    FlattenLayer
    ConcatLayer
    ReshapeLayer
    LambdaLayer
    ElementwiseLayer
+
    SlimNetsLayer
+
    PReluLayer
+
    MultiplexerLayer
+
    EmbeddingAttentionSeq2seqWrapper
+
    flatten_reshape
    clear_layers_name
-   set_name_reuse
-   print_all_variables
    initialize_rnn_state
    list_remove_repeat
 
@@ -344,26 +362,13 @@ Dropconnect层
 
 .. autoclass:: DropconnectDenseLayer
 
-卷积层
+卷积层（Pro）
 --------------------
 
 1D卷积层
 ^^^^^^^^^^
 
-我们不直接提供 1D 卷积层，事实上 TensorFlow 只有 `tf.nn.conv2d` 和 `tf.nn.conv3d` ，
-所以想实现 1D 卷积，可以如下使用  Reshape 实现。
-
-.. code-block:: python
-
-  x = tf.placeholder(tf.float32, shape=[None, 500], name='x')
-  network = tl.layers.ReshapeLayer(x, shape=[-1, 500, 1, 1], name='reshape')
-  network = tl.layers.Conv2dLayer(network,
-                      act = tf.nn.relu,
-                      shape = [10, 1, 1, 16], # 16 features
-                      strides=[1, 2, 1, 1],   # stride of 2
-                      padding='SAME',
-                      name = 'cnn')
-
+.. autoclass:: Conv1dLayer
 
 
 2D卷积层
@@ -386,6 +391,38 @@ Dropconnect层
 
 .. autoclass:: DeConv3dLayer
 
+
+2D上采样层
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: UpSampling2dLayer
+
+2D多孔卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: AtrousConv2dLayer
+
+卷积层 (Simplified)
+-----------------------------------
+
+对于不擅长 TensorFlow 的用户，下面的简化的函数使用起来更简单。接下来我们将添加更多简化函数。
+
+2D卷积层
+^^^^^^^^^
+.. autofunction:: Conv2d
+
+2D反卷积层
+^^^^^^^^^^^
+.. autofunction:: DeConv2d
+
+2D Max池化层
+^^^^^^^^^^^^^
+.. autofunction:: MaxPool2d
+
+2D Mean池化层
+^^^^^^^^^^^^^^
+.. autofunction:: MeanPool2d
+
 池化层
 --------------------
 
@@ -396,9 +433,10 @@ Dropconnect层
 规范化层
 ----------
 
-我们不提供local response normalization layer，因为它不包含任何参数，也没有复杂的设置。用户可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+Local Response Normalization 不包含任何参数，也没有复杂的设置。您可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
 
 .. autoclass:: BatchNormLayer
+.. autoclass:: LocalResponseNormLayer
 
 递归层
 ----------------
