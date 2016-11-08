@@ -38,7 +38,7 @@ def cross_entropy(output, target, name="cross_entropy_loss"):
         return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(output, target))
 
 
-def binary_cross_entropy(output, target, name=None):
+def binary_cross_entropy(output, target, epsilon=1e-8, name='bce_loss'):
     """Computes binary cross entropy given `output`.
 
     For brevity, let `x = `, `z = targets`.  The logistic loss is
@@ -47,17 +47,24 @@ def binary_cross_entropy(output, target, name=None):
 
     Parameters
     ----------
-    output : A `Tensor` of type `float32` or `float64`.
-    target : A `Tensor` of the same type and shape as `output`.
+    output : tensor of type `float32` or `float64`.
+    target : tensor of the same type and shape as `output`.
+    epsilon : float
+        A small value to avoid output is zero.
+    name : string
+        An optional name to attach to this layer.
+
+    References
+    -----------
+    - `DRAW <https://github.com/ericjang/draw/blob/master/draw.py#L73>`_
     """
-    # print("Undocumented")
-    from tensorflow.python.framework import ops
-    eps = 1e-12
-    with ops.op_scope([output, target], name, "bce_loss") as name:
-        output = ops.convert_to_tensor(output, name="preds")
-        target = ops.convert_to_tensor(targets, name="target")
-        return tf.reduce_mean(-(target * tf.log(output + eps) +
-                              (1. - target) * tf.log(1. - output + eps)))
+#     from tensorflow.python.framework import ops
+#     with ops.op_scope([output, target], name, "bce_loss") as name:
+#         output = ops.convert_to_tensor(output, name="preds")
+#         target = ops.convert_to_tensor(targets, name="target")
+    with tf.name_scope(name):
+        return tf.reduce_mean(-(target * tf.log(output + epsilon) +
+                              (1. - target) * tf.log(1. - output + epsilon)))
 
 
 def mean_squared_error(output, target):
@@ -73,6 +80,74 @@ def mean_squared_error(output, target):
     with tf.name_scope("mean_squared_error_loss"):
         mse = tf.reduce_sum(tf.squared_difference(output, target), reduction_indices = 1)
         return tf.reduce_mean(mse)
+
+
+
+def dice_coe(output, target, epsilon=1e-10):
+    """Sørensen–Dice coefficient for comparing the similarity of two distributions,
+    usually be used for binary image segmentation i.e. labels are binary.
+    The coefficient = [0, 1], 1 if totally match.
+
+    Parameters
+    -----------
+    output : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    target : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    epsilon : float
+        An optional name to attach to this layer.
+
+    Examples
+    ---------
+    >>> outputs = pixel_wise_softmax(network.outputs)
+    >>> dice_loss = 1 - dice_coe(outputs, y_, epsilon=1e-5)
+
+    References
+    -----------
+    - `wiki-dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
+    """
+    # inse = tf.reduce_sum( tf.mul(output, target) )
+    # l = tf.reduce_sum( tf.mul(output, output) )
+    # r = tf.reduce_sum( tf.mul(target, target) )
+    inse = tf.reduce_sum( output * target )
+    l = tf.reduce_sum( output * output )
+    r = tf.reduce_sum( target * target )
+    dice = 2 * (inse) / (l + r)
+    if epsilon == 0:
+        return dice
+    else:
+        return tf.clip_by_value(dice, 0, 1.0-epsilon)
+
+def iou_coe(output, target, threshold=0.5, epsilon=1e-10):
+    """Intersection over Union (Hard Dice), usually be used for evaluating binary image segmentation.
+    The coefficient = [0, 1], 1 means totally match.
+
+    Parameters
+    -----------
+    output : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    target : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    threshold : float
+        The threshold value to be true.
+    epsilon : float
+        A small value to avoid zero denominator when both output and target output nothing.
+
+    Examples
+    ---------
+    >>> outputs = pixel_wise_softmax(network.outputs)
+    >>> iou = iou_ef(outputs, y_, epsilon=1e-5)
+
+    Notes
+    ------
+    - IOU cannot be used as training loss, people usually use dice coefficient for training, and IOU for evaluating.
+    """
+    pre = tf.cast(output > threshold, dtype=tf.float32)
+    truth = tf.cast(target > threshold, dtype=tf.float32)
+    intersection = tf.reduce_sum(pre * truth)
+    union = tf.reduce_sum(tf.cast((pre + truth) > threshold, dtype=tf.float32))
+    return tf.reduce_sum(intersection) / (tf.reduce_sum(union) + epsilon)
+
 
 def cross_entropy_seq(logits, target_seqs, batch_size=1, num_steps=None):
     """Returns the expression of cross-entropy of two sequences, implement
@@ -141,8 +216,6 @@ def li_regularizer(scale):
   """li regularization removes the neurons of previous layer, `i` represents `inputs`.\n
   Returns a function that can be used to apply group li regularization to weights.\n
   The implementation follows `TensorFlow contrib <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/layers/python/layers/regularizers.py>`_.
-
-
 
   Parameters
   ----------

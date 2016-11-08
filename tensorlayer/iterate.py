@@ -7,8 +7,7 @@ import numpy as np
 from six.moves import xrange
 
 def minibatches(inputs=None, targets=None, batch_size=None, shuffle=False):
-    """
-    Generate a generator that input a group of example in numpy.array and
+    """Generate a generator that input a group of example in numpy.array and
     their labels, return the examples and labels by the given batchsize.
 
     Parameters
@@ -50,13 +49,12 @@ def minibatches(inputs=None, targets=None, batch_size=None, shuffle=False):
         yield inputs[excerpt], targets[excerpt]
 
 def seq_minibatches(inputs, targets, batch_size, seq_length, stride=1):
-    """
-    Generate a generator that return a batch of sequence inputs and targets.
+    """Generate a generator that return a batch of sequence inputs and targets.
     If ``batch_size = 100, seq_length = 5``, one return will have ``500`` rows (examples).
 
     Examples
     --------
-    >>> Synced sequence input and output.
+    - Synced sequence input and output.
     >>> X = np.asarray([['a','a'], ['b','b'], ['c','c'], ['d','d'], ['e','e'], ['f','f']])
     >>> y = np.asarray([0, 1, 2, 3, 4, 5])
     >>> for batch in tl.iterate.seq_minibatches(inputs=X, targets=y, batch_size=2, seq_length=2, stride=1):
@@ -73,7 +71,8 @@ def seq_minibatches(inputs, targets, batch_size, seq_length, stride=1):
     ...         dtype='<U1'), array([2, 3, 3, 4]))
     ...
     ...
-    >>> Many to One
+    
+    - Many to One
     >>> return_last = True
     >>> num_steps = 2
     >>> X = np.asarray([['a','a'], ['b','b'], ['c','c'], ['d','d'], ['e','e'], ['f','f']])
@@ -110,22 +109,19 @@ def seq_minibatches(inputs, targets, batch_size, seq_length, stride=1):
         yield flatten_inputs, flatten_targets
 
 def seq_minibatches2(inputs, targets, batch_size, num_steps):
-    """
-    Generate a generator that iterates on two list of words. Yields (Returns) the source contexts and
+    """Generate a generator that iterates on two list of words. Yields (Returns) the source contexts and
     the target context by the given batch_size and num_steps (sequence_length),
-    see ``PTB tutorial``.
-
-    Hint, if the input data are images, you can modify the code from
-
-    data = np.zeros([batch_size, batch_len)
-
-    to
-
-    data = np.zeros([batch_size, batch_len, inputs.shape[1], inputs.shape[2], inputs.shape[3]])
-
-
-    In TensorFlow's tutorial, this generates batch_size pointers into the raw
+    see ``PTB tutorial``. In TensorFlow's tutorial, this generates the batch_size pointers into the raw
     PTB data, and allows minibatch iteration along these pointers.
+
+    - Hint, if the input data are images, you can modify the code as follow.
+
+    .. code-block:: python
+        
+        from
+        data = np.zeros([batch_size, batch_len)
+        to
+        data = np.zeros([batch_size, batch_len, inputs.shape[1], inputs.shape[2], inputs.shape[3]])
 
     Parameters
     ----------

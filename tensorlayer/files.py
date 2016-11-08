@@ -160,7 +160,6 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
     import pickle
     import numpy as np
 
-
     # We first define a download function, supporting both Python 2 and 3.
     filename = 'cifar-10-python.tar.gz'
     if sys.version_info[0] == 2:
@@ -187,11 +186,9 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=False, second=3):
         tar.close()
         print("Extracted to %s" % names[0])
 
-
     if not os.path.exists('cifar-10-batches-py'):
         download(filename)
         un_tar(filename)
-
 
     def unpickle(file):
         fp = open(file, 'rb')
@@ -615,7 +612,7 @@ def load_wmt_en_fr_dataset(data_dir="wmt"):
 
 
 ## Load and save network
-def save_npz(save_list=[], name='model.npz'):
+def save_npz(save_list=[], name='model.npz', sess=None):
     """Input parameters and the file name, save parameters into .npz file. Use tl.utils.load_npz() to restore.
 
     Parameters
@@ -624,10 +621,11 @@ def save_npz(save_list=[], name='model.npz'):
         Parameters want to be saved.
     name : a string or None
         The name of the .npz file.
+    sess : None or Session
 
     Examples
     --------
-    >>> tl.files.save_npz(network.all_params, name='model_test.npz')
+    >>> tl.files.save_npz(network.all_params, name='model_test.npz', sess=sess)
     ... File saved to: model_test.npz
     >>> load_params = tl.files.load_npz(name='model_test.npz')
     ... Loading param0, (784, 800)
@@ -646,18 +644,25 @@ def save_npz(save_list=[], name='model.npz'):
     ----------
     - `Saving dictionary using numpy <http://stackoverflow.com/questions/22315595/saving-dictionary-of-header-information-using-numpy-savez>`_
     """
+    ## save params into a list
+    save_list_var = []
+    for k, value in enumerate(save_list):
+        if sess:
+            save_list_var.append( sess.run(value) )
+        else:
+            try:
+                save_list_var.append( value.eval() )
+            except:
+                print(" Fail to save model, Hint: pass the session into this function, save_npz(network.all_params, name='model.npz', sess=sess)")
+    np.savez(name, params=save_list_var)
+    print('Model is saved to: %s' % name)
+
     ## save params into a dictionary
     # rename_dict = {}
     # for k, value in enumerate(save_dict):
     #     rename_dict.update({'param'+str(k) : value.eval()})
     # np.savez(name, **rename_dict)
     # print('Model is saved to: %s' % name)
-    ## save params into a list
-    save_list_var = []
-    for k, value in enumerate(save_list):
-        save_list_var.append( value.eval() )
-    np.savez(name, params=save_list_var)
-    print('Model is saved to: %s' % name)
 
 def load_npz(path='', name='model.npz'):
     """Load the parameters of a Model saved by tl.files.save_npz().
@@ -669,7 +674,7 @@ def load_npz(path='', name='model.npz'):
     name : a string or None
         The name of the .npz file.
 
-    Return
+    Returns
     --------
     params : list
         A list of parameters in order.

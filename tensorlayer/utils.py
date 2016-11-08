@@ -7,8 +7,7 @@ import time
 
 
 def fit(sess, network, train_op, cost, X_train, y_train, x, y_, acc=None, batch_size=100, n_epoch=100, print_freq=5, X_val=None, y_val=None, eval_train=True):
-    """
-    Traing a given non time-series network by the given cost function, training data, batch_size, n_epoch etc.
+    """Traing a given non time-series network by the given cost function, training data, batch_size, n_epoch etc.
 
     Parameters
     ----------
@@ -38,7 +37,7 @@ def fit(sess, network, train_op, cost, X_train, y_train, x, y_, acc=None, batch_
         the input of validation data
     y_val : numpy array or None
         the target of validation data
-    eval_train : boolen
+    eval_train : boolean
         if X_val and y_val are not None, it refects whether to evaluate the training data
 
     Examples

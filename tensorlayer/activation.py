@@ -6,7 +6,7 @@
 import tensorflow as tf
 
 def identity(x, name=None):
-    """The identity activation function
+    """The identity activation function, Shortcut is ``linear``.
 
     Parameters
     ----------
@@ -45,7 +45,7 @@ def ramp(x=None, v_min=0, v_max=1, name=None):
     return tf.clip_by_value(x, clip_value_min=v_min, clip_value_max=v_max, name=name)
 
 def leaky_relu(x=None, alpha=0.1, name="LeakyReLU"):
-    """The LeakyReLU.
+    """The LeakyReLU, Shortcut is ``lrelu``.
 
     Modified version of ReLU, introducing a nonzero gradient for negative
     input.
@@ -57,6 +57,11 @@ def leaky_relu(x=None, alpha=0.1, name="LeakyReLU"):
     alpha : `float`. slope.
     name : a string or None
         An optional name to attach to this activation function.
+
+    Examples
+    ---------
+    >>> network = tl.layers.DenseLayer(network, n_units=100, name = 'dense_lrelu',
+    ...                 act= lambda x : tl.act.lrelu(x, 0.2))
 
     References
     ------------
@@ -72,38 +77,31 @@ def leaky_relu(x=None, alpha=0.1, name="LeakyReLU"):
 #Shortcut
 lrelu = leaky_relu
 
-#
-# ## Alternatively we can use tl.layers.PReluLayer()
-# def prelu(x, channel_shared=False, W_init=tf.constant_initializer(value=0.0), W_init_args={}, restore=True, name="PReLU"):
-#     """ Parametric Rectified Linear Unit.
-#
-#     Parameters
-#     ----------
-#     x : A `Tensor` with type `float`, `double`, `int32`, `int64`, `uint8`,
-#         `int16`, or `int8`.
-#     channel_shared : `bool`. Single weight is shared by all channels
-#     W_init: weights initializer, default zero constant.
-#         The initializer for initializing the alphas.
-#     restore : `bool`. Restore or not alphas
-#     name : A name for this activation op (optional).
-#
-#     Returns
-#     -------
-#     A `Tensor` with the same type as `x`.
-#
-#     References
-#     -----------
-#     - `Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification <http://arxiv.org/pdf/1502.01852v1.pdf>`_
-#     """
-#     print(' prelu: untested !!!')
-#     if channel_shared:
-#         w_shape = (1,)
-#     else:
-#         w_shape = int(x._shape[-1:])
-#
-#     with tf.name_scope(name) as scope:
-#         W_init = initializations.get(weights_init)()
-#         alphas = tf.get_variable(name='alphas', shape=w_shape, initializer=W_init, **W_init_args )
-#         x = tf.nn.relu(x) + tf.mul(alphas, (x - tf.abs(x))) * 0.5
-#
-#     return x
+def pixel_wise_softmax(output, name='pixel_wise_softmax'):
+    """Return the softmax outputs of images, every pixels have multiple label, the sum of a pixel is 1.
+    Usually be used for image segmentation.
+
+    Parameters
+    ------------
+    output : tensor
+        - For 2d image, 4D tensor [batch_size, height, weight, channel], channel >= 2.
+        - For 3d image, 5D tensor [batch_size, depth, height, weight, channel], channel >= 2.
+
+    Examples
+    ---------
+    >>> outputs = pixel_wise_softmax(network.outputs)
+    >>> dice_loss = 1 - dice_coe(outputs, y_, epsilon=1e-5)
+
+    References
+    -----------
+    - `tf.reverse <https://www.tensorflow.org/versions/master/api_docs/python/array_ops.html#reverse>`_
+    """
+    with tf.name_scope(name) as scope:
+        exp_map = tf.exp(output)
+        if output.get_shape().ndims == 4:   # 2d image
+            evidence = tf.add(exp_map, tf.reverse(exp_map, [False, False, False, True]))
+        elif output.get_shape().ndims == 5: # 3d image
+            evidence = tf.add(exp_map, tf.reverse(exp_map, [False, False, False, False, True]))
+        else:
+            raise Exception("output parameters should be 2d or 3d image, not %s" % str(output._shape))
+        return tf.div(exp_map, evidence)

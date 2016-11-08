@@ -11,15 +11,22 @@ import numbers
 import random
 import os
 import re
+import sys
 
 import threading
-import Queue
+# import Queue  # <-- donot work for py3
+is_py2 = sys.version[0] == '2'
+if is_py2:
+    import Queue as queue
+else:
+    import queue as queue
 
 from six.moves import range
 import scipy
 from scipy import linalg
 import scipy.ndimage as ndi
-
+from skimage import transform
+# import skimage
 from skimage import exposure
 
 # linalg https://docs.scipy.org/doc/scipy/reference/linalg.html
@@ -59,18 +66,17 @@ def threading_data(data=None, fn=None, **kwargs):
     ...     x, y = data
     ...     x, y = flip_axis_multi([x, y], axis=0, is_random=True)
     ...     x, y = flip_axis_multi([x, y], axis=1, is_random=True)
-    ...     x, y = rotation_multi([x, y], rg=180, is_random=True)
-    ...     x, y = shear_multi([x, y], 0.2, is_random=True)
-    ...     x, y = zoom_multi([x, y], zoom_range=[0.8, 1.2], is_random=True)
+    ...     x, y = rotation_multi([x, y], rg=10, is_random=True)
+    ...     x, y = shear_multi([x, y], 0.1, is_random=True)
+    ...     x, y = zoom_multi([x, y], zoom_range=[0.9, 1.1], is_random=True)
     ...     return x, y
     >>> X, Y --> [batch_size, row, col, channel]
     >>> data = threading_data([_ for _ in zip(X, Y)], distort_img)
     >>> X_, Y_ = data.transpose((1,0,2,3,4))
 
-
     References
     ----------
-    - `python Queue <https://pymotw.com/2/Queue/index.html#module-Queue>`_
+    - `python queue <https://pymotw.com/2/Queue/index.html#module-Queue>`_
     """
     ## plot function info
     # for name, value in kwargs.items():
@@ -81,7 +87,7 @@ def threading_data(data=None, fn=None, **kwargs):
         result = fn(data, **kwargs)
         q.put(result)
     ## start threading
-    q = Queue.Queue()
+    q = queue.Queue()
     for i in range(len(data)):
         d = threading.Thread(
                         name='threading_and_return',
@@ -114,10 +120,12 @@ def rotation(x, rg=20, is_random=False, row_index=0, col_index=1, channel_index=
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
         Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
 
     Examples
     ---------
@@ -315,11 +323,13 @@ def shift(x, wrg=0.1, hrg=0.1, is_random=False, row_index=0, col_index=1, channe
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
-        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     """
     h, w = x.shape[row_index], x.shape[col_index]
     if is_random:
@@ -379,11 +389,13 @@ def shear(x, intensity=0.1, is_random=False, row_index=0, col_index=1, channel_i
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
-        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     """
     if is_random:
         shear = np.random.uniform(-intensity, intensity)
@@ -442,11 +454,13 @@ def zoom(x, zoom_range=(0.9, 1.1), is_random=False, row_index=0, col_index=1, ch
     row_index, col_index, channel_index : int
         Index of row, col and channel, default (0, 1, 2), for theano (1, 2, 0).
     fill_mode : string
-        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
-        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+        Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0.
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     """
     if len(zoom_range) != 2:
         raise Exception('zoom_range should be a tuple or list of two floats. '
@@ -511,8 +525,6 @@ def zoom_multi(x, zoom_range=(0.9, 1.1), is_random=False,
 # image = tf.image.random_hue(image, max_delta=0.032)
 # image = tf.image.random_contrast(image, lower=0.5, upper=1.5)
 
-
-
 # brightness
 def brightness(x, gamma=1, gain=1, is_random=False):
     """Change the brightness of a single image, randomly or non-randomly.
@@ -523,11 +535,11 @@ def brightness(x, gamma=1, gain=1, is_random=False):
         An image with dimension of [row, col, channel] (default).
     gamma : float, small than 1 means brighter.
         Non negative real number. Default value is 1.
-        If is_random is True, gamma in a range of (1-gamma, 1+gamma).
+            - If is_random is True, gamma in a range of (1-gamma, 1+gamma).
     gain : float
         The constant multiplier. Default value is 1.
     is_random : boolean, default False
-        If True, randomly change brightness.
+        - If True, randomly change brightness.
 
     References
     -----------
@@ -621,13 +633,14 @@ def samplewise_norm(x, rescale=None, samplewise_center=False, samplewise_std_nor
 
     Examples
     --------
-    >>> x = samplewise_norm(x samplewise_center=True, samplewise_std_normalization=True)
+    >>> x = samplewise_norm(x, samplewise_center=True, samplewise_std_normalization=True)
     >>> print(x.shape, np.mean(x), np.std(x))
     ... (160, 176, 1), 0.0, 1.0
 
     Notes
     ------
     When samplewise_center and samplewise_std_normalization are True.
+
     - For greyscale image, every pixels are subtracted and divided by the mean and std of whole image.
     - For RGB image, every pixels are subtracted and divided by the mean and std of this pixel i.e. the mean and std of a pixel is 0 and 1.
     """
@@ -697,7 +710,10 @@ def zca_whitening(x, principal_components):
     principal_components : matrix from ``get_zca_whitening_principal_components_img``.
     """
     # flatx = np.reshape(x, (x.size))
-    flatx = np.reshape(x, (x.shape))
+    print(principal_components.shape, x.shape)  # ((28160, 28160), (160, 176, 1))
+    # flatx = np.reshape(x, (x.shape))
+    # flatx = np.reshape(x, (x.shape[0], ))
+    print(flatx.shape)  # (160, 176, 1)
     whitex = np.dot(flatx, principal_components)
     x = np.reshape(whitex, (x.shape[0], x.shape[1], x.shape[2]))
     return x
@@ -810,10 +826,12 @@ def apply_transform(x, transform_matrix, channel_index=2, fill_mode='nearest', c
         Index of channel, default 2.
     fill_mode : string
         Method to fill missing pixel, default ‘nearest’, more options ‘constant’, ‘reflect’ or ‘wrap’
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
     cval : scalar, optional
         Value used for points outside the boundaries of the input if mode='constant'. Default is 0.0
-        - `Scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
+
+        - `scipy ndimage affine_transform <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.interpolation.affine_transform.html>`_
 
     Examples
     --------
@@ -827,6 +845,63 @@ def apply_transform(x, transform_matrix, channel_index=2, fill_mode='nearest', c
     x = np.stack(channel_images, axis=0)
     x = np.rollaxis(x, 0, channel_index+1)
     return x
+
+
+def projective_transform_by_points(x, src, dst, map_args={}, output_shape=None, order=1, mode='constant', cval=0.0, clip=True, preserve_range=False):
+    """Projective transform by given coordinates, usually 4 coordinates. see `scikit-image <http://scikit-image.org/docs/dev/auto_examples/applications/plot_geometric.html>`_.
+
+    Parameters
+    -----------
+    x : numpy array
+        An image with dimension of [row, col, channel] (default).
+    src : list or numpy
+        The original coordinates, usually 4 coordinates of (x, y).
+    dst : list or numpy
+        The coordinates after transformation, the number of coordinates is the same with src.
+    map_args : dict, optional
+        Keyword arguments passed to inverse_map.
+    output_shape : tuple (rows, cols), optional
+        Shape of the output image generated. By default the shape of the input image is preserved. Note that, even for multi-band images, only rows and columns need to be specified.
+    order : int, optional
+        The order of interpolation. The order has to be in the range 0-5:
+            - 0 Nearest-neighbor
+            - 1 Bi-linear (default)
+            - 2 Bi-quadratic
+            - 3 Bi-cubic
+            - 4 Bi-quartic
+            - 5 Bi-quintic
+    mode : {‘constant’, ‘edge’, ‘symmetric’, ‘reflect’, ‘wrap’}, optional
+        Points outside the boundaries of the input are filled according to the given mode. Modes match the behaviour of numpy.pad.
+    cval : float, optional
+        Used in conjunction with mode ‘constant’, the value outside the image boundaries.
+    clip : bool, optional
+        Whether to clip the output to the range of values of the input image. This is enabled by default, since higher order interpolation may produce values outside the given input range.
+    preserve_range : bool, optional
+        Whether to keep the original range of values. Otherwise, the input image is converted according to the conventions of img_as_float.
+
+    Examples
+    --------
+    >>> Assume X is an image from CIFAR 10, i.e. shape == (32, 32, 3)
+    >>> src = [[0,0],[0,32],[32,0],[32,32]]
+    >>> dst = [[10,10],[0,32],[32,0],[32,32]]
+    >>> x = projective_transform_by_points(X, src, dst)
+
+    References
+    -----------
+    - `scikit-image : geometric transformations <http://scikit-image.org/docs/dev/auto_examples/applications/plot_geometric.html>`_
+    - `scikit-image : examples <http://scikit-image.org/docs/dev/auto_examples/index.html>`_
+    """
+    if type(src) is list:   # convert to numpy
+        src = np.array(src)
+    if type(dst) is list:
+        dst = np.array(dst)
+    if np.max(x)>1:         # convert to [0, 1]
+        x = x/255
+
+    m = transform.ProjectiveTransform()
+    m.estimate(dst, src)
+    warped = transform.warp(x, m,  map_args=map_args, output_shape=output_shape, order=order, mode=mode, cval=cval, clip=clip, preserve_range=preserve_range)
+    return warped
 
 # Numpy and PIL
 def array_to_img(x, dim_ordering=(0,1,2), scale=True):
@@ -871,7 +946,7 @@ def array_to_img(x, dim_ordering=(0,1,2), scale=True):
 
 ## Sequence
 def pad_sequences(sequences, maxlen=None, dtype='int32',
-                  padding='pre', truncating='pre', value=0.):
+                  padding='post', truncating='pre', value=0.):
     """Pads each sequence to the same length:
     the length of the longest sequence.
     If maxlen is provided, any sequence longer
@@ -898,10 +973,10 @@ def pad_sequences(sequences, maxlen=None, dtype='int32',
     ----------
     >>> sequences = [[1,1,1,1,1],[2,2,2],[3,3]]
     >>> sequences = pad_sequences(sequences, maxlen=None, dtype='int32',
-    ...                  padding='pre', truncating='pre', value=0.)
+    ...                  padding='post', truncating='pre', value=0.)
     ... [[1 1 1 1 1]
-    ...  [0 0 2 2 2]
-    ...  [0 0 0 3 3]]
+    ...  [2 2 2 0 0]
+    ...  [3 3 0 0 0]]
     """
     lengths = [len(s) for s in sequences]
 
