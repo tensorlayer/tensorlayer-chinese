@@ -362,7 +362,7 @@ Dropconnect层
 
 .. autoclass:: DropconnectDenseLayer
 
-卷积层（Pro）
+卷积层(Pro)
 --------------------
 
 1D卷积层
@@ -402,7 +402,7 @@ Dropconnect层
 
 .. autoclass:: AtrousConv2dLayer
 
-卷积层 (Simplified)
+卷积层(Simplified)
 -----------------------------------
 
 对于不擅长 TensorFlow 的用户，下面的简化的函数使用起来更简单。接下来我们将添加更多简化函数。
