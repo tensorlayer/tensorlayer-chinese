@@ -275,6 +275,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DeConv2d
 
    BatchNormLayer
+   LocalResponseNormLayer
    RNNLayer
    BiRNNLayer
    advanced_indexing_op
