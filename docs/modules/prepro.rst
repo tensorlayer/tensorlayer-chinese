@@ -21,8 +21,13 @@ API - 数据预处理
    flip_axis_multi
    shift
    shift_multi
+   
    shear
    shear_multi
+
+   swirl
+   swirl_multi
+   
    zoom
    zoom_multi
    
@@ -86,6 +91,11 @@ API - 数据预处理
 ^^^^^^^^^
 .. autofunction:: shear
 .. autofunction:: shear_multi
+
+漩涡
+^^^^^^^^^
+.. autofunction:: swirl
+.. autofunction:: swirl_multi
 
 缩放
 ^^^^^^^^^
