@@ -1515,6 +1515,18 @@ def Conv2d(net, n_filter=32, filter_size=(3, 3), strides=(1, 1), act = None,
     strides : tuple (height, width) for strides.
     act : None or activation function.
     others : see :class:`Conv2dLayer`.
+
+    Examples
+    --------
+    >>> w_init = tf.truncated_normal_initializer(stddev=0.01)
+    >>> b_init = tf.constant_initializer(value=0.0)
+    >>> inputs = InputLayer(x, name='inputs')
+    >>> conv1 = Conv2d(inputs, 64, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv1_1')
+    >>> conv1 = Conv2d(conv1, 64, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv1_2')
+    >>> pool1 = MaxPool2d(conv1, (2, 2), padding='SAME', name='pool1')
+    >>> conv2 = Conv2d(pool1, 128, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv2_1')
+    >>> conv2 = Conv2d(conv2, 128, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv2_2')
+    >>> pool2 = MaxPool2d(conv2, (2, 2), padding='SAME', name='pool2')
     """
     if act is None:
         act = tf.identity
@@ -1531,7 +1543,7 @@ def Conv2d(net, n_filter=32, filter_size=(3, 3), strides=(1, 1), act = None,
     return net
 
 def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
-        batch_size = 32, out_size = (30, 30), strides = (2, 2), padding = 'SAME', act = None,
+        out_size = (30, 30), strides = (2, 2), padding = 'SAME', batch_size = None, act = None,
         W_init = tf.truncated_normal_initializer(stddev=0.02), b_init = tf.constant_initializer(value=0.0),
         W_init_args = {}, b_init_args = {}, name ='decnn2d'):
     """Wrapper for :class:`DeConv2dLayer`, if you don't understand how to use :class:`DeConv2dLayer`, this function may be easier.
@@ -1542,15 +1554,17 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
     n_out_channel : int, number of output channel.
     filter_size : tuple of (height, width) for filter size.
     out_size :  tuple of (height, width) of output.
-    batch_size : int, batch_size.
+    batch_size : int or None, batch_size. If None, try to find the batch_size from the first dim of net.outputs (you should tell the batch_size when define the input placeholder).
     strides : tuple of (height, width) for strides.
     act : None or activation function.
     others : see :class:`Conv2dLayer`.
     """
     if act is None:
         act = tf.identity
+    if batch_size is None:
+        batch_size = tf.shape(net.outputs)[0]
     net = DeConv2dLayer(layer = net,
-                    act = tf.nn.relu,
+                    act = act,
                     shape = [filter_size[0], filter_size[1], n_out_channel, int(net.outputs._shape[-1])],
                     output_shape = [batch_size, out_size[0], out_size[1], n_out_channel],
                     strides = [1, strides[0], strides[1], 1],
@@ -2665,8 +2679,10 @@ class DynamicRNNLayer(Layer):
                 else:
                     # <akara>:
                     # 3D Tensor [batch_size, n_steps(max), n_hidden]
-                    max_length = tf.shape(self.outputs)[1]
-                    self.outputs = tf.reshape(tf.concat(1, outputs), [-1, max_length, n_hidden])
+                    max_length = tf.shape(outputs)[1]
+                    batch_size = tf.shape(outputs)[0]
+                    self.outputs = tf.reshape(tf.concat(1, outputs), [batch_size, max_length, n_hidden])
+                    # self.outputs = tf.reshape(tf.concat(1, outputs), [-1, max_length, n_hidden])
 
         # Final state
         self.final_state = last_states
