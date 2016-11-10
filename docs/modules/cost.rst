@@ -113,6 +113,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    dice_coe
    iou_coe
    cross_entropy_seq
+   cross_entropy_seq_with_mask
    li_regularizer
    lo_regularizer
    maxnorm_regularizer
@@ -122,16 +123,31 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
 损失函数
 ----------------
 
+分类
+^^^^^^^^^^^
 .. autofunction:: cross_entropy
 .. autofunction:: binary_cross_entropy
+
+拟合
+^^^^^^^
 .. autofunction:: mean_squared_error
+
+图像分割
+^^^^^^^^^^
 .. autofunction:: dice_coe
 .. autofunction:: iou_coe
+
+序列
+^^^^^^
 .. autofunction:: cross_entropy_seq
+.. autofunction:: cross_entropy_seq_with_mask
 
 
 规则化函数
 --------------------------
+
+更多 ``tf.contrib.layers.l1_regularizer``, ``tf.contrib.layers.l2_regularizer`` 与
+``tf.contrib.layers.sum_regularizer``, 请见 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_.
 
 .. autofunction:: li_regularizer
 .. autofunction:: lo_regularizer
