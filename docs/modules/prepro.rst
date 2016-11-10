@@ -24,10 +24,11 @@ API - 数据预处理
    
    shear
    shear_multi
-
    swirl
    swirl_multi
-   
+   elastic_transform
+   elastic_transform_multi  
+
    zoom
    zoom_multi
    
@@ -96,6 +97,12 @@ API - 数据预处理
 ^^^^^^^^^
 .. autofunction:: swirl
 .. autofunction:: swirl_multi
+
+局部l扭曲(Elastic transform)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: elastic_transform
+.. autofunction:: elastic_transform_multi
 
 缩放
 ^^^^^^^^^
