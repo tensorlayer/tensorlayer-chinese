@@ -273,7 +273,9 @@ the sparsity can be implemented by using the L1 regularization of activation out
 
    Conv2d
    DeConv2d
-
+   MaxPool2d
+   MeanPool2d
+   
    BatchNormLayer
    LocalResponseNormLayer
    RNNLayer
