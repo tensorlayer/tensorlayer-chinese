@@ -451,6 +451,9 @@ Local Response Normalization 不包含任何参数，也没有复杂的设置。
 定长递归层
 ^^^^^^^^^^^^
 .. autoclass:: RNNLayer
+
+定长双向递归层
+^^^^^^^^^^^^^^^^
 .. autoclass:: BiRNNLayer
 
 
