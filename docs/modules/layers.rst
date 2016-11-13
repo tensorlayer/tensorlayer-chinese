@@ -553,7 +553,18 @@ Elementwise层
 辅助函数
 ----------------
 
+Flatten tensor
+^^^^^^^^^^^^^^^^^
 .. autofunction:: flatten_reshape
+
+永久删除现有 layer 名字
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: clear_layers_name
+
+初始化 RNN state
+^^^^^^^^^^^^^^^^^^^
 .. autofunction:: initialize_rnn_state
+
+去除列表中重复内容
+^^^^^^^^^^^^^^^^^^
 .. autofunction:: list_remove_repeat
