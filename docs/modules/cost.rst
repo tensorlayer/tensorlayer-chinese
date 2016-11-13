@@ -123,23 +123,32 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
 损失函数
 ----------------
 
-分类
-^^^^^^^^^^^
+Cross entropy
+^^^^^^^^^^^^^^^^^
 .. autofunction:: cross_entropy
+
+Binary cross entropy
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: binary_cross_entropy
 
-拟合
-^^^^^^^
+Mean squared error
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mean_squared_error
 
-图像分割
-^^^^^^^^^^
+Dice coefficient
+^^^^^^^^^^^^^^^^^^^
 .. autofunction:: dice_coe
+
+IOU coefficient
+^^^^^^^^^^^^^^^^^^^
 .. autofunction:: iou_coe
 
-序列
-^^^^^^
+Cross entropy for sequence
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: cross_entropy_seq
+
+Cross entropy with mask for sequence
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: cross_entropy_seq_with_mask
 
 
