@@ -49,13 +49,13 @@ API目录
   
   modules/layers
   modules/cost
+  modules/prepro
   modules/iterate
   modules/utils
   modules/nlp
   modules/rein
   modules/files
   modules/visualize
-  modules/prepro
   modules/ops
   modules/activation
 
