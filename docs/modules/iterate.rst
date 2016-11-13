@@ -22,6 +22,14 @@ API - 迭代函数
 时间序列
 --------------------
 
+Sequence iteration 1
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: seq_minibatches
+
+Sequence iteration 2
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: seq_minibatches2
+
+PTB dataset iteration
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: ptb_iterator
