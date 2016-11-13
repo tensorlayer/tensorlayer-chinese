@@ -48,6 +48,6 @@ Pixel-wise Softmax
 ----------------------
 .. autofunction:: pixel_wise_softmax
 
-Parametric activation layer
+带有参数的激活函数
 ------------------------------
 请见神经网络层。
