@@ -472,6 +472,7 @@ Local Response Normalization
 输出索引
 ^^^^^^^^^^^^
 用以得到 last output。
+
 .. autofunction:: advanced_indexing_op
 
 计算 Sequence length 方法1
