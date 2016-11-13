@@ -124,6 +124,7 @@ sess.close()
 TensorLayer 起初是帝国理工大学的内部项目，用来帮助研究人员验证新的算法。现在它鼓励全世界的人工智能爱好者们参与开发，以促进学术和应用交流。您可以和我们联系讨论您的想法，或者在官方 Github 上发起 Fork 与 Pull 请求。
  -->
 TensorLayer is a major ongoing research project in Data Science Institute, Imperial College London.
+TensorLayer contributors are from Imperial College, Tsinghua University, Carnegie Mellon University, Google, Microsoft, Bloomberg and etc.
 The goal of the project is to develop a compositional language while complex learning systems
 can be build through composition of neural network modules.
 The whole development is now participated by numerous contributors [here](https://github.com/zsdonghao/tensorlayer/releases).
