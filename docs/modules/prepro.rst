@@ -156,7 +156,8 @@ Numpy 与 PIL
 Tensor Opt
 ------------
 
-这几个函数将被弃用， 关于如何使用 Tensor Operator 请参考 ``tutorial_cifar10_tfrecord.py`` 。
+.. note::
+  这几个函数将被弃用， 关于如何使用 Tensor Operator 请参考 ``tutorial_cifar10_tfrecord.py`` 。
 
 .. autofunction:: distorted_images
 .. autofunction:: crop_central_whiten_images
