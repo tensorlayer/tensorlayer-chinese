@@ -96,6 +96,9 @@ WMT'15 Website 的英文译法文数据
 从.npz文件加载模型
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
+
+网络赋值
+^^^^^^^^^^
 .. autofunction:: assign_params
 
 保存与加载数据
