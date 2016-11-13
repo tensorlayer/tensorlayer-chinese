@@ -147,6 +147,8 @@ Numpy 与 PIL
 
 更多相关函数，请见 ``tensorlayer.nlp`` 。
 
+Padding
+^^^^^^^^^^
 .. autofunction:: pad_sequences
 
 
