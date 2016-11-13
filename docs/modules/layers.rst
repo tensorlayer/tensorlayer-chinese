@@ -6,7 +6,7 @@ API - 神经网络层
 更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
 
-了解神经网络层
+了解层
 ---------------
 
 所有TensorLayer层有如下的属性：
@@ -98,11 +98,9 @@ API - 神经网络层
 
 更多细节，请看 MNIST 例子。
 
-自定义层
-------------------------
 
-理解Dense层
-^^^^^^^^^^^^^^^^^^^^^^^^^
+了解Dense层
+----------------
 
 在创造自定义层之前，我们来看看全连接（Dense）层是如何实现的。
 若不存在Weights矩阵和Biases向量时，它新建之，然后通过给定的激活函数计算出 ``outputs`` 。
@@ -169,6 +167,8 @@ API - 神经网络层
           else:
              self.all_params.extend( [W] )
 
+自定义层
+----------
 
 一个简单的层
 ^^^^^^^^^^^^^^^
