@@ -17,19 +17,26 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 可视化模型参数
 --------------------
 
+可视化Weight Matrix
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: W
 
+可视化CNN 2d filter
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: CNN2d
 
 
-可视化数据
+可视化图像
 ----------------
 
+matplotlib显示单图
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: frame
 
+matplotlib显示多图
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: images2d
 
 可视化词嵌入矩阵
 --------------------
-
 .. autofunction:: tsne_embedding
