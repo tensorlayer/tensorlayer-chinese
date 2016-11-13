@@ -286,9 +286,10 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DynamicRNNLayer
 
    FlattenLayer
-   ConcatLayer
    ReshapeLayer
    LambdaLayer
+   
+   ConcatLayer
    ElementwiseLayer
 
    SlimNetsLayer
@@ -480,11 +481,6 @@ Flatten层
 
 .. autoclass:: FlattenLayer
 
-Concat层
-^^^^^^^^^^
-
-.. autoclass:: ConcatLayer
-
 Reshape层
 ^^^^^^^^^^^
 .. autoclass:: ReshapeLayer
@@ -495,6 +491,13 @@ Lambda层
 
 合并层
 ----------
+
+Concat层
+^^^^^^^^^^
+.. autoclass:: ConcatLayer
+
+Elementwise层
+^^^^^^^^^^^^^^^^^
 .. autoclass:: ElementwiseLayer
 
 连接 TF-Slim
