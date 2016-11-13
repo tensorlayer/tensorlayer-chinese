@@ -19,23 +19,34 @@ API - 操作系统管理
 TensorFlow 操作函数
 ---------------------------
 
+中断 Nvidia 进程
+^^^^^^^^^^^^^^^^^
 .. autofunction:: exit_tf
+
+删除 placeholder
+^^^^^^^^^^^^^^^^^^
 .. autofunction:: clear_all
 
 GPU 配置函数
 ---------------------------
-
 .. autofunction:: set_gpu_fraction
-
 
 命令窗口显示
 ------------------
 
+禁止 print
+^^^^^^^^^^^^
 .. autofunction:: disable_print
+
+允许 print
+^^^^^^^^^^^^
 .. autofunction:: enable_print
+
+临时禁止 print
+^^^^^^^^^^^^^^^^
 .. autofunction:: suppress_stdout
 
-包信息
+Site packages 信息
 --------------------
 
 .. autofunction:: get_site_packages_directory
