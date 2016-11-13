@@ -311,8 +311,16 @@ the sparsity can be implemented by using the L1 regularization of activation out
 这些函数用以帮助您在不同的 graph 中复用相同的参数，以及如何通过一个名字来获取相应的参数列表。
 更多关于 TensorFlow parameters sharing 请点击 `这里 <https://www.tensorflow.org/versions/master/how_tos/variable_scope/index.html>`_。
 
+Get variables with name
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: get_variables_with_name
+
+Enable layer name reuse
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: set_name_reuse
+
+Print variables
+^^^^^^^^^^^^^^^^^^
 .. autofunction:: print_all_variables
 
 Basic 层
