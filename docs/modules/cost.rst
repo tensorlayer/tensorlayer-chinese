@@ -158,8 +158,13 @@ Cross entropy with mask for sequence
 更多 ``tf.contrib.layers.l1_regularizer``, ``tf.contrib.layers.l2_regularizer`` 与
 ``tf.contrib.layers.sum_regularizer``, 请见 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_.
 
+Maxnorm
+^^^^^^^^^^
+.. autofunction:: maxnorm_regularizer
+
+Special
+^^^^^^^^^^
 .. autofunction:: li_regularizer
 .. autofunction:: lo_regularizer
-.. autofunction:: maxnorm_regularizer
 .. autofunction:: maxnorm_o_regularizer
 .. autofunction:: maxnorm_i_regularizer
