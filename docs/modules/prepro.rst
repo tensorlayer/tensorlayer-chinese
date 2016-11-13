@@ -98,7 +98,7 @@ API - 数据预处理
 .. autofunction:: swirl
 .. autofunction:: swirl_multi
 
-局部l扭曲(Elastic transform)
+局部扭曲(Elastic transform)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: elastic_transform
