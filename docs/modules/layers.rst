@@ -446,12 +446,12 @@ Local Response Normalization 不包含任何参数，也没有复杂的设置。
 .. autoclass:: BatchNormLayer
 .. autoclass:: LocalResponseNormLayer
 
-递归层
+定长递归层
 ----------------
 
 所有递归层可实现任意 RNN 内核，只需输入不同的 cell 函数。
 
-定长递归层
+递归层
 ^^^^^^^^^^^^
 .. autoclass:: RNNLayer
 
@@ -461,16 +461,25 @@ Local Response Normalization 不包含任何参数，也没有复杂的设置。
 
 
 动态递归的高级 Ops 函数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 这些函数通常在使用 Dynamic RNN layer 时使用，他们用以计算不同情况下的 sequence length，以及已知 sequence length 时对
 输出进行索引。
 
+输出索引
+^^^^^^^^^^^^
+用以得到 last output。
 .. autofunction:: advanced_indexing_op
+
+计算 Sequence length 方法1
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: retrieve_seq_length_op
+
+计算 Sequence length 方法2
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: retrieve_seq_length_op2
 
 动态递归层
-^^^^^^^^^^^^
+------------
 .. autoclass:: DynamicRNNLayer
 
 形状修改层
