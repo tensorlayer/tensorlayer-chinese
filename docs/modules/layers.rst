@@ -441,9 +441,14 @@ Dropconnect层
 规范化层
 ----------
 
-Local Response Normalization 不包含任何参数，也没有复杂的设置。您可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
+Local Response Normalization 不包含任何参数，也没有复杂的设置。您也可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
 
+Batch Normalization
+^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: BatchNormLayer
+
+Local Response Normalization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LocalResponseNormLayer
 
 定长递归层
