@@ -31,25 +31,23 @@ TensorFlow官方的函数，比如
    leaky_relu
    pixel_wise_softmax
 
-
-
-激活函数 
----------------------
-
 Identity
-^^^^^^^^^^
+-----------
 .. autofunction:: identity
 
 Ramp
-^^^^^
+-----------
 .. autofunction:: ramp
 
 Leaky Relu
-^^^^^^^^^^^
+-----------
 .. autofunction:: leaky_relu
 
 
 Pixel-wise Softmax
-^^^^^^^^^^^^^^^^^^^^
-
+----------------------
 .. autofunction:: pixel_wise_softmax
+
+Parametric activation layer
+------------------------------
+请见神经网络层。
