@@ -32,7 +32,8 @@ Python 的 ``pip`` 可以帮助您很快地安装库，此外 `虚拟环境(Virt
   sudo apt-get install python3-pip
   sudo pip3 install virtualenv
 
-建立虚拟环境，并安装包到虚拟环境如下:
+接着在虚拟环境中安装 dependencies 到虚拟环境如下:
+(您也可以跳过该部分，在步骤3中让 TensorLayer 自动安装 dependencies)
 
 .. code-block:: bash
 
