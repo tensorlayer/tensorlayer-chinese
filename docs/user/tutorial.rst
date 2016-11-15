@@ -360,8 +360,8 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 
 对于 sigmoid型激活函数来说，自编码器可以用KL散度来实现。
 而对于整流器(Rectifier)来说，对激活函数输出的L1正则化能使得输出变得稀疏。
-所以 ``ReconLayer`` 的默认只对整流激活函数提供sigmoid型激活函数，L1正则化激活输出和均方差的KLD和交叉熵
-我们建立您修改 ``ReconLayer`` 来实现自己的预训练度量。
+所以 ``ReconLayer`` 默认只对整流激活函数(ReLU)提供KLD和交叉熵这两种损失度量，而对sigmoid型激活函数提供均方误差以及激活输出的L1范数这两种损失度量。
+我们建议您修改 ``ReconLayer`` 来实现自己的预训练度量。
 
 .. code-block:: python
 
@@ -736,7 +736,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 词嵌套（嵌入）
 -------------------
 
-我们强烈建立您先阅读Colah的博客 `Word Representations`_ `[中文翻译] <http://dataunion.org/9331.html>`_ ，
+我们强烈建议您先阅读Colah的博客 `Word Representations`_ `[中文翻译] <http://dataunion.org/9331.html>`_ ，
 以理解为什么我们要使用一个向量来表示一个单词。更多Word2vec的细节可以在 `Word2vec Parameter Learning Explained <http://arxiv.org/abs/1411.2738>`_ 中找到。
 
 基本来说，训练一个嵌套矩阵是一个非监督学习的过程。一个单词使用唯一的ID来表示，而这个ID号就是嵌套矩阵的行号（row index），对应的行向量就是用来表示该单词的，使用向量来表示单词可以更好地表达单词的意思。比如，有4个单词的向量， ``woman − man = queen - king`` ，这个例子中可以看到，嵌套矩阵中有一个纬度是用来表示性别的。
