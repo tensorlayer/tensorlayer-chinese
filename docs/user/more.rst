@@ -15,33 +15,33 @@ FQA
 贡献方式有很多种，比如提供应用、实现新的TensorLayer层、回答 `GitHub`_ Issues 以及帮助完善翻译等等。
 每一点贡献都会署名，欢迎在 `GitHub`_ 上push。
 
+..
+ 竞赛
+ ============
 
-竞赛
-============
-
-有奖竞赛即将到来
+ 有奖竞赛即将到来
 
 
 
-应用例子 
-============
+ 应用例子 
+ ============
 
-有很多基于TensorLayer开发的优秀应用，你或许可以在这里找到适合你项目用的模型。
-此外，如果你想分享你的应用例子，请联系 hao.dong11@imperial.ac.uk.
+ 有很多基于TensorLayer开发的优秀应用，你或许可以在这里找到适合你项目用的模型。
+ 此外，如果你想分享你的应用例子，请联系 hao.dong11@imperial.ac.uk.
 
-1D CNN+LSTM for Biosignal
-------------------------
+ 1D CNN+LSTM for Biosignal
+ ------------------------
 
-作者 : `Akara Supratak <https://akaraspt.github.io>`_
+ 作者 : `Akara Supratak <https://akaraspt.github.io>`_
 
-介绍
-^^^^^^^^^
+ 介绍
+ ^^^^^^^^^
 
-实现
-^^^^^^^^^^^
+ 实现
+ ^^^^^^^^^^^
 
-引用
-^^^^^^^^
+ 引用
+ ^^^^^^^^
 
 
 招聘信息
