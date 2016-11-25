@@ -137,6 +137,18 @@ cuDNN
 下载后, 复制 ``*.h`` 文件到 ``/usr/local/cuda/include`` 以及复制
 ``lib*`` 文件到 ``/usr/local/cuda/lib64``。
 
+
+
+困难
+=======
+
+当你 import tensorlayer 时出现如下错误，请阅读  `FQA <http://tensorlayer.readthedocs.io/en/latest/user/more.html>`_ 。
+
+.. code-block:: bash
+
+  _tkinter.TclError: no display name and no $DISPLAY environment variable
+
+
 .. _TensorFlow: https://www.tensorflow.org/versions/master/get_started/os_setup.html
 .. _GitHub: https://github.com/zsdonghao/tensorlayer
 .. _TensorLayer: https://github.com/zsdonghao/tensorlayer/
