@@ -114,6 +114,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    iou_coe
    cross_entropy_seq
    cross_entropy_seq_with_mask
+   cosine_similarity
    li_regularizer
    lo_regularizer
    maxnorm_regularizer
@@ -147,6 +148,10 @@ Cross entropy for sequence
 Cross entropy with mask for sequence
 ---------------------------------------
 .. autofunction:: cross_entropy_seq_with_mask
+
+Cosine similarity
+-------------------
+.. autofunction:: cosine_similarity
 
 
 规则化函数
