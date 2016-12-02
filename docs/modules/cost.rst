@@ -111,6 +111,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    binary_cross_entropy
    mean_squared_error
    dice_coe
+   dice_hard_coe
    iou_coe
    cross_entropy_seq
    cross_entropy_seq_with_mask
@@ -136,6 +137,10 @@ Mean squared error
 Dice coefficient
 -------------------
 .. autofunction:: dice_coe
+
+Hard Dice coefficient
+-------------------------
+.. autofunction:: dice_hard_coe
 
 IOU coefficient
 -----------------
