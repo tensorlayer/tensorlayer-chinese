@@ -63,7 +63,7 @@ Python 的 ``pip`` 可以帮助您很快地安装库，此外 `虚拟环境(Virt
 =========================
 
 TensorFlow 的安装步骤在 `TensorFlow`_  官网中有非常详细的说明，不国有一些东西是需要考虑的。
-如 `TensorFlow`_ 官方目前只支持 Linux 和 Mac OX 系统。
+如 `TensorFlow`_ 官方目前支持 Linux, Mac OX 和 Windows 系统。
 
 .. warning::
   对于使用 ARM 架构的机器，你需要用源码来编译安装 TensorFlow。
