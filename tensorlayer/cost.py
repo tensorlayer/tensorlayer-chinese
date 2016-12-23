@@ -18,11 +18,11 @@ def cross_entropy(output, target, name="cross_entropy_loss"):
     output : Tensorflow variable
         A distribution with shape: [batch_size, n_feature].
     target : Tensorflow variable
-        A distribution with shape: [batch_size, n_feature].
+        A batch of index with shape: [batch_size, ].
 
     Examples
     --------
-    >>> ce = tf.cost.cross_entropy(y_logits, y_target_logits)
+    >>> ce = tl.cost.cross_entropy(y_logits, y_target_logits)
 
     References
     -----------
@@ -41,7 +41,7 @@ def cross_entropy(output, target, name="cross_entropy_loss"):
 def binary_cross_entropy(output, target, epsilon=1e-8, name='bce_loss'):
     """Computes binary cross entropy given `output`.
 
-    For brevity, let `x = `, `z = targets`.  The logistic loss is
+    For brevity, let `x = output`, `z = target`.  The binary cross entropy loss is
 
         loss(x, z) = - sum_i (x[i] * log(z[i]) + (1 - x[i]) * log(1 - z[i]))
 
@@ -78,8 +78,9 @@ def mean_squared_error(output, target):
         A distribution with shape: [batch_size, n_feature].
     """
     with tf.name_scope("mean_squared_error_loss"):
-        mse = tf.reduce_sum(tf.squared_difference(output, target), reduction_indices = 1)
-        return tf.reduce_mean(mse)
+        mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target),
+                                           reduction_indices = 1))
+        return mse
 
 
 
@@ -118,8 +119,43 @@ def dice_coe(output, target, epsilon=1e-10):
     else:
         return tf.clip_by_value(dice, 0, 1.0-epsilon)
 
+
+def dice_hard_coe(output, target, epsilon=1e-10):
+    """Non-differentiable Sørensen–Dice coefficient for comparing the similarity of two distributions,
+    usually be used for binary image segmentation i.e. labels are binary.
+    The coefficient = [0, 1], 1 if totally match.
+
+    Parameters
+    -----------
+    output : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    target : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    epsilon : float
+        An optional name to attach to this layer.
+
+    Examples
+    ---------
+    >>> outputs = pixel_wise_softmax(network.outputs)
+    >>> dice_loss = 1 - dice_coe(outputs, y_, epsilon=1e-5)
+
+    References
+    -----------
+    - `wiki-dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
+    """
+    output = tf.cast(output > 0.5, dtype=tf.float32)
+    target = tf.cast(target > 0.5, dtype=tf.float32)
+    inse = tf.reduce_sum( output * target )
+    l = tf.reduce_sum( output * output )
+    r = tf.reduce_sum( target * target )
+    dice = 2 * (inse) / (l + r)
+    if epsilon == 0:
+        return dice
+    else:
+        return tf.clip_by_value(dice, 0, 1.0-epsilon)
+
 def iou_coe(output, target, threshold=0.5, epsilon=1e-10):
-    """Intersection over Union (Hard Dice), usually be used for evaluating binary image segmentation.
+    """Non-differentiable Intersection over Union, usually be used for evaluating binary image segmentation.
     The coefficient = [0, 1], 1 means totally match.
 
     Parameters
@@ -199,7 +235,6 @@ def cross_entropy_seq_with_mask(logits, target_seqs, input_mask, return_details=
     --------
     - see Image Captioning Example.
     """
-    print("     cross_entropy_seq_with_mask : Undocumented")
     targets = tf.reshape(target_seqs, [-1])   # to one vector
     weights = tf.to_float(tf.reshape(input_mask, [-1]))   # to one vector like targets
     losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, targets)
@@ -210,6 +245,22 @@ def cross_entropy_seq_with_mask(logits, target_seqs, input_mask, return_details=
         return loss, losses, weights, targets
     else:
         return loss
+
+
+def cosine_similarity(v1, v2):
+    """Cosine similarity [-1, 1], `wiki <https://en.wikipedia.org/wiki/Cosine_similarity>`_.
+
+    Parameters
+    -----------
+    v1, v2 : tensor of [batch_size, n_feature], with the same number of features.
+
+    Returns
+    -----------
+    a tensor of [batch_size, ]
+    """
+    return tf.reduce_sum(tf.mul(v1, v2), reduction_indices=1) / (tf.sqrt(tf.reduce_sum(tf.mul(v1, v1), reduction_indices=1)) * tf.sqrt(tf.reduce_sum(tf.mul(v2, v2), reduction_indices=1)))
+
+
 
 ## Regularization Functions
 def li_regularizer(scale):
@@ -224,7 +275,7 @@ def li_regularizer(scale):
 
   Returns
   --------
-  A function with signature `li(weights, name=None)` that apply L1 regularization.
+  A function with signature `li(weights, name=None)` that apply Li regularization.
 
   Raises
   ------

@@ -76,30 +76,64 @@ def threading_data(data=None, fn=None, **kwargs):
     References
     ----------
     - `python queue <https://pymotw.com/2/Queue/index.html#module-Queue>`_
+    - `run with limited queue <http://effbot.org/librarybook/queue.htm>`_
     """
     ## plot function info
     # for name, value in kwargs.items():
     #     print('{0} = {1}'.format(name, value))
     # exit()
-    ## define function for threading
-    def function(q, data, kwargs):
-        result = fn(data, **kwargs)
-        q.put(result)
-    ## start threading
-    q = queue.Queue()
+    # define function for threading
+    def apply_fn(results, i, data, kwargs):
+        results[i] = fn(data, **kwargs)
+
+    ## start multi-threaded reading.
+    results = [None] * len(data) ## preallocate result list
+    threads = []
     for i in range(len(data)):
-        d = threading.Thread(
+        t = threading.Thread(
                         name='threading_and_return',
-                        target=function,
-                        args=(q, data[i], kwargs)
+                        target=apply_fn,
+                        args=(results, i, data[i], kwargs)
                         )
-        d.start()
-    ## get results
-    results = []
-    for i in range(len(data)):
-        result = q.get()
-        results.append(result)
+        t.start()
+        threads.append(t)
+
+    ## <Milo> wait for all threads to complete
+    for t in threads:
+        t.join()
+
     return np.asarray(results)
+
+    ## old implementation
+    # define function for threading
+    # def function(q, i, data, kwargs):
+    #     result = fn(data, **kwargs)
+    #     q.put([i, result])
+    # ## start threading
+    # q = queue.Queue()
+    # threads = []
+    # for i in range(len(data)):
+    #     t = threading.Thread(
+    #                     name='threading_and_return',
+    #                     target=function,
+    #                     args=(q, i, data[i], kwargs)
+    #                     )
+    #     t.start()
+    #     threads.append(t)
+    #
+    # ## <Milo> wait for all threads to complete
+    # for t in threads:
+    #     t.join()
+    #
+    # ## get results
+    # results = []
+    # for i in range(len(data)):
+    #     result = q.get()
+    #     results.append(result)
+    # results = sorted(results)
+    # for i in range(len(results)):
+    #     results[i] = results[i][1]
+    # return np.asarray(results)
 
 
 ## Image
@@ -202,12 +236,19 @@ def crop(x, wrg, hrg, is_random=False, row_index=0, col_index=1, channel_index=2
         w_offset = int(np.random.uniform(0, w-wrg) -1)
         # print(h_offset, w_offset, x[h_offset: hrg+h_offset ,w_offset: wrg+w_offset].shape)
         return x[h_offset: hrg+h_offset ,w_offset: wrg+w_offset]
-    else:
+    else:   # central crop
+        h_offset = int(np.floor((h - hrg)/2.))
+        w_offset = int(np.floor((w - wrg)/2.))
+        h_end = h_offset + hrg
+        w_end = w_offset + wrg
+        return x[h_offset: h_end, w_offset: w_end]
+        # old implementation
+        # h_offset = (h - hrg)/2
+        # w_offset = (w - wrg)/2
+        # # print(x[h_offset: h-h_offset ,w_offset: w-w_offset].shape)
+        # return x[h_offset: h-h_offset ,w_offset: w-w_offset]
         # central crop
-        h_offset = (h - hrg)/2
-        w_offset = (w - wrg)/2
-        # print(x[h_offset: h-h_offset ,w_offset: w-w_offset].shape)
-        return x[h_offset: h-h_offset ,w_offset: w-w_offset]
+
 
 def crop_multi(x, wrg, hrg, is_random=False, row_index=0, col_index=1, channel_index=2):
     """Randomly or centrally crop multiple images.
@@ -503,7 +544,7 @@ def swirl_multi(x, center=None, strength=1, radius=100, rotation=0, output_shape
     -----------
     x : list of numpy array
         List of images with dimension of [n_images, row, col, channel] (default).
-    others : see ``rotation``.
+    others : see ``swirl``.
     """
     assert radius != 0, Exception("Invalid radius value")
     rotation = np.pi / 180 * rotation
@@ -527,6 +568,96 @@ def swirl_multi(x, center=None, strength=1, radius=100, rotation=0, output_shape
         results.append( swirled )
     return np.asarray(results)
 
+# elastic_transform
+
+from scipy.ndimage.interpolation import map_coordinates
+from scipy.ndimage.filters import gaussian_filter
+def elastic_transform(x, alpha, sigma, mode="constant", cval=0, is_random=False):
+    """Elastic deformation of images as described in `[Simard2003] <http://deeplearning.cs.cmu.edu/pdfs/Simard.pdf>`_ .
+
+    Parameters
+    -----------
+    x : numpy array, a greyscale image.
+    alpha : scalar factor.
+    sigma : scalar or sequence of scalars, the smaller the sigma, the more transformation.
+        Standard deviation for Gaussian kernel. The standard deviations of the Gaussian filter are given for each axis as a sequence, or as a single number, in which case it is equal for all axes.
+    mode : default constant, see `scipy.ndimage.filters.gaussian_filter <https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.ndimage.filters.gaussian_filter.html>`_.
+    cval : float, optional. Used in conjunction with mode ‘constant’, the value outside the image boundaries.
+    is_random : boolean, default False
+
+    Examples
+    ---------
+    >>> x = elastic_transform(x, alpha = x.shape[1] * 3, sigma = x.shape[1] * 0.07)
+
+    References
+    ------------
+    - `Github <https://gist.github.com/chsasank/4d8f68caf01f041a6453e67fb30f8f5a>`_.
+    - `Kaggle <https://www.kaggle.com/pscion/ultrasound-nerve-segmentation/elastic-transform-for-data-augmentation-0878921a>`_
+    """
+    if is_random is False:
+        random_state = np.random.RandomState(None)
+    else:
+        random_state = np.random.RandomState(int(time.time()))
+    #
+    is_3d = False
+    if len(x.shape) == 3 and x.shape[-1] == 1:
+        x = x[:,:,0]
+        is_3d = True
+    elif len(x.shape) == 3 and x.shape[-1] != 1:
+        raise Exception("Only support greyscale image")
+    assert len(x.shape)==2
+
+    shape = x.shape
+
+    dx = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode=mode, cval=cval) * alpha
+    dy = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode=mode, cval=cval) * alpha
+
+    x_, y_ = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
+    indices = np.reshape(x_ + dx, (-1, 1)), np.reshape(y_ + dy, (-1, 1))
+    if is_3d:
+        return map_coordinates(x, indices, order=1).reshape((shape[0], shape[1], 1))
+    else:
+        return map_coordinates(x, indices, order=1).reshape(shape)
+
+def elastic_transform_multi(x, alpha, sigma, mode="constant", cval=0, is_random=False):
+    """Elastic deformation of images as described in `[Simard2003] <http://deeplearning.cs.cmu.edu/pdfs/Simard.pdf>`_.
+
+    Parameters
+    -----------
+    x : list of numpy array
+    others : see ``elastic_transform``.
+    """
+    if is_random is False:
+        random_state = np.random.RandomState(None)
+    else:
+        random_state = np.random.RandomState(int(time.time()))
+
+    shape = x[0].shape
+    if len(shape) == 3:
+        shape = (shape[0], shape[1])
+    new_shape = random_state.rand(*shape)
+
+    results = []
+    for data in x:
+        is_3d = False
+        if len(data.shape) == 3 and data.shape[-1] == 1:
+            data = data[:,:,0]
+            is_3d = True
+        elif len(data.shape) == 3 and data.shape[-1] != 1:
+            raise Exception("Only support greyscale image")
+        assert len(data.shape)==2
+
+        dx = gaussian_filter((new_shape * 2 - 1), sigma, mode=mode, cval=cval) * alpha
+        dy = gaussian_filter((new_shape * 2 - 1), sigma, mode=mode, cval=cval) * alpha
+
+        x_, y_ = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
+        indices = np.reshape(x_ + dx, (-1, 1)), np.reshape(y_ + dy, (-1, 1))
+        # print(data.shape)
+        if is_3d:
+            results.append( map_coordinates(data, indices, order=1).reshape((shape[0], shape[1], 1)))
+        else:
+            results.append( map_coordinates(data, indices, order=1).reshape(shape) )
+    return np.asarray(results)
 
 # zoom
 def zoom(x, zoom_range=(0.9, 1.1), is_random=False, row_index=0, col_index=1, channel_index=2,
@@ -627,7 +758,8 @@ def brightness(x, gamma=1, gain=1, is_random=False):
         An image with dimension of [row, col, channel] (default).
     gamma : float, small than 1 means brighter.
         Non negative real number. Default value is 1.
-            - If is_random is True, gamma in a range of (1-gamma, 1+gamma).
+
+        - If is_random is True, gamma in a range of (1-gamma, 1+gamma).
     gain : float
         The constant multiplier. Default value is 1.
     is_random : boolean, default False
@@ -674,7 +806,8 @@ def constant_multi():
 
 # resize
 def imresize(x, size=[100, 100], interp='bilinear', mode=None):
-    """Resize an image by given output size and method.
+    """Resize an image by given output size and method. Warning, this function
+    will rescale the value to [0, 255].
 
     Parameters
     -----------
@@ -685,9 +818,9 @@ def imresize(x, size=[100, 100], interp='bilinear', mode=None):
         - float, Fraction of current size.
         - tuple, Size of the output image.
     interp : str, optional
-    Interpolation to use for re-sizing (‘nearest’, ‘lanczos’, ‘bilinear’, ‘bicubic’ or ‘cubic’).
+        Interpolation to use for re-sizing (‘nearest’, ‘lanczos’, ‘bilinear’, ‘bicubic’ or ‘cubic’).
     mode : str, optional
-    The PIL image mode (‘P’, ‘L’, etc.) to convert arr before resizing.
+        The PIL image mode (‘P’, ‘L’, etc.) to convert arr before resizing.
 
     Returns
     --------
@@ -956,12 +1089,13 @@ def projective_transform_by_points(x, src, dst, map_args={}, output_shape=None, 
         Shape of the output image generated. By default the shape of the input image is preserved. Note that, even for multi-band images, only rows and columns need to be specified.
     order : int, optional
         The order of interpolation. The order has to be in the range 0-5:
-            - 0 Nearest-neighbor
-            - 1 Bi-linear (default)
-            - 2 Bi-quadratic
-            - 3 Bi-cubic
-            - 4 Bi-quartic
-            - 5 Bi-quintic
+
+        - 0 Nearest-neighbor
+        - 1 Bi-linear (default)
+        - 2 Bi-quadratic
+        - 3 Bi-cubic
+        - 4 Bi-quartic
+        - 5 Bi-quintic
     mode : {‘constant’, ‘edge’, ‘symmetric’, ‘reflect’, ‘wrap’}, optional
         Points outside the boundaries of the input are filled according to the given mode. Modes match the behaviour of numpy.pad.
     cval : float, optional
@@ -1208,7 +1342,7 @@ def crop_central_whiten_images(images=None, height=24, width=24):
         The tensor or placeholder of images
     height : int
         The height for central crop.
-    width: int
+    width : int
         The width for central crop.
 
     Returns

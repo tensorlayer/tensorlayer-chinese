@@ -646,15 +646,17 @@ def save_npz(save_list=[], name='model.npz', sess=None):
     """
     ## save params into a list
     save_list_var = []
-    for k, value in enumerate(save_list):
-        if sess:
-            save_list_var.append( sess.run(value) )
-        else:
-            try:
-                save_list_var.append( value.eval() )
-            except:
-                print(" Fail to save model, Hint: pass the session into this function, save_npz(network.all_params, name='model.npz', sess=sess)")
+    if sess:
+        save_list_var = sess.run(save_list)
+    else:
+        try:
+            for k, value in enumerate(save_list):
+                save_list_var.append(value.eval())
+        except:
+            print(" Fail to save model, Hint: pass the session into this function, save_npz(network.all_params, name='model.npz', sess=sess)")
     np.savez(name, params=save_list_var)
+    save_list_var = None
+    del save_list_var
     print('Model is saved to: %s' % name)
 
     ## save params into a dictionary
@@ -732,9 +734,10 @@ def assign_params(sess, params, network):
     ----------
     - `Assign value to a TensorFlow variable <http://stackoverflow.com/questions/34220532/how-to-assign-value-to-a-tensorflow-variable>`_
     """
+    ops = []
     for idx, param in enumerate(params):
-        assign_op = network.all_params[idx].assign(param)
-        sess.run(assign_op)
+        ops.append(network.all_params[idx].assign(param))
+    sess.run(ops)
 
 
 
@@ -790,7 +793,7 @@ def npz_to_W_pdf(path=None, regx='w1pre_[0-9]+\.(npz)'):
 
 
 ## Helper functions
-def load_file_list(path=None, regx='\.npz'):
+def load_file_list(path=None, regx='\.npz', printable=True):
     """Return a file list in a folder by given a path and regular expression.
 
     Parameters
@@ -799,6 +802,7 @@ def load_file_list(path=None, regx='\.npz'):
         A folder path.
     regx : a string
         The regx of file name.
+    printable : boolean, whether to print the files infomation.
 
     Examples
     ----------
@@ -812,6 +816,7 @@ def load_file_list(path=None, regx='\.npz'):
         if re.search(regx, f):
             return_list.append(f)
     # return_list.sort()
-    print('Match file list = %s' % return_list)
-    print('Number of files = %d' % len(return_list))
+    if printable:
+        print('Match file list = %s' % return_list)
+        print('Number of files = %d' % len(return_list))
     return return_list
