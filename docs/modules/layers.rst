@@ -495,6 +495,15 @@ Local Response Normalization
 ------------
 .. autoclass:: DynamicRNNLayer
 
+动态递归层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DynamicRNNLayer
+
+动态双向递归层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BiDynamicRNNLayer
+
+
 形状修改层
 ----------------
 
