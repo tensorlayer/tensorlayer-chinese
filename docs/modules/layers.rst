@@ -259,6 +259,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DenseLayer
    ReconLayer
    DropoutLayer
+   GaussianNoiseLayer
    DropconnectDenseLayer
 
    Conv1dLayer
@@ -278,6 +279,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    
    BatchNormLayer
    LocalResponseNormLayer
+   
    RNNLayer
    BiRNNLayer
    advanced_indexing_op
@@ -366,12 +368,14 @@ Basic 层
 
 Dropout层
 ^^^^^^^^^^^
-
 .. autoclass:: DropoutLayer
 
-Dropconnect层
-^^^^^^^^^^^^^^^^
+高斯噪声层
+^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: GaussianNoiseLayer
 
+Dropconnect + 全链接层
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DropconnectDenseLayer
 
 卷积层(Pro)
