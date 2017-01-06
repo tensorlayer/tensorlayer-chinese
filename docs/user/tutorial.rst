@@ -76,8 +76,8 @@ TensorLayer很简单
   train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
                               epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-  # 初始化所有参数
-  sess.run(tf.initialize_all_variables())
+  # 初始化 session 中的所有参数
+  tl.layers.initialize_global_variables(sess)
 
   # 列出模型信息
   network.print_params()
@@ -832,7 +832,7 @@ Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单
                   embedding_size = embedding_size,
                   name ='embedding_layer')
 
-  sess.run(tf.initialize_all_variables())
+  tl.layers.initialize_global_variables(sess)
 
   tl.files.assign_params(sess, [load_params[0]], emb_net)
 
