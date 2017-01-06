@@ -386,7 +386,7 @@ MNIST数据集包含了60000个28x28像素的手写数字图片，它通常用�
 首先，我们需要添加一个 :class:`Conv2dLayer<tensorlayer.layers.Conv2dLayer>` ，
 它顶部有32个5x5的过滤器，紧接着在两个2个向量的同尺寸的最大汇流。[###]
 
-
+注，``tutorial_mnist.py`` 中介绍了针对初学者的简化版的 CNN API。
 .. code-block:: python
 
     network = tl.layers.InputLayer(x, name='input_layer')
