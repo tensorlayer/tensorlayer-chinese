@@ -86,8 +86,8 @@ train_params = network.all_params
 train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
                             epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-# 初始化所有参数
-sess.run(tf.initialize_all_variables())
+# 初始化 session 中的所有参数
+tl.layers.initialize_global_variables(sess)
 
 # 列出模型信息
 network.print_params()
