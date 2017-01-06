@@ -18,7 +18,7 @@ API - 神经网络层
 
 所有TensorLayer层有如下的方法：
 
- - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``sess.run(tf.initialize_all_variables())`` 之后）。另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
+ - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``tl.layers.initialize_global_variables(sess)`` 之后）。另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
  - ``layer.print_layers()`` : 打印出神经网络每一层输出的信息。
  - ``layer.count_params()`` : 打印出神经网络参数的数量。
 
@@ -69,7 +69,7 @@ API - 神经网络层
   train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
                               epsilon=1e-08, use_locking=False).minimize(cost, var_list = train_params)
 
-  sess.run(tf.initialize_all_variables())
+  tl.layers.initialize_global_variables(sess)
 
   network.print_params()
   network.print_layers()
@@ -249,6 +249,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    get_variables_with_name
    set_name_reuse
    print_all_variables
+   initialize_global_variables
 
    Layer
 
@@ -324,6 +325,10 @@ Enable layer name reuse
 Print variables
 ^^^^^^^^^^^^^^^^^^
 .. autofunction:: print_all_variables
+
+Initialize variables
+^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: initialize_global_variables
 
 Basic 层
 ----------------
