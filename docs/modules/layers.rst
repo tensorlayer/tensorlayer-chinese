@@ -288,8 +288,8 @@ the sparsity can be implemented by using the L1 regularization of activation out
    retrieve_seq_length_op2
    DynamicRNNLayer
 
-   Seq2seq
-   PeekySeq2seq
+   Seq2Seq
+   PeekySeq2Seq
    AttentionSeq2Seq
 
    FlattenLayer
@@ -517,16 +517,16 @@ Local Response Normalization
 .. autoclass:: BiDynamicRNNLayer
 
 
-Sequence to Sequence
+序列到序列
 ----------------------
 
-Simple Seq2seq
+Simple Seq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Seq2seq
+.. autoclass:: Seq2Seq
 
-PeekySeq2seq
+PeekySeq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: PeekySeq2seq
+.. autoclass:: PeekySeq2Seq
 
 AttentionSeq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
