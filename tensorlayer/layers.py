@@ -3845,11 +3845,11 @@ class Seq2Seq(Layer):
         n_layer = 1,
         # return_last = False,
         return_seq_2d = False,
-        name = 'simple_seq2seq',
+        name = 'seq2seq',
     ):
         Layer.__init__(self, name=name)
         # self.inputs = layer.outputs
-        print("  tensorlayer:Instantiate SimpleSeq2Seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
+        print("  tensorlayer:Instantiate Seq2Seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
 
         with tf.variable_scope(name) as vs:#, reuse=reuse):
@@ -3895,7 +3895,7 @@ class Seq2Seq(Layer):
         self.all_layers = list_remove_repeat(self.all_layers)
         self.all_params = list_remove_repeat(self.all_params)
 
-class PeekySeq2seq(Layer):
+class PeekySeq2Seq(Layer):
     """
     Waiting for contribution.
     The :class:`PeekySeq2Seq` class is `Model <https://camo.githubusercontent.com/7f690d451036938a51e62feb77149c8bb4be6675/687474703a2f2f6936342e74696e797069632e636f6d2f333032617168692e706e67>`_
@@ -3916,7 +3916,7 @@ class PeekySeq2seq(Layer):
         n_layer = 1,
         # return_last = False,
         return_seq_2d = False,
-        name = 'simple_seq2seq',
+        name = 'peeky_seq2seq',
     ):
         Layer.__init__(self, name=name)
         # self.inputs = layer.outputs
@@ -3944,7 +3944,7 @@ class AttentionSeq2Seq(Layer):
         n_layer = 1,
         # return_last = False,
         return_seq_2d = False,
-        name = 'simple_seq2seq',
+        name = 'attention_seq2seq',
     ):
         Layer.__init__(self, name=name)
         # self.inputs = layer.outputs
