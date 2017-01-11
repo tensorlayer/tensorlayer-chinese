@@ -517,7 +517,7 @@ Local Response Normalization
 .. autoclass:: BiDynamicRNNLayer
 
 
-Seq2seq
+Sequence to Sequence
 ----------------------
 
 Simple Seq2seq
