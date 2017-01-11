@@ -52,7 +52,10 @@ API - 数据预处理
    array_to_img
 
    pad_sequences
-
+   precess_sequences
+   sequences_add_start_id
+   sequences_get_mask
+   
    distorted_images
    crop_central_whiten_images
 
@@ -157,7 +160,17 @@ Padding
 ^^^^^^^^^^
 .. autofunction:: pad_sequences
 
+Process
+^^^^^^^^^
+.. autofunction:: process_sequences
 
+Add Start ID
+^^^^^^^^^^^^^^^
+.. autofunction:: sequences_add_start_id
+
+Get Mask
+^^^^^^^^^
+.. autofunction:: sequences_get_mask
 
 
 
