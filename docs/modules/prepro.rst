@@ -43,6 +43,8 @@ API - 数据预处理
    channel_shift
    channel_shift_multi
    
+   drop
+   
    transform_matrix_offset_center
    apply_transform
    projective_transform_by_points
@@ -127,6 +129,10 @@ API - 数据预处理
 ^^^^^^^^^^^^^^
 .. autofunction:: channel_shift
 .. autofunction:: channel_shift_multi
+
+噪声
+^^^^^^^^^^^^^^
+.. autofunction:: drop
 
 手动变换
 ^^^^^^^^^^^^^^^^^
