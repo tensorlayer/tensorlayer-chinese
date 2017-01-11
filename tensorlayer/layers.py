@@ -3729,6 +3729,7 @@ class BiDynamicRNNLayer(Layer):
         self.all_params.extend( rnn_variables )
 
 
+# Seq2seq
 class Seq2Seq(Layer):
     """
     The :class:`Seq2Seq` class is a simple Seq2seq layer, see `Model <https://camo.githubusercontent.com/242210d7d0151cae91107ee63bff364a860db5dd/687474703a2f2f6936342e74696e797069632e636f6d2f333031333674652e706e67>`_
@@ -3821,8 +3822,8 @@ class Seq2Seq(Layer):
     >>> y = tf.nn.softmax(net_out.outputs)
     >>> net_out.print_params(False)
 
-    Tips
-    -----
+    Notes
+    --------
     - How to feed data: `Sequence to Sequence Learning with Neural Networks <https://arxiv.org/pdf/1409.3215v3.pdf>`_
     - input_seqs : ['how', 'are', 'you']
     - target_seqs : ['<START_ID>', 'I', 'am', 'fine']
@@ -3895,10 +3896,11 @@ class Seq2Seq(Layer):
         self.all_layers = list_remove_repeat(self.all_layers)
         self.all_params = list_remove_repeat(self.all_params)
 
+
 class PeekySeq2Seq(Layer):
     """
     Waiting for contribution.
-    The :class:`PeekySeq2Seq` class is `Model <https://camo.githubusercontent.com/7f690d451036938a51e62feb77149c8bb4be6675/687474703a2f2f6936342e74696e797069632e636f6d2f333032617168692e706e67>`_
+    The :class:`PeekySeq2Seq` class, see `Model <https://camo.githubusercontent.com/7f690d451036938a51e62feb77149c8bb4be6675/687474703a2f2f6936342e74696e797069632e636f6d2f333032617168692e706e67>`_
     and `Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation <https://arxiv.org/abs/1406.1078>`_ .
     """
     def __init__(
@@ -3923,10 +3925,11 @@ class PeekySeq2Seq(Layer):
         print("  tensorlayer:Instantiate PeekySeq2seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
 
+
 class AttentionSeq2Seq(Layer):
     """
     Waiting for contribution.
-    The :class:`AttentionSeq2Seq` class is `Model <https://camo.githubusercontent.com/0e2e4e5fb2dd47846c2fe027737a5df5e711df1b/687474703a2f2f6936342e74696e797069632e636f6d2f6132727733642e706e67>`_
+    The :class:`AttentionSeq2Seq` class, see `Model <https://camo.githubusercontent.com/0e2e4e5fb2dd47846c2fe027737a5df5e711df1b/687474703a2f2f6936342e74696e797069632e636f6d2f6132727733642e706e67>`_
     and `Neural Machine Translation by Jointly Learning to Align and Translate <https://arxiv.org/pdf/1409.0473v6.pdf>`_ .
     """
     def __init__(
@@ -3950,6 +3953,7 @@ class AttentionSeq2Seq(Layer):
         # self.inputs = layer.outputs
         print("  tensorlayer:Instantiate PeekySeq2seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
+
 
 ## Shape layer
 class FlattenLayer(Layer):
