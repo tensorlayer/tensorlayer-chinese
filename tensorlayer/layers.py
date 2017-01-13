@@ -3732,13 +3732,17 @@ class BiDynamicRNNLayer(Layer):
 # Seq2seq
 class Seq2Seq(Layer):
     """
-    The :class:`Seq2Seq` class is a simple Seq2seq layer, see `Model <https://camo.githubusercontent.com/242210d7d0151cae91107ee63bff364a860db5dd/687474703a2f2f6936342e74696e797069632e636f6d2f333031333674652e706e67>`_
+    The :class:`Seq2Seq` class is a simple :class:`DynamicRNNLayer` based Seq2seq layer,
+    both encoder and decoder are :class:`DynamicRNNLayer`, network details
+    see `Model <https://camo.githubusercontent.com/242210d7d0151cae91107ee63bff364a860db5dd/687474703a2f2f6936342e74696e797069632e636f6d2f333031333674652e706e67>`_
     and `Sequence to Sequence Learning with Neural Networks <https://arxiv.org/abs/1409.3215>`_ .
 
     Parameters
     ----------
-    layer : a :class:`Layer` instance
-        The `Layer` class feeding into this layer.
+    net_encode_in : a :class:`Layer` instance
+        Encode sequences, [batch_size, None, n_features].
+    net_decode_in : a :class:`Layer` instance
+        Decode sequences, [batch_size, None, n_features].
     cell_fn : a TensorFlow's core RNN cell as follow.
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_\n
         - class ``tf.nn.rnn_cell.BasicRNNCell``
@@ -3751,22 +3755,14 @@ class Seq2Seq(Layer):
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
-    in_sequence_length : a tensor, array or None
-        The sequence length of each row of input data, see ``Advanced Ops for Dynamic RNN``.
-            - If None, it uses ``retrieve_seq_length_op`` to compute the sequence_length, i.e. when the features of padding (on right hand side) are all zeros.
-            - If using word embedding, you may need to compute the sequence_length from the ID array (the integer features before word embedding) by using ``retrieve_seq_length_op2`` or ``retrieve_seq_length_op``.
-            - You can also input an numpy array.
-            - More details about TensorFlow dynamic_rnn in `Wild-ML Blog <http://www.wildml.com/2016/08/rnns-in-tensorflow-a-practical-guide-and-undocumented-features/>`_.
+    encode_sequence_length : tensor for encoder sequence length, see :class:`DynamicRNNLayer` .
+    decode_sequence_length : tensor for decoder sequence length, see :class:`DynamicRNNLayer` .
     initial_state : None or forward RNN State
-        If None, initial_state is zero_state.
+        If None, initial_state is of encoder zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
     n_layer : a int, default is 1.
         The number of RNN layers.
-    return_last : boolean
-        If True, return the last output, "Sequence input and single output"\n
-        If False, return all outputs, "Synced sequence input and output"\n
-        In other word, if you want to apply one or more RNN(s) on this layer, set to False.
     return_seq_2d : boolean
         - When return_last = False
         - If True, return 2D Tensor [n_example, 2 * n_hidden], for stacking DenseLayer or computing cost after it.
@@ -3780,43 +3776,41 @@ class Seq2Seq(Layer):
         The output of RNN decoder.
 
     final_state : a tensor or StateTuple
-        When state_is_tuple = False,
-        it is the final hidden and cell states, states.get_shape() = [?, 2 * n_hidden].\n
-        When state_is_tuple = True, it stores two elements: (c, h), in that order.
-        You can get the final state after each iteration during training, then
-        feed it to the initial state of next iteration.
+        Final state of decoder, see :class:`DynamicRNNLayer` .
 
     Examples
     ----------
     >>> batch_size = 32
-    >>> input_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="input_seqs")
+    >>> encode_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="encode_seqs")
     >>> decode_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="decode_seqs")
     >>> target_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="target_seqs")
     >>> target_mask = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="target_mask") # tl.prepro.sequences_get_mask()
-    >>> with tf.variable_scope("model") as vs:
-    >>>     net_in = EmbeddingInputlayer(
-    ...         inputs = input_seqs,
-    ...         vocabulary_size = 10000,
-    ...         embedding_size = 200,
-    ...         name = 'seq_embedding')
+    >>> with tf.variable_scope("model") as vs:#, reuse=reuse):
+    ...     # for chatbot, you can use the same embedding layer,
+    ...     # for translation, you may want to use 2 seperated embedding layers
+    >>>     net_encode = EmbeddingInputlayer(
+    ...             inputs = encode_seqs,
+    ...             vocabulary_size = 10000,
+    ...             embedding_size = 200,
+    ...             name = 'seq_embedding')
     >>>     vs.reuse_variables()
     >>>     tl.layers.set_name_reuse(True)
-    >>>     net_out = EmbeddingInputlayer(
-    ...         inputs = decode_seqs,
-    ...         vocabulary_size = 10000,
-    ...         embedding_size = 200,
-    ...         name = 'seq_embedding')
-    >>> net = Seq2Seq(net_in, net_out,
-    ...     cell_fn = tf.nn.rnn_cell.LSTMCell,
-    ...     n_hidden = 200,
-    ...     initializer = tf.random_uniform_initializer(-0.1, 0.1),
-    ...     in_sequence_length = retrieve_seq_length_op2(input_seqs),
-    ...     out_sequence_length = retrieve_seq_length_op2(target_seqs),
-    ...     initial_state = None,
-    ...     dropout = None,
-    ...     n_layer = 1,# return_last = False,
-    ...     return_seq_2d = True,
-    ...     name = 'seq2seq')
+    >>>     net_decode = EmbeddingInputlayer(
+    ...             inputs = decode_seqs,
+    ...             vocabulary_size = 10000,
+    ...             embedding_size = 200,
+    ...             name = 'seq_embedding')
+    >>>     net = Seq2Seq(net_encode, net_decode,
+    ...             cell_fn = tf.nn.rnn_cell.LSTMCell,
+    ...             n_hidden = 200,
+    ...             initializer = tf.random_uniform_initializer(-0.1, 0.1),
+    ...             encode_sequence_length = retrieve_seq_length_op2(encode_seqs),
+    ...             decode_sequence_length = retrieve_seq_length_op2(decode_seqs),
+    ...             initial_state = None,
+    ...             dropout = None,
+    ...             n_layer = 1,
+    ...             return_seq_2d = True,
+    ...             name = 'seq2seq')
     >>> net_out = DenseLayer(net, n_units=10000, act=tf.identity, name='output')
     >>> e_loss = tl.cost.cross_entropy_seq_with_mask(logits=net_out.outputs, target_seqs=target_seqs, input_mask=target_mask, return_details=False)
     >>> y = tf.nn.softmax(net_out.outputs)
@@ -3825,22 +3819,22 @@ class Seq2Seq(Layer):
     Notes
     --------
     - How to feed data: `Sequence to Sequence Learning with Neural Networks <https://arxiv.org/pdf/1409.3215v3.pdf>`_
-    - input_seqs : ['how', 'are', 'you', '<PAD_ID'>]
-    - decode_seqs : ['<START_ID>', 'I', 'am', 'fine', '<PAD_ID'>]
-    - target_seqs : ['I', 'am', 'fine', '<END_ID']
-    - target_mask : [1, 1, 1, 1, 0]
+    - input_seqs : ``['how', 'are', 'you', '<PAD_ID'>]``
+    - decode_seqs : ``['<START_ID>', 'I', 'am', 'fine', '<PAD_ID'>]``
+    - target_seqs : ``['I', 'am', 'fine', '<END_ID']``
+    - target_mask : ``[1, 1, 1, 1, 0]``
     - related functions : tl.prepro <pad_sequences, precess_sequences, sequences_add_start_id, sequences_get_mask>
     """
     def __init__(
         self,
-        net_in = None,
-        net_out = None,
+        net_encode_in = None,
+        net_decode_in = None,
         cell_fn = tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
-        in_sequence_length = None,
-        out_sequence_length = None,
+        encode_sequence_length = None,
+        decode_sequence_length = None,
         initial_state = None,
         dropout = None,
         n_layer = 1,
@@ -3856,25 +3850,27 @@ class Seq2Seq(Layer):
         with tf.variable_scope(name) as vs:#, reuse=reuse):
             # tl.layers.set_name_reuse(reuse)
             # network = InputLayer(self.inputs, name=name+'/input')
-            network_encode = DynamicRNNLayer(net_in,
+            network_encode = DynamicRNNLayer(net_encode_in,
                      cell_fn = cell_fn,
                      cell_init_args = cell_init_args,
                      n_hidden = n_hidden,
                      initial_state = initial_state,
                      dropout = dropout,
-                     sequence_length = in_sequence_length,
+                     n_layer = n_layer,
+                     sequence_length = encode_sequence_length,
                      return_last = False,
                      return_seq_2d = True,
                      name = 'encode')
             # vs.reuse_variables()
             # tl.layers.set_name_reuse(True)
-            network_decode = DynamicRNNLayer(net_out,
+            network_decode = DynamicRNNLayer(net_decode_in,
                      cell_fn = cell_fn,
                      cell_init_args = cell_init_args,
                      n_hidden = n_hidden,
                      initial_state = network_encode.final_state,
                      dropout = dropout,
-                     sequence_length = out_sequence_length,
+                     n_layer = n_layer,
+                     sequence_length = decode_sequence_length,
                      return_last = False,
                      return_seq_2d = return_seq_2d,
                      name = 'decode')
@@ -3905,8 +3901,8 @@ class PeekySeq2Seq(Layer):
     """
     def __init__(
         self,
-        net_in = None,
-        net_out = None,
+        net_encode_in = None,
+        net_decode_in = None,
         cell_fn = tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
@@ -3934,8 +3930,8 @@ class AttentionSeq2Seq(Layer):
     """
     def __init__(
         self,
-        net_in = None,
-        net_out = None,
+        net_encode_in = None,
+        net_decode_in = None,
         cell_fn = tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
@@ -4218,6 +4214,78 @@ class ElementwiseLayer(Layer):
         self.all_layers = list_remove_repeat(self.all_layers)
         self.all_params = list_remove_repeat(self.all_params)
         # self.all_drop = list_remove_repeat(self.all_drop)
+
+
+# Slicing and Joining
+class ExpandDimsLayer(object):
+    """
+    The :class:`ExpandDimsLayer` class inserts a dimension of 1 into a tensor's shape,
+    see `tf.expand_dims() <https://www.tensorflow.org/api_docs/python/array_ops/shapes_and_shaping#expand_dims>`_ .
+
+    Parameters
+    ----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    axis : int, 0-D (scalar).
+        Specifies the dimension index at which to expand the shape of input.
+    dim : int, 0-D (scalar).
+        Equivalent to axis, to be deprecated.
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+        self,
+        layer = None,
+        axis = None,
+        dim = None,
+        name = 'expand_dims',
+    ):
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+
+        print("  tensorlayer:Instantiate ExpandDimsLayer  %s" % self.name)
+        with tf.variable_scope(name) as vs:
+            self.outputs = tf.expand_dims(self.inputs, axis=axis, dim=dim)
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( variables )
+
+
+class TileLayer(object):
+    """
+    The :class:`TileLayer` class constructs a tensor by tiling a given tensor,
+    see `tf.tile() <https://www.tensorflow.org/api_docs/python/array_ops/slicing_and_joining#tile>`_ .
+
+    Parameters
+    ----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    multiples: a list of int
+        Must be one of the following types: int32, int64. 1-D. Length must be the same as the number of dimensions in input
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+        self,
+        layer = None,
+        multiples = None,
+        name = 'tile',
+    ):
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+
+        print("  tensorlayer:Instantiate TileLayer  %s" % self.name)
+        with tf.variable_scope(name) as vs:
+            self.outputs = tf.tile(self.inputs, multiples=multiples)
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( variables )
+
+
 
 ## TF-Slim layer
 class SlimNetsLayer(Layer):
