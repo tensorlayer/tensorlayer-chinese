@@ -298,6 +298,9 @@ the sparsity can be implemented by using the L1 regularization of activation out
    
    ConcatLayer
    ElementwiseLayer
+   
+   ExpandDimsLayer
+   TileLayer
 
    SlimNetsLayer
 
@@ -559,6 +562,18 @@ Concat层
 Elementwise层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: ElementwiseLayer
+
+扩充层
+---------
+
+Expand 层
+^^^^^^^^^^
+.. autoclass:: ExpandDimsLayer
+
+Tile 层
+^^^^^^^^^^^^^^^^^
+.. autoclass:: TileLayer
+
 
 连接 TF-Slim
 ---------------
