@@ -52,6 +52,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_file_list
    load_folder_list
    exists_or_mkdir
+   maybe_download_and_extract
    
 下载数据集
 ------------------------
@@ -134,3 +135,7 @@ WMT'15 Website 的英文译法文数据
 查看或建立文件夹
 ^^^^^^^^^^^^^^^^^^
 .. autofunction:: exists_or_mkdir
+
+下载或解压
+^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: maybe_download_and_extract
