@@ -1503,9 +1503,9 @@ class AtrousConv2dLayer(Layer):
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
         if b_init:
-            self.all_params.extend( [filters, b] )
+            self.all_params.extend( [W, b] )
         else:
-            self.all_params.extend( [filters] )
+            self.all_params.extend( [W] )
 
 class SeparableConv2dLayer(Layer):#TODO
     """The :class:`SeparableConv2dLayer` class is 2-D convolution with separable filters., see `tf.nn.separable_conv2d <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#separable_conv2d>`_.
@@ -1629,7 +1629,6 @@ def Conv2d(net, n_filter=32, filter_size=(3, 3), strides=(1, 1), act = None,
     >>> conv2 = Conv2d(conv2, 128, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv2_2')
     >>> pool2 = MaxPool2d(conv2, (2, 2), padding='SAME', name='pool2')
     """
-    assert len(strides) == 2, print("len(strides)==2, Conv2d and Conv2dLayer are different.")
     if act is None:
         act = tf.identity
     net = Conv2dLayer(net,
@@ -1659,9 +1658,8 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
     batch_size : int or None, batch_size. If None, try to find the batch_size from the first dim of net.outputs (you should tell the batch_size when define the input placeholder).
     strides : tuple of (height, width) for strides.
     act : None or activation function.
-    others : see :class:`DeConv2dLayer`.
+    others : see :class:`Conv2dLayer`.
     """
-    assert len(strides) == 2, print("len(strides)==2, DeConv2d and DeConv2dLayer are different.")
     if act is None:
         act = tf.identity
     if batch_size is None:
@@ -1679,7 +1677,7 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
                     name = name)
     return net
 
-def MaxPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='maxpool'):
+def MaxPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='maxpool'):
     """Wrapper for :class:`PoolLayer`.
 
     Parameters
@@ -1687,11 +1685,10 @@ def MaxPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='maxpo
     net : TensorLayer layer.
     filter_size : tuple of (height, width) for filter size.
     strides : tuple of (height, width). Default is the same with filter_size.
-    others : see :class:`PoolLayer`.
+    others : see :class:`Conv2dLayer`.
     """
     if strides is None:
         strides = filter_size
-    assert len(strides) == 2, print("len(strides)==2, MaxPool2d and PoolLayer are different.")
     net = PoolLayer(net, ksize=[1, filter_size[0], filter_size[1], 1],
             strides=[1, strides[0], strides[1], 1],
             padding=padding,
@@ -1699,7 +1696,7 @@ def MaxPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='maxpo
             name = name)
     return net
 
-def MeanPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='meanpool'):
+def MeanPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='meanpool'):
     """Wrapper for :class:`PoolLayer`.
 
     Parameters
@@ -1707,11 +1704,10 @@ def MeanPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='mean
     net : TensorLayer layer.
     filter_size : tuple of (height, width) for filter size.
     strides : tuple of (height, width). Default is the same with filter_size.
-    others : see :class:`PoolLayer`.
+    others : see :class:`Conv2dLayer`.
     """
     if strides is None:
         strides = filter_size
-    assert len(strides) == 2, print("len(strides)==2, MeanPool2d and PoolLayer are different.")
     net = PoolLayer(net, ksize=[1, filter_size[0], filter_size[1], 1],
             strides=[1, strides[0], strides[1], 1],
             padding=padding,
@@ -2771,7 +2767,7 @@ class RNNLayer(Layer):
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
     cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -2907,7 +2903,7 @@ class RNNLayer(Layer):
 
     References
     ----------
-    - `Neural Network RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
+    - `Neural Network RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
     - `tensorflow/python/ops/rnn.py <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn.py>`_
     - `tensorflow/python/ops/rnn_cell.py <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn_cell.py>`_
     - see TensorFlow tutorial ``ptb_word_lm.py``, TensorLayer tutorials ``tutorial_ptb_lstm*.py`` and ``tutorial_generate_text.py``
@@ -3021,7 +3017,7 @@ class BiRNNLayer(Layer):
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
     cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3322,7 +3318,7 @@ class DynamicRNNLayer(Layer):
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
     cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3540,7 +3536,7 @@ class BiDynamicRNNLayer(Layer):
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
     cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_\n
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_\n
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3748,7 +3744,7 @@ class Seq2Seq(Layer):
     net_decode_in : a :class:`Layer` instance
         Decode sequences, [batch_size, None, n_features].
     cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_\n
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_\n
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -4220,8 +4216,8 @@ class ElementwiseLayer(Layer):
         # self.all_drop = list_remove_repeat(self.all_drop)
 
 
-# Extend
-class ExpandDimsLayer(Layer):
+# Slicing and Joining
+class ExpandDimsLayer(object):
     """
     The :class:`ExpandDimsLayer` class inserts a dimension of 1 into a tensor's shape,
     see `tf.expand_dims() <https://www.tensorflow.org/api_docs/python/array_ops/shapes_and_shaping#expand_dims>`_ .
@@ -4232,6 +4228,8 @@ class ExpandDimsLayer(Layer):
         The `Layer` class feeding into this layer.
     axis : int, 0-D (scalar).
         Specifies the dimension index at which to expand the shape of input.
+    dim : int, 0-D (scalar).
+        Equivalent to axis, to be deprecated.
     name : a string or None
         An optional name to attach to this layer.
     """
@@ -4239,6 +4237,7 @@ class ExpandDimsLayer(Layer):
         self,
         layer = None,
         axis = None,
+        dim = None,
         name = 'expand_dims',
     ):
         Layer.__init__(self, name=name)
@@ -4246,18 +4245,15 @@ class ExpandDimsLayer(Layer):
 
         print("  tensorlayer:Instantiate ExpandDimsLayer  %s" % self.name)
         with tf.variable_scope(name) as vs:
-            try:    # TF12
-                self.outputs = tf.expand_dims(self.inputs, axis=axis)
-            except: # TF11
-                self.outputs = tf.expand_dims(self.inputs, dim=axis)
+            self.outputs = tf.expand_dims(self.inputs, axis=axis, dim=dim)
         self.all_layers = list(layer.all_layers)
         self.all_params = list(layer.all_params)
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
-        # self.all_params.extend( variables )
+        self.all_params.extend( variables )
 
 
-class TileLayer(Layer):
+class TileLayer(object):
     """
     The :class:`TileLayer` class constructs a tensor by tiling a given tensor,
     see `tf.tile() <https://www.tensorflow.org/api_docs/python/array_ops/slicing_and_joining#tile>`_ .
@@ -4287,8 +4283,7 @@ class TileLayer(Layer):
         self.all_params = list(layer.all_params)
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
-        # self.all_params.extend( variables )
-
+        self.all_params.extend( variables )
 
 
 
