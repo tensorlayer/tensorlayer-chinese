@@ -270,6 +270,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DeConv3dLayer
    PoolLayer
    UpSampling2dLayer
+   DownSampling2dLayer
    AtrousConv2dLayer
    LocalResponseNormLayer
 
@@ -424,6 +425,11 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: UpSampling2dLayer
+
+2D下采样层
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: DownSampling2dLayer
 
 2D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
