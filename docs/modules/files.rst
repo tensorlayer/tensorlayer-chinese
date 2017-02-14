@@ -43,6 +43,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    save_npz
    load_npz
    assign_params
+   load_and_assign_npz
 
    save_any_to_npy
    load_npy_to_any
@@ -96,13 +97,18 @@ WMT'15 Website 的英文译法文数据
 ^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_npz
 
-从.npz文件加载模型
+从.npz文件加载模型参数
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
 
-网络赋值
-^^^^^^^^^^
+把模型参数载入模型
+^^^^^^^^^^^^^^^^^^^
 .. autofunction:: assign_params
+
+从.npz中加载参数并导入模型
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_and_assign_npz
+
 
 保存与加载数据
 ------------------------
