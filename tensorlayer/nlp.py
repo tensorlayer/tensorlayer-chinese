@@ -360,6 +360,7 @@ def create_vocab(sentences, word_counts_output_file, min_word_count=1):
     # Filter uncommon words and sort by descending count.
     word_counts = [x for x in counter.items() if x[1] >= min_word_count]
     word_counts.sort(key=lambda x: x[1], reverse=True)
+    word_counts = [("<PAD>", 0)] + word_counts # 1st id should be reserved for padding
     # print(word_counts)
     print("    Words in vocabulary: %d" % len(word_counts))
 
@@ -418,6 +419,7 @@ def read_words(filename="nietzsche.txt", replace = ['\n', '<eos>']):
         try:    # python 3.4 or older
             context_list = f.read().replace(*replace).split()
         except: # python 3.5
+            f.seek(0)
             replace = [x.encode('utf-8') for x in replace]
             context_list = f.read().replace(*replace).split()
         return context_list

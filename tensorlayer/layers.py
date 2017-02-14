@@ -218,7 +218,7 @@ class Layer(object):
     ):
         self.inputs = inputs
         if (name in set_keep['_layers_name_list']) and name_reuse == False:
-            raise Exception("Layer '%s' already exists, please choice other 'name'.\
+            raise Exception("Layer '%s' already exists, please choice other 'name' or reuse this layer\
             \nHint : Use different name for different 'Layer' (The name is used to control parameter sharing)" % name)
         else:
             self.name = name
@@ -700,9 +700,9 @@ class ReconLayer(DenseLayer):
         print("     learning_rate: %f" % learning_rate)
 
         # Mean-squre-error i.e. quadratic-cost
-        mse = tf.reduce_sum(tf.squared_difference(y, x_recon), reduction_indices = 1)
+        mse = tf.reduce_sum(tf.squared_difference(y, x_recon),  1)
         mse = tf.reduce_mean(mse)            # in theano: mse = ((y - x) ** 2 ).sum(axis=1).mean()
-            # mse = tf.reduce_mean(tf.reduce_sum(tf.square(tf.sub(y, x_recon)), reduction_indices = 1))
+            # mse = tf.reduce_mean(tf.reduce_sum(tf.square(tf.sub(y, x_recon)),  1))
             # mse = tf.reduce_mean(tf.squared_difference(y, x_recon)) # <haodong>: Error
             # mse = tf.sqrt(tf.reduce_mean(tf.square(y - x_recon)))   # <haodong>: Error
         # Cross-entropy
@@ -719,13 +719,16 @@ class ReconLayer(DenseLayer):
         # L1 of activation outputs
         activation_out = self.all_layers[-2]
         L1_a = 0.001 * tf.reduce_mean(activation_out)   # <haodong>:  theano: T.mean( self.a[i] )         # some neuron are broken, white and black
-            # L1_a = 0.001 * tf.reduce_mean( tf.reduce_sum(activation_out, reduction_indices=0) )         # <haodong>: some neuron are broken, white and black
-            # L1_a = 0.001 * 100 * tf.reduce_mean( tf.reduce_sum(activation_out, reduction_indices=1) )   # <haodong>: some neuron are broken, white and black
+            # L1_a = 0.001 * tf.reduce_mean( tf.reduce_sum(activation_out, 0) )         # <haodong>: some neuron are broken, white and black
+            # L1_a = 0.001 * 100 * tf.reduce_mean( tf.reduce_sum(activation_out, 1) )   # <haodong>: some neuron are broken, white and black
         # KL Divergence
         beta = 4
         rho = 0.15
-        p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)   # theano: p_hat = T.mean( self.a[i], axis=0 )
-        KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat)) + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
+        p_hat = tf.reduce_mean(activation_out, 0)   # theano: p_hat = T.mean( self.a[i], axis=0 )
+        try: ## TF1.0
+            KLD = beta * tf.reduce_sum( rho * tf.log(tf.divide(rho, p_hat)) + (1- rho) * tf.log((1- rho)/ (tf.subtract(float(1), p_hat))) )
+        except: ## TF0.12
+            KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat)) + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
             # KLD = beta * tf.reduce_sum( rho * tf.log(rho/ p_hat) + (1- rho) * tf.log((1- rho)/(1- p_hat)) )
             # theano: L1_a = l1_a[i] * T.sum( rho[i] * T.log(rho[i]/ p_hat) + (1- rho[i]) * T.log((1- rho[i])/(1- p_hat)) )
         # Total cost
@@ -825,6 +828,8 @@ class DropoutLayer(Layer):
         The keeping probability, the lower more values will be set to zero.
     is_fix : boolean
         Default False, if True, the keeping probability is fixed and cannot be changed via feed_dict.
+    is_train : boolean
+        If False, skip this layer, default is True.
     name : a string or None
         An optional name to attach to this layer.
 
@@ -860,26 +865,34 @@ class DropoutLayer(Layer):
         layer = None,
         keep = 0.5,
         is_fix = False,
+        is_train = True,
         name = 'dropout_layer',
     ):
         Layer.__init__(self, name=name)
-        self.inputs = layer.outputs
-        print("  tensorlayer:Instantiate DropoutLayer %s: keep: %f is_fix: %s" % (self.name, keep, is_fix))
-
-        # The name of placeholder for keep_prob is the same with the name
-        # of the Layer.
-        if is_fix:
-            self.outputs = tf.nn.dropout(self.inputs, keep, name=name)
+        if is_train is False:
+            print("  tensorlayer:skip DropoutLayer")
+            self.outputs = layer.outputs
+            self.all_layers = list(layer.all_layers)
+            self.all_params = list(layer.all_params)
+            self.all_drop = dict(layer.all_drop)
         else:
-            set_keep[name] = tf.placeholder(tf.float32)
-            self.outputs = tf.nn.dropout(self.inputs, set_keep[name], name=name) # 1.2
+            self.inputs = layer.outputs
+            print("  tensorlayer:Instantiate DropoutLayer %s: keep: %f is_fix: %s" % (self.name, keep, is_fix))
 
-        self.all_layers = list(layer.all_layers)
-        self.all_params = list(layer.all_params)
-        self.all_drop = dict(layer.all_drop)
-        if is_fix is False:
-            self.all_drop.update( {set_keep[name]: keep} )
-        self.all_layers.extend( [self.outputs] )
+            # The name of placeholder for keep_prob is the same with the name
+            # of the Layer.
+            if is_fix:
+                self.outputs = tf.nn.dropout(self.inputs, keep, name=name)
+            else:
+                set_keep[name] = tf.placeholder(tf.float32)
+                self.outputs = tf.nn.dropout(self.inputs, set_keep[name], name=name) # 1.2
+
+            self.all_layers = list(layer.all_layers)
+            self.all_params = list(layer.all_params)
+            self.all_drop = dict(layer.all_drop)
+            if is_fix is False:
+                self.all_drop.update( {set_keep[name]: keep} )
+            self.all_layers.extend( [self.outputs] )
 
         # print(set_keep[name])
         #   Tensor("Placeholder_2:0", dtype=float32)
@@ -907,26 +920,38 @@ class GaussianNoiseLayer(Layer):
     ------------
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
-    sigma : float
-        Scale value of gaussian noise.
+    mean : float
+    stddev : float
+    is_train : boolean
+        If False, skip this layer, default is True.
     name : a string or None
         An optional name to attach to this layer.
     """
     def __init__(
         self,
         layer = None,
-        sigma = 0.1,
+        mean = 0.0,
+        stddev = 1.0,
+        is_train = True,
         name = 'gaussian_noise_layer',
     ):
         Layer.__init__(self, name=name)
-        self.inputs = layer.outputs
-        print("  tensorlayer:Instantiate GaussianNoiseLayer %s: keep: %f" % (self.name, keep))
-        with tf.variable_scope(name) as vs:
-            noise = np.random.normal(0.0 , sigma , tf.to_int64(input_layer).get_shape())
-            self.inputs = self.inputs + noise
-        self.all_layers = list(layer.all_layers)
-        self.all_params = list(layer.all_params)
-        self.all_drop = dict(layer.all_drop)
+        if is_train is False:
+            print("  tensorlayer:skip GaussianNoiseLayer")
+            self.outputs = layer.outputs
+            self.all_layers = list(layer.all_layers)
+            self.all_params = list(layer.all_params)
+            self.all_drop = dict(layer.all_drop)
+        else:
+            self.inputs = layer.outputs
+            print("  tensorlayer:Instantiate GaussianNoiseLayer %s: mean: %f stddev: %f" % (self.name, mean, stddev))
+            with tf.variable_scope(name) as vs:
+                # noise = np.random.normal(0.0 , sigma , tf.to_int64(self.inputs).get_shape())
+                noise = tf.random_normal(shape = self.inputs.get_shape(), mean=mean, stddev=stddev)
+                self.outputs = self.inputs + noise
+            self.all_layers = list(layer.all_layers)
+            self.all_params = list(layer.all_params)
+            self.all_drop = dict(layer.all_drop)
 
 
 class DropconnectDenseLayer(Layer):
@@ -1398,12 +1423,12 @@ class DeConv3dLayer(Layer):
         self.all_params.extend( [W, b] )
 
 class UpSampling2dLayer(Layer):
-    """The :class:`UpSampling2dLayer` class is upSampling 2d layer, see `tf.nn.conv3d_transpose <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#conv3d_transpose>`_.
+    """The :class:`UpSampling2dLayer` class is upSampling 2d layer, see `tf.image.resize_images <https://www.tensorflow.org/versions/master/api_docs/python/image/resizing#resize_images>`_.
 
     Parameters
     -----------
     layer : a layer class with 4-D Tensor of shape [batch, height, width, channels] or 3-D Tensor of shape [height, width, channels].
-    size : a tupe of int.
+    size : a tupe of int or float.
         (height, width) scale factor or new size of height and width.
     is_scale : boolean, if True (default), size is scale factor, otherwise, size is number of pixels of height and width.
     method : 0, 1, 2, 3. ResizeMethod. Defaults to ResizeMethod.BILINEAR.
@@ -1450,6 +1475,62 @@ class UpSampling2dLayer(Layer):
         self.all_params = list(layer.all_params)
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
+
+
+class DownSampling2dLayer(Layer):
+    """The :class:`DownSampling2dLayer` class is downSampling 2d layer, see `tf.image.resize_images <https://www.tensorflow.org/versions/master/api_docs/python/image/resizing#resize_images>`_.
+
+    Parameters
+    -----------
+    layer : a layer class with 4-D Tensor of shape [batch, height, width, channels] or 3-D Tensor of shape [height, width, channels].
+    size : a tupe of int or float.
+        (height, width) scale factor or new size of height and width.
+    is_scale : boolean, if True (default), size is scale factor, otherwise, size is number of pixels of height and width.
+    method : 0, 1, 2, 3. ResizeMethod. Defaults to ResizeMethod.BILINEAR.
+        - ResizeMethod.BILINEAR, Bilinear interpolation.
+        - ResizeMethod.NEAREST_NEIGHBOR, Nearest neighbor interpolation.
+        - ResizeMethod.BICUBIC, Bicubic interpolation.
+        - ResizeMethod.AREA, Area interpolation.
+    align_corners : bool. If true, exactly align all 4 corners of the input and output. Defaults to false.
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+        self,
+        layer = None,
+        size = [],
+        is_scale = True,
+        method = 0,
+        align_corners = False,
+        name ='downsample2d_layer',
+    ):
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+        if len(self.inputs.get_shape()) == 3:
+            if is_scale:
+                size_h = size[0] * int(self.inputs.get_shape()[0])
+                size_w = size[1] * int(self.inputs.get_shape()[1])
+                size = [size_h, size_w]
+        elif len(self.inputs.get_shape()) == 4:
+            if is_scale:
+                size_h = size[0] * int(self.inputs.get_shape()[1])
+                size_w = size[1] * int(self.inputs.get_shape()[2])
+                size = [size_h, size_w]
+        else:
+            raise Exception("Donot support shape %s" % self.inputs.get_shape())
+        print("  tensorlayer:Instantiate DownSampling2dLayer %s: is_scale:%s : %s, method: %d, align_corners: %s" %
+                                (name, is_scale, size, method, align_corners))
+        with tf.variable_scope(name) as vs:
+            try:
+                self.outputs = tf.image.resize_images(self.inputs, size=size, method=method, align_corners=align_corners)
+            except: # for TF 0.10
+                self.outputs = tf.image.resize_images(self.inputs, new_height=size[0], new_width=size[1], method=method, align_corners=align_corners)
+
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+
 
 class AtrousConv2dLayer(Layer):
     """The :class:`AtrousConv2dLayer` class is Atrous convolution (a.k.a. convolution with holes or dilated convolution) 2D layer, see `tf.nn.atrous_conv2d <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#atrous_conv2d>`_.
@@ -1503,9 +1584,9 @@ class AtrousConv2dLayer(Layer):
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
         if b_init:
-            self.all_params.extend( [W, b] )
+            self.all_params.extend( [filters, b] )
         else:
-            self.all_params.extend( [W] )
+            self.all_params.extend( [filters] )
 
 class SeparableConv2dLayer(Layer):#TODO
     """The :class:`SeparableConv2dLayer` class is 2-D convolution with separable filters., see `tf.nn.separable_conv2d <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#separable_conv2d>`_.
@@ -1629,6 +1710,7 @@ def Conv2d(net, n_filter=32, filter_size=(3, 3), strides=(1, 1), act = None,
     >>> conv2 = Conv2d(conv2, 128, (3, 3), act=tf.nn.relu, padding='SAME', W_init=w_init, b_init=b_init, name='conv2_2')
     >>> pool2 = MaxPool2d(conv2, (2, 2), padding='SAME', name='pool2')
     """
+    assert len(strides) == 2, "len(strides) should be 2, Conv2d and Conv2dLayer are different."
     if act is None:
         act = tf.identity
     net = Conv2dLayer(net,
@@ -1658,8 +1740,9 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
     batch_size : int or None, batch_size. If None, try to find the batch_size from the first dim of net.outputs (you should tell the batch_size when define the input placeholder).
     strides : tuple of (height, width) for strides.
     act : None or activation function.
-    others : see :class:`Conv2dLayer`.
+    others : see :class:`DeConv2dLayer`.
     """
+    assert len(strides) == 2, "len(strides) should be 2, DeConv2d and DeConv2dLayer are different."
     if act is None:
         act = tf.identity
     if batch_size is None:
@@ -1677,7 +1760,7 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
                     name = name)
     return net
 
-def MaxPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='maxpool'):
+def MaxPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='maxpool'):
     """Wrapper for :class:`PoolLayer`.
 
     Parameters
@@ -1685,10 +1768,11 @@ def MaxPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='maxpoo
     net : TensorLayer layer.
     filter_size : tuple of (height, width) for filter size.
     strides : tuple of (height, width). Default is the same with filter_size.
-    others : see :class:`Conv2dLayer`.
+    others : see :class:`PoolLayer`.
     """
     if strides is None:
         strides = filter_size
+    assert len(strides) == 2, "len(strides) should be 2, MaxPool2d and PoolLayer are different."
     net = PoolLayer(net, ksize=[1, filter_size[0], filter_size[1], 1],
             strides=[1, strides[0], strides[1], 1],
             padding=padding,
@@ -1696,7 +1780,7 @@ def MaxPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='maxpoo
             name = name)
     return net
 
-def MeanPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='meanpool'):
+def MeanPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='meanpool'):
     """Wrapper for :class:`PoolLayer`.
 
     Parameters
@@ -1704,10 +1788,11 @@ def MeanPool2d(net, filter_size=(2,2), strides=None, padding='SAME', name='meanp
     net : TensorLayer layer.
     filter_size : tuple of (height, width) for filter size.
     strides : tuple of (height, width). Default is the same with filter_size.
-    others : see :class:`Conv2dLayer`.
+    others : see :class:`PoolLayer`.
     """
     if strides is None:
         strides = filter_size
+    assert len(strides) == 2, "len(strides) should be 2, MeanPool2d and PoolLayer are different."
     net = PoolLayer(net, ksize=[1, filter_size[0], filter_size[1], 1],
             strides=[1, strides[0], strides[1], 1],
             padding=padding,
@@ -2766,8 +2851,8 @@ class RNNLayer(Layer):
     ----------
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
-    cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
+    cell_fn : a TensorFlow's core RNN cell as follow (Note TF1.0+ is different).
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -2903,7 +2988,7 @@ class RNNLayer(Layer):
 
     References
     ----------
-    - `Neural Network RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
+    - `Neural Network RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
     - `tensorflow/python/ops/rnn.py <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn.py>`_
     - `tensorflow/python/ops/rnn_cell.py <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn_cell.py>`_
     - see TensorFlow tutorial ``ptb_word_lm.py``, TensorLayer tutorials ``tutorial_ptb_lstm*.py`` and ``tutorial_generate_text.py``
@@ -2911,7 +2996,7 @@ class RNNLayer(Layer):
     def __init__(
         self,
         layer = None,
-        cell_fn = tf.nn.rnn_cell.BasicRNNCell,
+        cell_fn = None,#tf.nn.rnn_cell.BasicRNNCell,
         cell_init_args = {},
         n_hidden = 100,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -2923,6 +3008,9 @@ class RNNLayer(Layer):
         name = 'rnn_layer',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
+
         self.inputs = layer.outputs
 
         print("  tensorlayer:Instantiate RNNLayer %s: n_hidden:%d, n_steps:%d, in_dim:%d %s, cell_fn:%s " % (self.name, n_hidden,
@@ -3016,8 +3104,8 @@ class BiRNNLayer(Layer):
     ----------
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
-    cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
+    cell_fn : a TensorFlow's core RNN cell as follow (Note TF1.0+ is different).
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3084,7 +3172,7 @@ class BiRNNLayer(Layer):
     def __init__(
         self,
         layer = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None, #tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'use_peepholes':True, 'state_is_tuple':True},
         n_hidden = 100,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3098,6 +3186,8 @@ class BiRNNLayer(Layer):
         name = 'birnn_layer',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         self.inputs = layer.outputs
 
         print("  tensorlayer:Instantiate BiRNNLayer %s: n_hidden:%d, n_steps:%d, in_dim:%d %s, cell_fn:%s, dropout:%s, n_layer:%d " % (self.name, n_hidden,
@@ -3163,7 +3253,10 @@ class BiRNNLayer(Layer):
                 self.bw_initial_state = bw_initial_state
             # exit()
             # Feedforward to MultiRNNCell
-            list_rnn_inputs = tf.unpack(self.inputs, axis=1)
+            try: ## TF1.0
+                list_rnn_inputs = tf.unstack(self.inputs, axis=1)
+            except: ## TF0.12
+                list_rnn_inputs = tf.unpack(self.inputs, axis=1)
             outputs, fw_state, bw_state = tf.nn.bidirectional_rnn(
                 cell_fw=self.fw_cell,
                 cell_bw=self.bw_cell,
@@ -3280,8 +3373,12 @@ def retrieve_seq_length_op(data):
     - Borrow from `TFlearn <https://github.com/tflearn/tflearn/blob/master/tflearn/layers/recurrent.py>`_.
     """
     with tf.name_scope('GetLength'):
-        used = tf.sign(tf.reduce_max(tf.abs(data), reduction_indices=2))
-        length = tf.reduce_sum(used, reduction_indices=1)
+        ## TF 1.0 change reduction_indices to axis
+        used = tf.sign(tf.reduce_max(tf.abs(data), 2))
+        length = tf.reduce_sum(used, 1)
+        ## TF < 1.0
+        # used = tf.sign(tf.reduce_max(tf.abs(data), reduction_indices=2))
+        # length = tf.reduce_sum(used, reduction_indices=1)
         length = tf.cast(length, tf.int32)
     return length
 
@@ -3317,8 +3414,8 @@ class DynamicRNNLayer(Layer):
     ----------
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
-    cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_
+    cell_fn : a TensorFlow's core RNN cell as follow (Note TF1.0+ is different).
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3407,7 +3504,7 @@ class DynamicRNNLayer(Layer):
     def __init__(
         self,
         layer = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None,#tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple' : True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3420,6 +3517,8 @@ class DynamicRNNLayer(Layer):
         name = 'dyrnn_layer',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         self.inputs = layer.outputs
 
         print("  tensorlayer:Instantiate DynamicRNNLayer %s: n_hidden:%d, in_dim:%d %s, cell_fn:%s, dropout:%s, n_layer:%d" % (self.name, n_hidden,
@@ -3475,8 +3574,12 @@ class DynamicRNNLayer(Layer):
 
         # Computes sequence_length
         if sequence_length is None:
-            sequence_length = retrieve_seq_length_op(
-                        self.inputs if isinstance(self.inputs, tf.Tensor) else tf.pack(self.inputs))
+            try: ## TF1.0
+                sequence_length = retrieve_seq_length_op(
+                            self.inputs if isinstance(self.inputs, tf.Tensor) else tf.stack(self.inputs))
+            except: ## TF0.12
+                sequence_length = retrieve_seq_length_op(
+                            self.inputs if isinstance(self.inputs, tf.Tensor) else tf.pack(self.inputs))
 
         # Main - Computes outputs and last_states
         with tf.variable_scope(name, initializer=initializer) as vs:
@@ -3494,7 +3597,7 @@ class DynamicRNNLayer(Layer):
             # Manage the outputs
             if return_last:
                 # [batch_size, n_hidden]
-                # outputs = tf.transpose(tf.pack(outputs), [1, 0, 2])
+                # outputs = tf.transpose(tf.pack(outputs), [1, 0, 2]) # TF1.0 tf.pack --> tf.stack
                 self.outputs = advanced_indexing_op(outputs, sequence_length)
             else:
                 # [batch_size, n_step(max), n_hidden]
@@ -3535,8 +3638,8 @@ class BiDynamicRNNLayer(Layer):
     ----------
     layer : a :class:`Layer` instance
         The `Layer` class feeding into this layer.
-    cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_\n
+    cell_fn : a TensorFlow's core RNN cell as follow (Note TF1.0+ is different).
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_\n
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3607,7 +3710,7 @@ class BiDynamicRNNLayer(Layer):
     def __init__(
         self,
         layer = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None,#tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3621,6 +3724,8 @@ class BiDynamicRNNLayer(Layer):
         name = 'bi_dyrnn_layer',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         self.inputs = layer.outputs
 
         print("  tensorlayer:Instantiate BiDynamicRNNLayer %s: n_hidden:%d, in_dim:%d %s, cell_fn:%s, dropout:%s, n_layer:%d" %
@@ -3682,8 +3787,12 @@ class BiDynamicRNNLayer(Layer):
                 self.bw_initial_state = bw_initial_state
             # Computes sequence_length
             if sequence_length is None:
-                sequence_length = retrieve_seq_length_op(
-                    self.inputs if isinstance(self.inputs, tf.Tensor) else tf.pack(self.inputs))
+                try: ## TF1.0
+                    sequence_length = retrieve_seq_length_op(
+                        self.inputs if isinstance(self.inputs, tf.Tensor) else tf.stack(self.inputs))
+                except: ## TF0.12
+                    sequence_length = retrieve_seq_length_op(
+                        self.inputs if isinstance(self.inputs, tf.Tensor) else tf.pack(self.inputs))
 
             outputs, (states_fw, states_bw) = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=self.fw_cell,
@@ -3743,8 +3852,8 @@ class Seq2Seq(Layer):
         Encode sequences, [batch_size, None, n_features].
     net_decode_in : a :class:`Layer` instance
         Decode sequences, [batch_size, None, n_features].
-    cell_fn : a TensorFlow's core RNN cell as follow.
-        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/versions/master/api_docs/python/rnn_cell.html>`_\n
+    cell_fn : a TensorFlow's core RNN cell as follow (Note TF1.0+ is different)
+        - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/rnn_cell/>`_\n
         - class ``tf.nn.rnn_cell.BasicRNNCell``
         - class ``tf.nn.rnn_cell.BasicLSTMCell``
         - class ``tf.nn.rnn_cell.GRUCell``
@@ -3829,7 +3938,7 @@ class Seq2Seq(Layer):
         self,
         net_encode_in = None,
         net_decode_in = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None,#tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3843,6 +3952,8 @@ class Seq2Seq(Layer):
         name = 'seq2seq',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         # self.inputs = layer.outputs
         print("  tensorlayer:Instantiate Seq2Seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
@@ -3903,7 +4014,7 @@ class PeekySeq2Seq(Layer):
         self,
         net_encode_in = None,
         net_decode_in = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None,#tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3917,6 +4028,8 @@ class PeekySeq2Seq(Layer):
         name = 'peeky_seq2seq',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         # self.inputs = layer.outputs
         print("  tensorlayer:Instantiate PeekySeq2seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
@@ -3932,7 +4045,7 @@ class AttentionSeq2Seq(Layer):
         self,
         net_encode_in = None,
         net_decode_in = None,
-        cell_fn = tf.nn.rnn_cell.LSTMCell,
+        cell_fn = None,#tf.nn.rnn_cell.LSTMCell,
         cell_init_args = {'state_is_tuple':True},
         n_hidden = 256,
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
@@ -3946,6 +4059,8 @@ class AttentionSeq2Seq(Layer):
         name = 'attention_seq2seq',
     ):
         Layer.__init__(self, name=name)
+        if cell_fn is None:
+            raise Exception("Please put in cell_fn")
         # self.inputs = layer.outputs
         print("  tensorlayer:Instantiate PeekySeq2seq %s: n_hidden:%d, cell_fn:%s, dropout:%s, n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
@@ -4143,7 +4258,10 @@ class ConcatLayer(Layer):
         self.inputs = []
         for l in layer:
             self.inputs.append(l.outputs)
-        self.outputs = tf.concat(concat_dim, self.inputs, name=name) # 1.2
+        try: # TF1.0
+            self.outputs = tf.concat(self.inputs, concat_dim, name=name)
+        except: # TF0.12
+            self.outputs = tf.concat(concat_dim, self.inputs, name=name)
         self.n_units = int(self.outputs.get_shape()[-1])
         print("  tensorlayer:Instantiate ConcatLayer %s, %d" % (self.name, self.n_units))
 
@@ -4170,7 +4288,7 @@ class ElementwiseLayer(Layer):
     layer : a list of :class:`Layer` instances
         The `Layer` class feeding into this layer.
     combine_fn : a TensorFlow elemwise-merge function
-        e.g. AND is ``tf.minimum`` ;  OR is ``tf.maximum`` ; ADD is ``tf.add`` ; MUL is ``tf.mul`` and so on.
+        e.g. AND is ``tf.minimum`` ;  OR is ``tf.maximum`` ; ADD is ``tf.add`` ; MUL is ``tf.multiply`` and so on.
         See `TensorFlow Math API <https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html#math>`_ .
     name : a string or None
         An optional name to attach to this layer.
@@ -4216,8 +4334,8 @@ class ElementwiseLayer(Layer):
         # self.all_drop = list_remove_repeat(self.all_drop)
 
 
-# Slicing and Joining
-class ExpandDimsLayer(object):
+# Extend
+class ExpandDimsLayer(Layer):
     """
     The :class:`ExpandDimsLayer` class inserts a dimension of 1 into a tensor's shape,
     see `tf.expand_dims() <https://www.tensorflow.org/api_docs/python/array_ops/shapes_and_shaping#expand_dims>`_ .
@@ -4228,8 +4346,6 @@ class ExpandDimsLayer(object):
         The `Layer` class feeding into this layer.
     axis : int, 0-D (scalar).
         Specifies the dimension index at which to expand the shape of input.
-    dim : int, 0-D (scalar).
-        Equivalent to axis, to be deprecated.
     name : a string or None
         An optional name to attach to this layer.
     """
@@ -4237,7 +4353,6 @@ class ExpandDimsLayer(object):
         self,
         layer = None,
         axis = None,
-        dim = None,
         name = 'expand_dims',
     ):
         Layer.__init__(self, name=name)
@@ -4245,15 +4360,18 @@ class ExpandDimsLayer(object):
 
         print("  tensorlayer:Instantiate ExpandDimsLayer  %s" % self.name)
         with tf.variable_scope(name) as vs:
-            self.outputs = tf.expand_dims(self.inputs, axis=axis, dim=dim)
+            try:    # TF12 TF1.0
+                self.outputs = tf.expand_dims(self.inputs, axis=axis)
+            except: # TF11
+                self.outputs = tf.expand_dims(self.inputs, dim=axis)
         self.all_layers = list(layer.all_layers)
         self.all_params = list(layer.all_params)
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
-        self.all_params.extend( variables )
+        # self.all_params.extend( variables )
 
 
-class TileLayer(object):
+class TileLayer(Layer):
     """
     The :class:`TileLayer` class constructs a tensor by tiling a given tensor,
     see `tf.tile() <https://www.tensorflow.org/api_docs/python/array_ops/slicing_and_joining#tile>`_ .
@@ -4283,7 +4401,8 @@ class TileLayer(object):
         self.all_params = list(layer.all_params)
         self.all_drop = dict(layer.all_drop)
         self.all_layers.extend( [self.outputs] )
-        self.all_params.extend( variables )
+        # self.all_params.extend( variables )
+
 
 
 
@@ -4390,7 +4509,10 @@ class PReluLayer(Layer):
         # with tf.name_scope(name) as scope:
         with tf.variable_scope(name) as vs:
             alphas = tf.get_variable(name='alphas', shape=w_shape, initializer=a_init, **a_init_args )
-            self.outputs = tf.nn.relu(self.inputs) + tf.mul(alphas, (self.inputs - tf.abs(self.inputs))) * 0.5
+            try:  ## TF 1.0
+                self.outputs = tf.nn.relu(self.inputs) + tf.mulitply(alphas, (self.inputs - tf.abs(self.inputs))) * 0.5
+            except: ## TF 0.12
+                self.outputs = tf.nn.relu(self.inputs) + tf.mul(alphas, (self.inputs - tf.abs(self.inputs))) * 0.5
 
         self.all_layers = list(layer.all_layers)
         self.all_params = list(layer.all_params)
@@ -4451,7 +4573,7 @@ class MultiplexerLayer(Layer):
 
     References
     ------------
-    - See ``tf.pack()`` and ``tf.gather()`` at `TensorFlow - Slicing and Joining <https://www.tensorflow.org/versions/master/api_docs/python/array_ops.html#slicing-and-joining>`_
+    - See ``tf.pack() for TF0.12 or tf.stack() for TF1.0`` and ``tf.gather()`` at `TensorFlow - Slicing and Joining <https://www.tensorflow.org/versions/master/api_docs/python/array_ops.html#slicing-and-joining>`_
     """
     def __init__(self,
                layer = [],
@@ -4462,7 +4584,10 @@ class MultiplexerLayer(Layer):
         self.inputs = []
         for l in layer:
             self.inputs.append(l.outputs)
-        all_inputs = tf.pack(self.inputs, name=name) # pack means concat a list of tensor in a new dim  # 1.2
+        try: ## TF1.0
+            all_inputs = tf.stack(self.inputs, name=name) # pack means concat a list of tensor in a new dim  # 1.2
+        except:
+            all_inputs = tf.pack(self.inputs, name=name) # pack means concat a list of tensor in a new dim  # 1.2
 
         print("  tensorlayer:Instantiate MultiplexerLayer %s: n_inputs: %d" % (self.name, self.n_inputs))
 

@@ -9,7 +9,7 @@ from tensorflow.python.framework import ops
 from tensorflow.python.ops import standard_ops
 
 ## Cost Functions
-def cross_entropy(output, target, name="cross_entropy_loss"):
+def cross_entropy(output, target, name=None):
     """Returns the TensorFlow expression of cross-entropy of two distributions, implement
     softmax internally.
 
@@ -19,23 +19,25 @@ def cross_entropy(output, target, name="cross_entropy_loss"):
         A distribution with shape: [batch_size, n_feature].
     target : Tensorflow variable
         A batch of index with shape: [batch_size, ].
+    name : string
+        Name of this loss.
 
     Examples
     --------
-    >>> ce = tl.cost.cross_entropy(y_logits, y_target_logits)
+    >>> ce = tl.cost.cross_entropy(y_logits, y_target_logits, 'my_loss')
 
     References
     -----------
     - About cross-entropy: `wiki <https://en.wikipedia.org/wiki/Cross_entropy>`_.\n
     - The code is borrowed from: `here <https://en.wikipedia.org/wiki/Cross_entropy>`_.
     """
-    with tf.name_scope(name):
-        # net_output_tf = output
-        # target_tf = target
-        # cross_entropy = tf.add(tf.mul(tf.log(net_output_tf, name=None),target_tf),
-        #                      tf.mul(tf.log(1 - net_output_tf), (1 - target_tf)))
-        # return -1 * tf.reduce_mean(tf.reduce_sum(cross_entropy, 1), name='cross_entropy_mean')
-        return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(output, target))
+    assert name is not None, "Please give a unique name to tl.cost.cross_entropy"
+
+    if tf.__version__ <= "0.12":
+        return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=output, targets=target, name=name))
+    else: # TF 1.0
+        return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=target, logits=outputs, name=name))
+
 
 
 def binary_cross_entropy(output, target, epsilon=1e-8, name='bce_loss'):
@@ -78,8 +80,7 @@ def mean_squared_error(output, target):
         A distribution with shape: [batch_size, n_feature].
     """
     with tf.name_scope("mean_squared_error_loss"):
-        mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target),
-                                           reduction_indices = 1))
+        mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target), 1))
         return mse
 
 
@@ -237,10 +238,17 @@ def cross_entropy_seq_with_mask(logits, target_seqs, input_mask, return_details=
     """
     targets = tf.reshape(target_seqs, [-1])   # to one vector
     weights = tf.to_float(tf.reshape(input_mask, [-1]))   # to one vector like targets
-    losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, targets)
-    loss = tf.div(tf.reduce_sum(tf.mul(losses, weights)),   # loss from mask. reduce_sum before element-wise mul with mask !!
-                    tf.reduce_sum(weights),
-                    name="seq_loss_with_mask")
+    # losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, targets)
+    losses = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=targets, name=name)) # for TF1.0 and others
+
+    try: ## TF1.0
+        loss = tf.divide(tf.reduce_sum(tf.multiply(losses, weights)),   # loss from mask. reduce_sum before element-wise mul with mask !!
+                        tf.reduce_sum(weights),
+                        name="seq_loss_with_mask")
+    except: ## TF0.12
+        loss = tf.div(tf.reduce_sum(tf.mul(losses, weights)),   # loss from mask. reduce_sum before element-wise mul with mask !!
+                        tf.reduce_sum(weights),
+                        name="seq_loss_with_mask")
     if return_details:
         return loss, losses, weights, targets
     else:
@@ -258,8 +266,11 @@ def cosine_similarity(v1, v2):
     -----------
     a tensor of [batch_size, ]
     """
-    return tf.reduce_sum(tf.mul(v1, v2), reduction_indices=1) / (tf.sqrt(tf.reduce_sum(tf.mul(v1, v1), reduction_indices=1)) * tf.sqrt(tf.reduce_sum(tf.mul(v2, v2), reduction_indices=1)))
-
+    try: ## TF1.0
+        cost = tf.reduce_sum(tf.multiply(v1, v2), 1) / (tf.sqrt(tf.reduce_sum(tf.multiply(v1, v1), 1)) * tf.sqrt(tf.reduce_sum(tf.multiply(v2, v2), 1)))
+    except: ## TF0.12
+        cost = tf.reduce_sum(tf.mul(v1, v2), reduction_indices=1) / (tf.sqrt(tf.reduce_sum(tf.mul(v1, v1), reduction_indices=1)) * tf.sqrt(tf.reduce_sum(tf.mul(v2, v2), reduction_indices=1)))
+    return cost
 
 
 ## Regularization Functions
