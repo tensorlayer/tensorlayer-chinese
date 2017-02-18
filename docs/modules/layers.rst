@@ -269,6 +269,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    Conv3dLayer
    DeConv3dLayer
    PoolLayer
+   PadLayer
    UpSampling2dLayer
    DownSampling2dLayer
    AtrousConv2dLayer
@@ -467,6 +468,14 @@ Dropconnect + 全链接层
 该池化层可以实现各种纬度（1D，2D，3D）以及各种池化方法（Mean，Max）。
 
 .. autoclass:: PoolLayer
+
+
+填充层
+--------------------
+该填充层可以实现任意模式的填充。
+
+.. autoclass:: PadLayer
+
 
 规范化层
 ----------
