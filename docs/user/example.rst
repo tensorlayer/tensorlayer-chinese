@@ -1,81 +1,79 @@
 .. _more:
 
 ============
-例子 Examples
+例子
 ============
 
-更多例子请访问 `英文文档 <http://tensorlayer.readthedocs.io/en/latest/user/example.html>`_ .
 
-基础经典
+Basics
 ============
 
  - Multi-layer perceptron (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist_simple.py`` on `GitHub`_.
 
-计算机视觉
+Computer Vision
 ==================
 
  - Denoising Autoencoder (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist.py`` on `GitHub`_.
  - Stacked Denoising Autoencoder and Fine-Tuning (MNIST). A multi-layer perceptron implementation for MNIST classification task, see ``tutorial_mnist.py`` on `GitHub`_.
  - Convolutional Network (MNIST). A Convolutional neural network implementation for classifying MNIST dataset, see ``tutorial_mnist.py`` on `GitHub`_.
- - Convolutional Network (CIFAR-10). A Convolutional neural network implementation for classifying CIFAR-10 dataset, see ``tutorial_cifar10.py`` on `GitHub`_.
+ - Convolutional Network (CIFAR-10). A Convolutional neural network implementation for classifying CIFAR-10 dataset, see ``tutorial_cifar10.py`` and ``tutorial_cifar10_tfrecord.py``on `GitHub`_.
  - VGG 16 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg16.py`` on `GitHub`_.
  - VGG 19 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_vgg19.py`` on `GitHub`_.
  - InceptionV3 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
- - Wild ResNet (CIFAR) by `ritchieng <https://github.com/ritchieng/wideresnet-tensorlayer>`_.
+ - Wide ResNet (CIFAR) by `ritchieng <https://github.com/ritchieng/wideresnet-tensorlayer>`_.
  - More CNN implementations of `TF-Slim <https://github.com/tensorflow/models/tree/master/slim#pre-trained-models>`_ can be connected to TensorLayer via SlimNetsLayer.
 
-自然语言处理
+Natural Language Processing
 ==============================
 
- - Recurrent Neural Network (LSTM). Apply multiple LSTM to PTB dataset for language modeling, see ``tutorial_ptb_lstm.py`` on `GitHub`_.
+ - Recurrent Neural Network (LSTM). Apply multiple LSTM to PTB dataset for language modeling, see ``tutorial_ptb_lstm_state_is_tuple.py`` on `GitHub`_.
  - Word Embedding - Word2vec. Train a word embedding matrix, see ``tutorial_word2vec_basic.py`` on `GitHub`_.
  - Restore Embedding matrix. Restore a pre-train embedding matrix, see ``tutorial_generate_text.py`` on `GitHub`_.
  - Text Generation. Generates new text scripts, using LSTM network, see ``tutorial_generate_text.py`` on `GitHub`_.
  - Machine Translation (WMT). Translate English to French. Apply Attention mechanism and Seq2seq to WMT English-to-French translation data, see ``tutorial_translate.py`` on `GitHub`_.
 
-强化学习(RL)
+Reinforcement Learning
 ==============================
 
  - Deep Reinforcement Learning - Pong Game. Teach a machine to play Pong games, see ``tutorial_atari_pong.py`` on `GitHub`_.
 
 
-应用
-=========
+Applications
+==============
+
 - Image Captioning - Reimplementation of Google's `im2txt <https://github.com/tensorflow/models/tree/master/im2txt>`_ by `zsdonghao <https://github.com/zsdonghao/Image-Captioning>`_.
-- DCGAN - Generating images by `Deep Convolutional Generative Adversarial Networks <http://arxiv.org/abs/1511.06434>`_ by `zsdonghao <https://github.com/zsdonghao/dcgan-tensorlayer>`_.
+- DCGAN - Generating images by `Deep Convolutional Generative Adversarial Networks <http://arxiv.org/abs/1511.06434>`_ by `zsdonghao <https://github.com/zsdonghao/dcgan>`_.
+- A simple web service - `TensorFlask <https://github.com/JoelKronander/TensorFlask>`_ by `JoelKronander <https://github.com/JoelKronander>`_.
 
-
-
-特殊例子
+Special Examples
 =================
 
  - Merge TF-Slim into TensorLayer. ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
  - MultiplexerLayer. ``tutorial_mnist_multiplexer.py`` on `GitHub`_.
- - Data augmentation with TFRecord. Effective way to load and pre-process data, see ``tutorial_tfrecord.py``, ``tutorial_tfrecord2.py`` and ``tutorial_cifar10_tfrecord.py`` on `GitHub`_.
- - Data augmentation with TensorLayer, see ``tutorial_image_preprocess.py``.
-
+ - Data augmentation with TFRecord. Effective way to load and pre-process data, see ``tutorial_tfrecord*.py`` and ``tutorial_cifar10_tfrecord.py`` on `GitHub`_.
+ - Data augmentation with TensorLayer, see ``tutorial_image_preprocess.py`` on `GitHub`_.
 
 ..
- 应用
- =============
- 
- There are some good applications implemented by TensorLayer.
- You may able to find some useful examples for your project.
- If you want to share your application, please contact hao.dong11@imperial.ac.uk.
- 
- 1D CNN + LSTM for Biosignal
- ---------------------------------
- 
- 作者 : `Akara Supratak <https://akaraspt.github.io>`_
- 
- 简介
- ^^^^^^^^^^^^
- 
- 实现
- ^^^^^^^^^^^^^^
- 
- 引用
- ^^^^^^^^
+  Applications
+  =============
+
+  There are some good applications implemented by TensorLayer.
+  You may able to find some useful examples for your project.
+  If you want to share your application, please contact tensorlayer@gmail.com.
+
+  1D CNN + LSTM for Biosignal
+  ---------------------------------
+
+  Author : `Akara Supratak <https://akaraspt.github.io>`_
+
+  Introduction
+  ^^^^^^^^^^^^
+
+  Implementation
+  ^^^^^^^^^^^^^^
+
+  Citation
+  ^^^^^^^^
 
 
 
