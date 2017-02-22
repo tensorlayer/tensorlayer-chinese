@@ -247,6 +247,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
 
 .. autosummary::
    get_variables_with_name
+   get_layers_with_name
    set_name_reuse
    print_all_variables
    initialize_global_variables
@@ -326,6 +327,10 @@ the sparsity can be implemented by using the L1 regularization of activation out
 Get variables with name
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: get_variables_with_name
+
+Get layers with name
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: get_layers_with_name
 
 Enable layer name reuse
 ^^^^^^^^^^^^^^^^^^^^^^^^^
