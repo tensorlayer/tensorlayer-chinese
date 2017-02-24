@@ -210,6 +210,7 @@ class Vocabulary(object):
   start_id : int of start id
   end_id : int of end id
   unk_id : int of unk id
+  pad_id : int of padding id
 
   Vocab_files
   -------------
@@ -231,7 +232,8 @@ class Vocabulary(object):
                vocab_file,
                start_word="<S>",
                end_word="</S>",
-               unk_word="<UNK>"):
+               unk_word="<UNK>",
+               pad_word="<PAD>"):
     if not tf.gfile.Exists(vocab_file):
       tf.logging.fatal("Vocab file %s not found.", vocab_file)
     tf.logging.info("Initializing vocabulary from file: %s", vocab_file)
@@ -245,7 +247,7 @@ class Vocabulary(object):
       reverse_vocab.append(unk_word)
     vocab = dict([(x, y) for (y, x) in enumerate(reverse_vocab)])
 
-    print("  tensorlayer.nlp:Instantiate Vocabulary from %s : %s %s %s" % (vocab_file, start_word, end_word, unk_word))
+    print("  [TL] Vocabulary from %s : %s %s %s" % (vocab_file, start_word, end_word, unk_word))
     print("    vocabulary with %d words (includes start_word, end_word, unk_word)" % len(vocab))
     # tf.logging.info("     vocabulary with %d words" % len(vocab))
 
@@ -256,9 +258,11 @@ class Vocabulary(object):
     self.start_id = vocab[start_word]
     self.end_id = vocab[end_word]
     self.unk_id = vocab[unk_word]
+    self.pad_id = vocab[pad_word]
     print("      start_id: %d" % self.start_id)
     print("      end_id: %d" % self.end_id)
     print("      unk_id: %d" % self.unk_id)
+    print("      pad_id: %d" % self.pad_id)
 
   def word_to_id(self, word):
     """Returns the integer word id of a word string."""
@@ -341,16 +345,16 @@ def create_vocab(sentences, word_counts_output_file, min_word_count=1):
     ...[['<S>', 'one', 'two', ',', 'three', '</S>'], ['<S>', 'four', 'five', 'five', '</S>']]
 
     >>> tl.nlp.create_vocab(processed_capts, word_counts_output_file='vocab.txt', min_word_count=1)
-    ...   tensorlayer.nlp:Creating vocabulary.
+    ...   [TL] Creating vocabulary.
     ...   Total words: 8
     ...   Words in vocabulary: 8
     ...   Wrote vocabulary file: vocab.txt
     >>> vocab = tl.nlp.Vocabulary('vocab.txt', start_word="<S>", end_word="</S>", unk_word="<UNK>")
-    ...   tensorlayer.nlp:Instantiate Vocabulary from vocab.txt : <S> </S> <UNK>
+    ...   [TL] Instantiate Vocabulary from vocab.txt : <S> </S> <UNK>
     ...   vocabulary with 9 words (includes unk_word)
     """
     from collections import Counter
-    print("  tensorlayer.nlp:Creating vocabulary.")
+    print("  [TL] Creating vocabulary.")
     counter = Counter()
     for c in sentences:
         counter.update(c)
