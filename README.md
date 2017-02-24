@@ -18,6 +18,10 @@
 
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
+* 🆕 NEWS 兼容 [TF-Slim](http://tensorlayercn.readthedocs.io/zh/latest/modules/layers.html#tf-slim) 和 [Keras](http://tensorlayercn.readthedocs.io/zh/latest/modules/layers.html#keras)
+* 🆕 兼容 TF1.0
+* 🆕 [使用技巧](https://github.com/wagamamaz/tensorlayer-tricks)
+
 TensorLayer grow out from a need to combine the power of TensorFlow with the right building modules for deep neural networks. According to our years of research and practical experiences of tackling real-world machine learning problems, we come up with three design goals for TensorLayer:
 
 - **Simplicity**: we make TensorLayer easy to work with by providing mass tutorials that can be deployed and run through in minutes. A TensorFlow user may find it easier to bootstrap with the simple, high-level APIs provided by TensorLayer, and then deep dive into their implementation details if need. 
@@ -76,7 +80,7 @@ network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
 network = tl.layers.DenseLayer(network, n_units=10, act = tf.identity, name='output_layer')
 y = network.outputs
-cost = tl.cost.cross_entropy(y, y_)
+cost = tl.cost.cross_entropy(y, y_, 'cost')
 correct_prediction = tf.equal(tf.argmax(y, 1), y_)
 acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 y_op = tf.argmax(tf.nn.softmax(y), 1)

@@ -280,10 +280,10 @@ the sparsity can be implemented by using the L1 regularization of activation out
    DeConv2d
    MaxPool2d
    MeanPool2d
-   
+
    BatchNormLayer
    LocalResponseNormLayer
-   
+
    RNNLayer
    BiRNNLayer
    advanced_indexing_op
@@ -298,10 +298,10 @@ the sparsity can be implemented by using the L1 regularization of activation out
    FlattenLayer
    ReshapeLayer
    LambdaLayer
-   
+
    ConcatLayer
    ElementwiseLayer
-   
+
    ExpandDimsLayer
    TileLayer
 
@@ -604,7 +604,7 @@ Tile 层
 
 .. autoclass:: SlimNetsLayer
 
-链接 Keras
+连接 Keras
 ------------------
 
 没错！Keras 可以和 TensorLayer 无缝对接！ 参见 `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_ .
