@@ -306,6 +306,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    TileLayer
 
    SlimNetsLayer
+   KerasLayer
 
    PReluLayer
 
@@ -602,6 +603,15 @@ Tile 层
 模型请见 `Slim-model <https://github.com/tensorflow/models/tree/master/slim#Install>`_ 。
 
 .. autoclass:: SlimNetsLayer
+
+链接 Keras
+------------------
+
+没错！Keras 可以和 TensorLayer 无缝对接！ 参见 `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_ .
+
+.. autoclass:: KerasLayer
+
+
 
 带参数的激活函数
 ------------------
