@@ -284,6 +284,8 @@ the sparsity can be implemented by using the L1 regularization of activation out
    BatchNormLayer
    LocalResponseNormLayer
 
+   TimeDistributedLayer
+
    RNNLayer
    BiRNNLayer
    advanced_indexing_op
@@ -495,6 +497,11 @@ Batch Normalization
 Local Response Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LocalResponseNormLayer
+
+TimeDistributed 包装器
+-------------------------
+.. autoclass:: TimeDistributedLayer
+
 
 定长递归层
 ----------------
