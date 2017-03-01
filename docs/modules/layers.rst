@@ -274,12 +274,17 @@ the sparsity can be implemented by using the L1 regularization of activation out
    UpSampling2dLayer
    DownSampling2dLayer
    AtrousConv2dLayer
-   LocalResponseNormLayer
+   SeparableConv2dLayer
 
    Conv2d
    DeConv2d
+   
+   MaxPool1d
+   MeanPool1d
    MaxPool2d
    MeanPool2d
+   MaxPool3d
+   MeanPool3d
 
    BatchNormLayer
    LocalResponseNormLayer
@@ -445,6 +450,11 @@ Dropconnect + 全链接层
 
 .. autoclass:: AtrousConv2dLayer
 
+2D Separable卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: SeparableConv2dLayer
+
 卷积层(Simplified)
 -----------------------------------
 
@@ -460,6 +470,16 @@ Dropconnect + 全链接层
 
 .. autofunction:: DeConv2d
 
+1D Max池化层
+^^^^^^^^^^^^^
+
+.. autofunction:: MaxPool1d
+
+1D Mean池化层
+^^^^^^^^^^^^^^
+
+.. autofunction:: MeanPool1d
+
 2D Max池化层
 ^^^^^^^^^^^^^
 
@@ -469,6 +489,16 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^
 
 .. autofunction:: MeanPool2d
+
+3D Max池化层
+^^^^^^^^^^^^^
+
+.. autofunction:: MaxPool3d
+
+3D Mean池化层
+^^^^^^^^^^^^^^
+
+.. autofunction:: MeanPool3d
 
 池化层
 --------------------
