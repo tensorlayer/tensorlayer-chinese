@@ -255,6 +255,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    Layer
 
    InputLayer
+   OneHotInputLayer
    Word2vecEmbeddingInputlayer
    EmbeddingInputlayer
 
@@ -362,6 +363,11 @@ Basic 层
 
 .. autoclass:: InputLayer
   :members:
+  
+  
+One-hot 输入层
+----------------
+.. autoclass:: OneHotInputLayer
 
 嵌入层+输入层
 -----------------
