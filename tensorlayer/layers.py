@@ -13,8 +13,8 @@ from . import iterate
 from . import ops
 import numpy as np
 from six.moves import xrange
-import random
-import warnings
+import random, warnings
+import copy
 
 # __all__ = [
 #     "Layer",
@@ -315,26 +315,56 @@ class InputLayer(Layer):
 
     Parameters
     ----------
-    inputs : a TensorFlow placeholder
+    inputs : a placeholder or tensor
         The input tensor data.
     name : a string or None
         An optional name to attach to this layer.
-    n_features : a int
-        The number of features. If not specify, it will assume the input is
-        with the shape of [batch_size, n_features], then select the second
-        element as the n_features. It is used to specify the matrix size of
-        next layer. If apply Convolutional layer after InputLayer,
-        n_features is not important.
     """
     def __init__(
         self,
         inputs = None,
-        n_features = None,
         name ='input_layer'
     ):
         Layer.__init__(self, inputs=inputs, name=name)
         print("  [TL] InputLayer  %s: %s" % (self.name, inputs.get_shape()))
         self.outputs = inputs
+        self.all_layers = []
+        self.all_params = []
+        self.all_drop = {}
+
+## OneHot layer
+class OneHotInputLayer(Layer):
+    """
+    The :class:`OneHotInputLayer` class is the starting layer of a neural network, see ``tf.one_hot``.
+
+    Parameters
+    ----------
+    inputs : a placeholder or tensor
+        The input tensor data.
+    name : a string or None
+        An optional name to attach to this layer.
+    depth : If the input indices is rank N, the output will have rank N+1. The new axis is created at dimension axis (default: the new axis is appended at the end).
+    on_value : If on_value is not provided, it will default to the value 1 with type dtype.
+        default, None
+    off_value : If off_value is not provided, it will default to the value 0 with type dtype.
+        default, None
+    axis : default, None
+    dtype : default, None
+    """
+    def __init__(
+        self,
+        inputs = None,
+        depth = None,
+        on_value = None,
+        off_value = None,
+        axis = None,
+        dtype=None,
+        name ='input_layer'
+    ):
+        Layer.__init__(self, inputs=inputs, name=name)
+        assert depth != None, "depth is not given"
+        print("  [TL]:Instantiate OneHotInputLayer  %s: %s" % (self.name, inputs.get_shape()))
+        self.outputs = tf.one_hot(inputs, depth, on_value=on_value, off_value=off_value, axis=axis, dtype=dtype)
         self.all_layers = []
         self.all_params = []
         self.all_drop = {}
@@ -1083,7 +1113,7 @@ class Conv1dLayer(Layer):
     act : activation function, None for identity.
     shape : list of shape
         shape of the filters, [filter_length, in_channels, out_channels].
-    strides : an int.
+    stride : an int.
         The number of entries by which the filter is moved right at each step.
     padding : a string from: "SAME", "VALID".
         The type of padding algorithm to use.
@@ -1104,8 +1134,8 @@ class Conv1dLayer(Layer):
         self,
         layer = None,
         act = tf.identity,
-        shape = [5, 5, 1],
-        strides= 1,
+        shape = [5, 1, 5],
+        stride = 1,
         padding='SAME',
         use_cudnn_on_gpu=None,
         data_format=None,
@@ -1117,18 +1147,18 @@ class Conv1dLayer(Layer):
     ):
         Layer.__init__(self, name=name)
         self.inputs = layer.outputs
-        print("  [TL] Conv1dLayer %s: shape:%s strides:%s pad:%s act:%s" %
-                            (self.name, str(shape), str(strides), padding, act.__name__))
+        print("  [TL] Conv1dLayer %s: shape:%s stride:%s pad:%s act:%s" %
+                            (self.name, str(shape), str(stride), padding, act.__name__))
         if act is None:
             act = tf.identity
         with tf.variable_scope(name) as vs:
             W = tf.get_variable(name='W_conv1d', shape=shape, initializer=W_init, **W_init_args )
             if b_init:
                 b = tf.get_variable(name='b_conv1d', shape=(shape[-1]), initializer=b_init, **b_init_args )
-                self.outputs = act( tf.nn.conv1d(self.inputs, W, stride=strides, padding=padding,
+                self.outputs = act( tf.nn.conv1d(self.inputs, W, stride=stride, padding=padding,
                             use_cudnn_on_gpu=use_cudnn_on_gpu, data_format=data_format) + b ) #1.2
             else:
-                self.outputs = act( tf.nn.conv1d(self.inputs, W, strides=strides, padding=padding,
+                self.outputs = act( tf.nn.conv1d(self.inputs, W, stride=stride, padding=padding,
                             use_cudnn_on_gpu=use_cudnn_on_gpu, data_format=data_format))
 
         self.all_layers = list(layer.all_layers)
@@ -1573,8 +1603,8 @@ class AtrousConv2dLayer(Layer):
 
     Parameters
     -----------
-    layer: a layer class with 4-D Tensor of shape [batch, height, width, channels].
-    # filters : A 4-D Tensor with the same type as value and shape [filter_height, filter_width, in_channels, out_channels]. filters' in_channels dimension must match that of value. Atrous convolution is equivalent to standard convolution with upsampled filters with effective height filter_height + (filter_height - 1) * (rate - 1) and effective width filter_width + (filter_width - 1) * (rate - 1), produced by inserting rate - 1 zeros along consecutive elements across the filters' spatial dimensions.
+    layer : a layer class with 4-D Tensor of shape [batch, height, width, channels].
+    filters : A 4-D Tensor with the same type as value and shape [filter_height, filter_width, in_channels, out_channels]. filters' in_channels dimension must match that of value. Atrous convolution is equivalent to standard convolution with upsampled filters with effective height filter_height + (filter_height - 1) * (rate - 1) and effective width filter_width + (filter_width - 1) * (rate - 1), produced by inserting rate - 1 zeros along consecutive elements across the filters' spatial dimensions.
     n_filter : number of filter.
     filter_size : tuple (height, width) for filter size.
     rate : A positive int32. The stride with which we sample input values across the height and width dimensions. Equivalently, the rate by which we upsample the filter values by inserting zeros across the height and width dimensions. In the literature, the same parameter is sometimes called input stride or dilation.
@@ -1624,38 +1654,79 @@ class AtrousConv2dLayer(Layer):
         else:
             self.all_params.extend( [filters] )
 
-class SeparableConv2dLayer(Layer):#TODO
-    """The :class:`SeparableConv2dLayer` class is 2-D convolution with separable filters., see `tf.nn.separable_conv2d <https://www.tensorflow.org/versions/master/api_docs/python/nn.html#separable_conv2d>`_.
+class SeparableConv2dLayer(Layer):# Untested
+    """The :class:`SeparableConv2dLayer` class is 2-D convolution with separable filters, see `tf.layers.separable_conv2d <https://www.tensorflow.org/api_docs/python/tf/layers/separable_conv2d>`_.
 
     Parameters
     -----------
-    layer: a layer class with 4-D Tensor of shape [batch, height, width, channels].
-    depthwise_filter : 4-D Tensor with shape [filter_height, filter_width, in_channels, channel_multiplier]. Contains in_channels convolutional filters of depth 1.
-    pointwise_filter : 4-D Tensor with shape [1, 1, channel_multiplier * in_channels, out_channels]. Pointwise filter to mix channels after depthwise_filter has convolved spatially.
-    strides : 1-D of size 4. The strides for the depthwise convolution for each dimension of input.
-    padding : A string, either 'VALID' or 'SAME'. The padding algorithm. See the comment here
+    layer : a layer class
+    filters : integer, the dimensionality of the output space (i.e. the number output of filters in the convolution).
+    kernel_size : a tuple or list of N positive integers specifying the spatial dimensions of of the filters. Can be a single integer to specify the same value for all spatial dimensions.
+    strides : a tuple or list of N positive integers specifying the strides of the convolution. Can be a single integer to specify the same value for all spatial dimensions. Specifying any stride value != 1 is incompatible with specifying any dilation_rate value != 1.
+    padding : one of "valid" or "same" (case-insensitive).
+    data_format : A string, one of channels_last (default) or channels_first. The ordering of the dimensions in the inputs. channels_last corresponds to inputs with shapedata_format = 'NWHC' (batch, width, height, channels) while channels_first corresponds to inputs with shape (batch, channels, width, height).
+    dilation_rate : an integer or tuple/list of 2 integers, specifying the dilation rate to use for dilated convolution. Can be a single integer to specify the same value for all spatial dimensions. Currently, specifying any dilation_rate value != 1 is incompatible with specifying any stride value != 1.
+    depth_multiplier : The number of depthwise convolution output channels for each input channel. The total number of depthwise convolution output channels will be equal to num_filters_in * depth_multiplier.
+    act (activation) : Activation function. Set it to None to maintain a linear activation.
+    use_bias : Boolean, whether the layer uses a bias.
+    depthwise_initializer : An initializer for the depthwise convolution kernel.
+    pointwise_initializer : An initializer for the pointwise convolution kernel.
+    bias_initializer : An initializer for the bias vector. If None, no bias will be applied.
+    depthwise_regularizer : Optional regularizer for the depthwise convolution kernel.
+    pointwise_regularizer : Optional regularizer for the pointwise convolution kernel.
+    bias_regularizer : Optional regularizer for the bias vector.
+    activity_regularizer : Regularizer function for the output.
     name : a string or None, an optional name to attach to this layer.
     """
     def __init__(
         self,
         layer = None,
-        depthwise_filter = None,
-        pointwise_filter = None,
-        rate = 2,
-        padding = 'SAME',
+        filters = None,
+        kernel_size=5,
+        strides=(1, 1),
+        padding='valid',
+        data_format='channels_last',
+        dilation_rate=(1, 1),
+        depth_multiplier=1,
+        act=None,
+        use_bias=True,
+        depthwise_initializer=None,
+        pointwise_initializer=None,
+        bias_initializer=tf.zeros_initializer,
+        depthwise_regularizer=None,
+        pointwise_regularizer=None,
+        bias_regularizer=None,
+        activity_regularizer=None,
         name = 'atrou2d'
     ):
         Layer.__init__(self, name=name)
         self.inputs = layer.outputs
-        # print("  [TL] SeparableConv2dLayer %s: %s, %s, %s, %s" %
-        #                     (self.name, str(shape), str(strides), padding, act.__name__))
-        # with tf.variable_scope(name) as vs:
-        #     self.outputs = tf.nn.separable_conv2d(value, filters, rate, padding)
-        #
-        # self.all_layers = list(layer.all_layers)
-        # self.all_params = list(layer.all_params)
-        # self.all_drop = dict(layer.all_drop)
-        # self.all_layers.extend( [self.outputs] )
+        assert filters is not None
+        assert tf.__version__ > "0.12.1", "This layer only supports for TF 1.0+"
+        if act is None:
+            act = tf.identity
+
+        bias_initializer = bias_initializer()
+
+        print("  [TL] SeparableConv2dLayer %s: filters:%s kernel_size:%s strides:%s padding:%s dilation_rate:%s depth_multiplier:%s act:%s" %
+                            (self.name, str(filters), str(kernel_size), str(strides), padding, str(dilation_rate), str(depth_multiplier), act.__name__))
+
+        with tf.variable_scope(name) as vs:
+            self.outputs = tf.layers.separable_conv2d(self.inputs, filters, kernel_size,
+                 strides=strides, padding=padding, data_format=data_format,
+                 dilation_rate=dilation_rate, depth_multiplier=depth_multiplier, activation=act,
+                 use_bias=use_bias, depthwise_initializer=depthwise_initializer, pointwise_initializer=pointwise_initializer,
+                 bias_initializer=bias_initializer, depthwise_regularizer=depthwise_regularizer,
+                 pointwise_regularizer=pointwise_regularizer, bias_regularizer=bias_regularizer, activity_regularizer=activity_regularizer,)
+                 #trainable=True, name=None, reuse=None)
+
+            variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
+
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( variables )
 
 ## Initializers for Convuolutional Layers
 def deconv2d_bilinear_upsampling_initializer(shape):
@@ -1720,6 +1791,39 @@ def deconv2d_bilinear_upsampling_initializer(shape):
     return bilinear_weights_init
 
 ## Convolutional layer (Simplified)
+def Conv1d(net, n_filter=32, filter_size=5, stride=1, act=None,
+        padding='SAME', use_cudnn_on_gpu=None,data_format=None,
+        W_init = tf.truncated_normal_initializer(stddev=0.02),
+        b_init = tf.constant_initializer(value=0.0),
+        W_init_args = {}, b_init_args = {}, name ='conv1d',):
+    """Wrapper for :class:`Conv1dLayer`, if you don't understand how to use :class:`Conv1dLayer`, this function may be easier.
+
+    Parameters
+    ----------
+    net : TensorLayer layer.
+    n_filter : number of filter.
+    filter_size : an int.
+    stride : an int.
+    act : None or activation function.
+    others : see :class:`Conv1dLayer`.
+    """
+    if act is None:
+        act = tf.identity
+    net = Conv1dLayer(layer = net,
+            act = act,
+            shape = [filter_size, int(net.outputs.get_shape()[-1]), n_filter],
+            stride = stride,
+            padding = padding,
+            use_cudnn_on_gpu = use_cudnn_on_gpu,
+            data_format = data_format,
+            W_init = W_init,
+            b_init = b_init,
+            W_init_args = W_init_args,
+            b_init_args = b_init_args,
+            name = name,
+        )
+    return net
+
 def Conv2d(net, n_filter=32, filter_size=(3, 3), strides=(1, 1), act = None,
         padding='SAME', W_init = tf.truncated_normal_initializer(stddev=0.02), b_init = tf.constant_initializer(value=0.0),
         W_init_args = {}, b_init_args = {}, name ='conv2d',):
@@ -1796,6 +1900,56 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
                     name = name)
     return net
 
+def MaxPool1d(net, filter_size, strides, padding='valid', data_format='channels_last', name=None): #Untested
+    """Wrapper for `tf.layers.max_pooling1d <https://www.tensorflow.org/api_docs/python/tf/layers/max_pooling1d>`_ .
+
+    Parameters
+    ------------
+    net : TensorLayer layer, the tensor over which to pool. Must have rank 3.
+    filter_size (pool_size) : An integer or tuple/list of a single integer, representing the size of the pooling window.
+    strides : An integer or tuple/list of a single integer, specifying the strides of the pooling operation.
+    padding : A string. The padding method, either 'valid' or 'same'. Case-insensitive.
+    data_format : A string, one of channels_last (default) or channels_first. The ordering of the dimensions in the inputs. channels_last corresponds to inputs with shape (batch, length, channels) while channels_first corresponds to inputs with shape (batch, channels, length).
+    name : A string, the name of the layer.
+
+    Returns
+    --------
+    - A :class:`Layer` which the output tensor, of rank 3.
+    """
+    print("  [TL] MaxPool1d %s: filter_size:%s strides:%s padding:%s" %
+                        (name, str(filter_size), str(strides), str(padding)))
+    outputs = tf.layers.max_pooling1d(net.outputs, filter_size, strides, padding=padding, data_format=data_format, name=name)
+
+    net_new = copy.copy(net)
+    net_new.outputs = outputs
+    net_new.all_layers.extend( [outputs] )
+    return net_new
+
+def MeanPool1d(net, filter_size, strides, padding='valid', data_format='channels_last', name=None): #Untested
+    """Wrapper for `tf.layers.average_pooling1d <https://www.tensorflow.org/api_docs/python/tf/layers/average_pooling1d>`_ .
+
+    Parameters
+    ------------
+    net : TensorLayer layer, the tensor over which to pool. Must have rank 3.
+    filter_size (pool_size) : An integer or tuple/list of a single integer, representing the size of the pooling window.
+    strides : An integer or tuple/list of a single integer, specifying the strides of the pooling operation.
+    padding : A string. The padding method, either 'valid' or 'same'. Case-insensitive.
+    data_format : A string, one of channels_last (default) or channels_first. The ordering of the dimensions in the inputs. channels_last corresponds to inputs with shape (batch, length, channels) while channels_first corresponds to inputs with shape (batch, channels, length).
+    name : A string, the name of the layer.
+
+    Returns
+    --------
+    - A :class:`Layer` which the output tensor, of rank 3.
+    """
+    print("  [TL] MeanPool1d %s: filter_size:%s strides:%s padding:%s" %
+                        (name, str(filter_size), str(strides), str(padding)))
+    outputs = tf.layers.average_pooling1d(net.outputs, filter_size, strides, padding=padding, data_format=data_format, name=name)
+
+    net_new = copy.copy(net)
+    net_new.outputs = outputs
+    net_new.all_layers.extend( [outputs] )
+    return net_new
+
 def MaxPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='maxpool'):
     """Wrapper for :class:`PoolLayer`.
 
@@ -1835,6 +1989,49 @@ def MeanPool2d(net, filter_size=(2, 2), strides=None, padding='SAME', name='mean
             pool = tf.nn.avg_pool,
             name = name)
     return net
+
+def MaxPool3d(net, filter_size, strides, padding='valid', data_format='channels_last', name=None): #Untested
+    """Wrapper for `tf.layers.max_pooling3d <https://www.tensorflow.org/api_docs/python/tf/layers/max_pooling3d>`_ .
+
+    Parameters
+    ------------
+    net : TensorLayer layer, the tensor over which to pool. Must have rank 5.
+    filter_size (pool_size) : An integer or tuple/list of 3 integers: (pool_depth, pool_height, pool_width) specifying the size of the pooling window. Can be a single integer to specify the same value for all spatial dimensions.
+    strides : An integer or tuple/list of 3 integers, specifying the strides of the pooling operation. Can be a single integer to specify the same value for all spatial dimensions.
+    padding : A string. The padding method, either 'valid' or 'same'. Case-insensitive.
+    data_format : A string. The ordering of the dimensions in the inputs. channels_last (default) and channels_first are supported. channels_last corresponds to inputs with shape (batch, depth, height, width, channels) while channels_first corresponds to inputs with shape (batch, channels, depth, height, width).
+    name : A string, the name of the layer.
+    """
+    print("  [TL] MaxPool3d %s: filter_size:%s strides:%s padding:%s" %
+                        (name, str(filter_size), str(strides), str(padding)))
+    outputs = tf.layers.max_pooling3d(net.outputs, filter_size, strides, padding=padding, data_format=data_format, name=name)
+
+    net_new = copy.copy(net)
+    net_new.outputs = outputs
+    net_new.all_layers.extend( [outputs] )
+    return net_new
+
+def MeanPool3d(net, filter_size, strides, padding='valid', data_format='channels_last', name=None): #Untested
+    """Wrapper for `tf.layers.average_pooling3d <https://www.tensorflow.org/api_docs/python/tf/layers/average_pooling3d>`_
+
+    Parameters
+    ------------
+    net : TensorLayer layer, the tensor over which to pool. Must have rank 5.
+    filter_size (pool_size) : An integer or tuple/list of 3 integers: (pool_depth, pool_height, pool_width) specifying the size of the pooling window. Can be a single integer to specify the same value for all spatial dimensions.
+    strides : An integer or tuple/list of 3 integers, specifying the strides of the pooling operation. Can be a single integer to specify the same value for all spatial dimensions.
+    padding : A string. The padding method, either 'valid' or 'same'. Case-insensitive.
+    data_format : A string. The ordering of the dimensions in the inputs. channels_last (default) and channels_first are supported. channels_last corresponds to inputs with shape (batch, depth, height, width, channels) while channels_first corresponds to inputs with shape (batch, channels, depth, height, width).
+    name : A string, the name of the layer.
+    """
+    print("  [TL] MeanPool3d %s: filter_size:%s strides:%s padding:%s name:%s" %
+                        (name, str(filter_size), str(strides), str(padding)))
+    outputs = tf.layers.average_pooling3d(net.outputs, filter_size, strides, padding=padding, data_format=data_format, name=name)
+
+    net_new = copy.copy(net)
+    net_new.outputs = outputs
+    net_new.all_layers.extend( [outputs] )
+    return net_new
+
 
 # ## Normalization layer
 class LocalResponseNormLayer(Layer):
@@ -2851,6 +3048,7 @@ class TimeDistributedLayer(Layer):
                 with tf.variable_scope(name, reuse=(False if i==0 else True)) as vs:
                     set_name_reuse((False if i==0 else True))
                     net = layer_class(InputLayer(x[i], name=args['name']+str(i)), **args)
+                    # net = layer_class(InputLayer(x[i], name="input_"+args['name']), **args)
                     x[i] = net.outputs
                     variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
@@ -3029,6 +3227,11 @@ class RNNLayer(Layer):
         Layer.__init__(self, name=name)
         if cell_fn is None:
             raise Exception("Please put in cell_fn")
+        if 'GRU' in cell_fn.__name__:
+            try:
+                cell_init_args.pop('state_is_tuple')
+            except:
+                pass
 
         self.inputs = layer.outputs
 
@@ -3210,6 +3413,12 @@ class BiRNNLayer(Layer):
         Layer.__init__(self, name=name)
         if cell_fn is None:
             raise Exception("Please put in cell_fn")
+        if 'GRU' in cell_fn.__name__:
+            try:
+                cell_init_args.pop('state_is_tuple')
+            except:
+                pass
+
         self.inputs = layer.outputs
 
         print("  [TL] BiRNNLayer %s: n_hidden:%d n_steps:%d in_dim:%d in_shape:%s cell_fn:%s dropout:%s n_layer:%d " % (self.name, n_hidden,
@@ -3557,6 +3766,11 @@ class DynamicRNNLayer(Layer):
         Layer.__init__(self, name=name)
         if cell_fn is None:
             raise Exception("Please put in cell_fn")
+        if 'GRU' in cell_fn.__name__:
+            try:
+                cell_init_args.pop('state_is_tuple')
+            except:
+                pass
         self.inputs = layer.outputs
 
         print("  [TL] DynamicRNNLayer %s: n_hidden:%d, in_dim:%d in_shape:%s cell_fn:%s dropout:%s n_layer:%d" % (self.name, n_hidden,
@@ -3776,6 +3990,11 @@ class BiDynamicRNNLayer(Layer):
         Layer.__init__(self, name=name)
         if cell_fn is None:
             raise Exception("Please put in cell_fn")
+        if 'GRU' in cell_fn.__name__:
+            try:
+                cell_init_args.pop('state_is_tuple')
+            except:
+                pass
         self.inputs = layer.outputs
 
         print("  [TL] BiDynamicRNNLayer %s: n_hidden:%d in_dim:%d in_shape:%s cell_fn:%s dropout:%s n_layer:%d" %
@@ -3937,8 +4156,8 @@ class Seq2Seq(Layer):
         The number of RNN layers.
     return_seq_2d : boolean
         - When return_last = False
-        - If True, return 2D Tensor [n_example, 2 * n_hidden], for stacking DenseLayer or computing cost after it.
-        - If False, return 3D Tensor [n_example/n_steps(max), n_steps(max), 2 * n_hidden], for stacking multiple RNN after it.
+        - If True, return 2D Tensor [n_example, n_hidden], for stacking DenseLayer or computing cost after it.
+        - If False, return 3D Tensor [n_example/n_steps(max), n_steps(max), n_hidden], for stacking multiple RNN after it.
     name : a string or None
         An optional name to attach to this layer.
 
@@ -4018,6 +4237,11 @@ class Seq2Seq(Layer):
         Layer.__init__(self, name=name)
         if cell_fn is None:
             raise Exception("Please put in cell_fn")
+        if 'GRU' in cell_fn.__name__:
+            try:
+                cell_init_args.pop('state_is_tuple')
+            except:
+                pass
         # self.inputs = layer.outputs
         print("  [**] Seq2Seq %s: n_hidden:%d cell_fn:%s dropout:%s n_layer:%d" %
               (self.name, n_hidden, cell_fn.__name__, dropout, n_layer))
@@ -4559,6 +4783,43 @@ class KerasLayer(Layer):
         self.all_layers.extend( [self.outputs] )
         self.all_params.extend( variables )
 
+## Estimator layer
+class EstimatorLayer(Layer):
+    """
+    The :class:`EstimatorLayer` class accepts ``model_fn`` that described the model.
+    It is similar with :class:`KerasLayer`, see `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_
+
+    Parameters
+    ----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    model_fn : a function that described the model.
+    args : dictionary
+        The arguments for the model_fn.
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+        self,
+        layer = None,
+        model_fn = None,
+        args = {},
+        name ='estimator_layer',
+    ):
+        Layer.__init__(self, name=name)
+        assert layer is not None
+        assert model_fn is not None
+        self.inputs = layer.outputs
+        print("  [TL] EstimatorLayer %s: %s" % (self.name, model_fn))
+        with tf.variable_scope(name) as vs:
+            self.outputs = model_fn(self.inputs, **args)
+            variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( variables )
+
 ## Special activation
 class PReluLayer(Layer):
     """
@@ -4733,7 +4994,7 @@ class MultiplexerLayer(Layer):
 
 ## Wrapper
 class EmbeddingAttentionSeq2seqWrapper(Layer):
-  """Sequence-to-sequence model with attention and for multiple buckets.
+  """Sequence-to-sequence model with attention and for multiple buckets (Deprecated after TF0.12).
 
     This example implements a multi-layer recurrent neural network as encoder,
     and an attention-based decoder. This is the same as the model described in
@@ -4795,6 +5056,9 @@ class EmbeddingAttentionSeq2seqWrapper(Layer):
     self.learning_rate_decay_op = self.learning_rate.assign(
         self.learning_rate * learning_rate_decay_factor)
     self.global_step = tf.Variable(0, trainable=False, name='global_step')
+
+    if tf.__version__ >= "0.12":
+        raise Exception("Deprecated after TF0.12 : use other seq2seq layers instead.")
 
     # =========== Fake output Layer for compute cost ======
     # If we use sampled softmax, we need an output projection.
@@ -4975,7 +5239,7 @@ class EmbeddingAttentionSeq2seqWrapper(Layer):
       return None, outputs[0], outputs[1:]  # No gradient norm, loss, outputs.
 
   def get_batch(self, data, bucket_id, PAD_ID=0, GO_ID=1, EOS_ID=2, UNK_ID=3):
-    """Get a random batch of data from the specified bucket, prepare for step.
+    """ Get a random batch of data from the specified bucket, prepare for step.
 
     To feed data in step(..) it must be a list of batch-major vectors, while
     data here contains single length-major cases. So the main logic of this
