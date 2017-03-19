@@ -277,6 +277,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    AtrousConv2dLayer
    SeparableConv2dLayer
 
+   Conv1d
    Conv2d
    DeConv2d
    
@@ -466,6 +467,12 @@ Dropconnect + 全链接层
 -----------------------------------
 
 对于不擅长 TensorFlow 的用户，下面的简化的函数使用起来更简单。接下来我们将添加更多简化函数。
+
+1D卷积层
+^^^^^^^^^
+
+.. autofunction:: Conv1d
+
 
 2D卷积层
 ^^^^^^^^^
