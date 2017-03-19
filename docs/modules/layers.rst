@@ -313,6 +313,7 @@ the sparsity can be implemented by using the L1 regularization of activation out
    ExpandDimsLayer
    TileLayer
 
+   EstimatorLayer
    SlimNetsLayer
    KerasLayer
 
@@ -638,6 +639,10 @@ Tile 层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: TileLayer
 
+
+Estimator 层
+------------------
+.. autoclass:: EstimatorLayer
 
 连接 TF-Slim
 ---------------
