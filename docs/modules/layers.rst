@@ -503,14 +503,14 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^
 .. autofunction:: MaxPool3d
 
+3D Mean池化层
+^^^^^^^^^^^^^^
+.. autofunction:: MeanPool3d
+
 Super-resolution 层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: SubpixelConv2d
 
-Su
-^^^^^^^^^^^^^^
-
-.. autofunction:: MeanPool3d
 
 池化层
 --------------------
