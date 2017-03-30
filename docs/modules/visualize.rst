@@ -8,11 +8,19 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 .. autosummary::
 
+   save_images
    W
    CNN2d
    frame
    images2d
    tsne_embedding
+
+保存图片
+--------------
+
+保存多个图片
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_images
 
 可视化模型参数
 --------------------
