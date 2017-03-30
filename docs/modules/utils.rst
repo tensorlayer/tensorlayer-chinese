@@ -10,6 +10,7 @@ API - 实用函数
    predict
    evaluation
    class_balancing_oversample
+   get_random_int
    dict_to_one
    flatten_list
 
@@ -38,6 +39,10 @@ API - 实用函数
 ----------------------------
 .. autofunction:: class_balancing_oversample
 
+
+随机函数
+----------------------------
+.. autofunction:: get_random_int
 
 辅助函数
 --------------------
