@@ -161,12 +161,12 @@ CUDA 驱动安装
 ^^^^^^^^^^^^^^^^^
 为了使用显卡进行GPU加速运算，需要安装NVIDIA的CUDA驱动，我们建议安装最新版的CUDA8.0，并根据操作系统下载对应的版本。我们建议使用local安装的方式，以防出现安装过程中因为网络中断造成安装失败的现象。安装过程中所有的选择直接选择默认，如果C盘空间足够，不建议手动更改安装目录。
 
-`CUDA下载地址<https://developer.nvidia.com/CUDA-downloads>`_
+`CUDA下载地址 <https://developer.nvidia.com/CUDA-downloads>`_
 
 
 加速库 cuDNN 安装
 ^^^^^^^^^^^^^^^^^
-cuDNN是NVIDIA针对深度学习计算的一个加速，建议安装。您可能需要注册一个账号才能下载cuDNN，然后根据CUDA的版本和windows的版本下载相应的cuDNN源码，我们建议下载最新版的cuDNN5.1。下载下来之后直接解压，解压之后有三个夹bin,lib,include，把解压之后的三个文件夹直接复制到CUDA的安装目录。（默认的安装目录为：C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0）
+cuDNN是NVIDIA针对深度学习计算的一个加速，建议安装。您可能需要注册一个账号才能下载cuDNN，然后根据CUDA的版本和windows的版本下载相应的cuDNN源码，我们建议下载最新版的cuDNN5.1。下载下来之后直接解压，解压之后有三个夹bin,lib,include，把解压之后的三个文件夹直接复制到CUDA的安装目录。（默认的安装目录为：`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0`）
 
 TensorLayer 框架搭建
 -----------------------
@@ -174,8 +174,8 @@ TensorLayer 框架搭建
 
 .. code-block:: bash
 
-    pip install tensorflow      # CPU 版本
-    pip install tensorflow-gpu  # GPU版本
+    pip install tensorflow      # CPU 版本 (二选一)
+    pip install tensorflow-gpu  # GPU 版本 (二选一)
     pip install tensorlayer     # 之后安装 TensorLayer 框架
 
 测试
