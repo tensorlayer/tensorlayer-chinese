@@ -138,6 +138,66 @@ cuDNN
 ``lib*`` 文件到 ``/usr/local/cuda/lib64``。
 
 
+Windows 用户
+=============
+
+Tensorflow于2016年11月28日发布0.12版本，添加了windows版本支持，Tensorlayer使用Tensorflow作为后端，也因此支持windows版本。根据Tensorflow官网说明，windows版本的最低系统要求为windows7，最低语言版本要求为python3.5。可以选择CPU和GPU两个版本。
+
+Python 环境搭建
+-----------------
+Python环境搭建我们建议使用科学计算集成python发行版Anaconda，Anaconda里面集成了大量常用的科学计算库，并且自带matlab风格的IDE Spyder，方便平时的开发使用。当然用户也可以根据自己的使用习惯选择合适的安装方式，但是python的版本最低要求为python3.5。
+
+`Anaconda 下载地址 <https://www.continuum.io/downloads>`_
+
+GPU 环境搭建
+--------------
+如果想使用GPU版本的 TensorLayer，需要安装GPU支持，而CPU版本不需要。
+
+编译环境 Microsoft Visual Studio 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+安装NVIDIA的CUDA显卡驱动需要预安装编译环境VS，VS最低的版本要求为VS2010，但我们建议安装较新的版本VS2015或者VS2013。其中CUDA7.5仅支持2010、2012、2013，CUDA8.0同时支持2015版本。
+
+CUDA 驱动安装
+^^^^^^^^^^^^^^^^^
+为了使用显卡进行GPU加速运算，需要安装NVIDIA的CUDA驱动，我们建议安装最新版的CUDA8.0，并根据操作系统下载对应的版本。我们建议使用local安装的方式，以防出现安装过程中因为网络中断造成安装失败的现象。安装过程中所有的选择直接选择默认，如果C盘空间足够，不建议手动更改安装目录。
+
+`CUDA下载地址<https://developer.nvidia.com/CUDA-downloads>`_
+
+
+加速库 cuDNN 安装
+^^^^^^^^^^^^^^^^^
+cuDNN是NVIDIA针对深度学习计算的一个加速，建议安装。您可能需要注册一个账号才能下载cuDNN，然后根据CUDA的版本和windows的版本下载相应的cuDNN源码，我们建议下载最新版的cuDNN5.1。下载下来之后直接解压，解压之后有三个夹bin,lib,include，把解压之后的三个文件夹直接复制到CUDA的安装目录。（默认的安装目录为：C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0）
+
+TensorLayer 框架搭建
+^^^^^^^^^^^^^^^^^^^^^^
+首先我们需要安装TensorFlow框架，在CMD命令行直接用pip命令进行安装：
+
+.. code-block:: bash
+
+    pip install tensorflow      # CPU 版本
+    pip install tensorflow-gpu  # GPU版本
+    pip install tensorlayer     # 之后安装 TensorLayer 框架
+
+测试
+^^^^^^^^
+在CMD命令行输入python进入Python环境，输入：
+
+.. code-block:: bash
+    
+    import tensorlayer
+
+如果未报错并且显示以下输出，则GPU版本安装成功
+
+.. code-block:: bash
+
+    successfully opened CUDA library cublas64_80.dll locally
+    successfully opened CUDA library cuDNN64_5.dll locally
+    successfully opened CUDA library cufft64_80.dll locally
+    successfully opened CUDA library nvcuda.dll locally
+    successfully opened CUDA library curand64_80.dll locally
+	
+如果未报错则CPU版本安装成功。
+
 
 困难
 =======
