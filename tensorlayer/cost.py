@@ -76,18 +76,30 @@ def binary_cross_entropy(output, target, epsilon=1e-8, name='bce_loss'):
                               (1. - target) * tf.log(1. - output + epsilon)))
 
 
-def mean_squared_error(output, target):
+def mean_squared_error(output, target, is_mean=False):
     """Return the TensorFlow expression of mean-squre-error of two distributions.
 
     Parameters
     ----------
-    output : tensorflow variable
-        A distribution with shape: [batch_size, n_feature].
-    target : tensorflow variable
-        A distribution with shape: [batch_size, n_feature].
+    output : 2D or 4D tensor.
+    target : 2D or 4D tensor.
+    is_mean : boolean, if True, use ``tf.reduce_mean`` to compute the loss of one data, otherwise, use ``tf.reduce_sum`` (default).
+
+    References
+    ------------
+    - `Wiki Mean Squared Error <https://en.wikipedia.org/wiki/Mean_squared_error>`_
     """
     with tf.name_scope("mean_squared_error_loss"):
-        mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target), 1))
+        if output.get_shape().ndims == 2:   # [batch_size, n_feature]
+            if is_mean:
+                mse = tf.reduce_mean(tf.reduce_mean(tf.squared_difference(output, target), 1))
+            else:
+                mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target), 1))
+        elif output.get_shape().ndims == 4: # [batch_size, w, h, c]
+            if is_mean:
+                mse = tf.reduce_mean(tf.reduce_mean(tf.squared_difference(output, target), [1, 2, 3]))
+            else:
+                mse = tf.reduce_mean(tf.reduce_sum(tf.squared_difference(output, target), [1, 2, 3]))
         return mse
 
 
@@ -193,7 +205,7 @@ def iou_coe(output, target, threshold=0.5, epsilon=1e-10):
     return tf.reduce_sum(intersection) / (tf.reduce_sum(union) + epsilon)
 
 
-def cross_entropy_seq(logits, target_seqs):#, batch_size=1, num_steps=None):
+def cross_entropy_seq(logits, target_seqs, batch_size=None):#, batch_size=1, num_steps=None):
     """Returns the expression of cross-entropy of two sequences, implement
     softmax internally. Normally be used for Fixed Length RNN outputs.
 
@@ -203,6 +215,8 @@ def cross_entropy_seq(logits, target_seqs):#, batch_size=1, num_steps=None):
         2D tensor, ``network.outputs``, [batch_size*n_steps (n_examples), number of output units]
     target_seqs : Tensorflow variable
         target : 2D tensor [batch_size, n_steps], if the number of step is dynamic, please use ``cross_entropy_seq_with_mask`` instead.
+    batch_size : None or int.
+        If not None, the return cost will be divided by batch_size.
 
     Examples
     --------
@@ -219,9 +233,11 @@ def cross_entropy_seq(logits, target_seqs):#, batch_size=1, num_steps=None):
     loss = sequence_loss_by_example_fn(
         [logits],
         [tf.reshape(target_seqs, [-1])],
-        [tf.ones_like(tf.reshape(targets, [-1]), dtype=tf.float32)])
+        [tf.ones_like(tf.reshape(target_seqs, [-1]), dtype=tf.float32)])
         # [tf.ones([batch_size * num_steps])])
-    cost = tf.reduce_sum(loss) / batch_size
+    cost = tf.reduce_sum(loss) #/ batch_size
+    if batch_size is not None:
+        cost = cost / batch_size
     return cost
 
 

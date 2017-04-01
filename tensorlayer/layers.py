@@ -259,6 +259,9 @@ class Layer(object):
         name ='layer'
     ):
         self.inputs = inputs
+        scope_name=tf.get_variable_scope().name
+        if scope_name:
+            name = scope_name + '/' + name
         if (name in set_keep['_layers_name_list']) and name_reuse == False:
             raise Exception("Layer '%s' already exists, please choice other 'name' or reuse this layer\
             \nHint : Use different name for different 'Layer' (The name is used to control parameter sharing)" % name)
@@ -303,9 +306,9 @@ class Layer(object):
         return n_params
 
     def __str__(self):
-        print("\nIt is a Layer class")
-        self.print_params(False)
-        self.print_layers()
+        # print("\nIt is a Layer class")
+        # self.print_params(False)
+        # self.print_layers()
         return "  Last layer is: %s" % self.__class__.__name__
 
 ## Input layer
@@ -2032,6 +2035,102 @@ def MeanPool3d(net, filter_size, strides, padding='valid', data_format='channels
     net_new.all_layers.extend( [outputs] )
     return net_new
 
+## Super resolution
+def SubpixelConv2d(net, scale=2, n_out_channel=None, name='subpixel_conv2d'):
+    """The :class:`SubpixelConv2d` class is a sub-pixel 2d convolutional ayer, usually be used
+    for super-resolution application.
+
+    Parameters
+    ------------
+    net : TensorLayer layer.
+    scale : int, upscaling ratio, a wrong setting will lead to Dimension size error.
+    n_out_channel : int or None, the number of output channels.
+        Note that, the number of input channels == (scale x scale) x The number of output channels.
+        If None, automatically set n_out_channel == the number of input channels / (scale x scale).
+    name : string.
+        An optional name to attach to this layer.
+
+    Examples
+    ---------
+    >>> # examples here just want to tell you how to set the n_out_channel.
+    >>> x = np.random.rand(2, 16, 16, 4)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 4), name="X")
+    >>> net = InputLayer(X, name='input')
+    >>> net = SubpixelConv2d(net, scale=2, n_out_channel=1, name='subpixel_conv2d')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 4) (2, 32, 32, 1)
+    >>>
+    >>> x = np.random.rand(2, 16, 16, 4*10)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 4*10), name="X")
+    >>> net = InputLayer(X, name='input2')
+    >>> net = SubpixelConv2d(net, scale=2, n_out_channel=10, name='subpixel_conv2d2')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 40) (2, 32, 32, 10)
+    >>>
+    >>> x = np.random.rand(2, 16, 16, 25*10)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 25*10), name="X")
+    >>> net = InputLayer(X, name='input3')
+    >>> net = SubpixelConv2d(net, scale=5, n_out_channel=None, name='subpixel_conv2d3')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 250) (2, 80, 80, 10)
+
+    References
+    ------------
+    - `Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network <https://arxiv.org/pdf/1609.05158.pdf>`_
+    """
+    # github/Tetrachrome/subpixel  https://github.com/Tetrachrome/subpixel/blob/master/subpixel.py
+
+    _err_log = "SubpixelConv2d: The number of input channels == (scale x scale) x The number of output channels"
+
+    def _phase_shift(I, r):
+        if tf.__version__ < '1.0':
+            raise Exception("Only support TF1.0+")
+        bsize, a, b, c = I.get_shape().as_list()
+        bsize = tf.shape(I)[0] # Handling Dimension(None) type for undefined batch dim
+        X = tf.reshape(I, (bsize, a, b, r, r))
+        X = tf.transpose(X, (0, 1, 2, 4, 3))  # bsize, a, b, 1, 1 # tf 0.12
+        # X = tf.split(1, a, X)  # a, [bsize, b, r, r] # tf 0.12
+        X = tf.split(X, a, 1)
+        # X = tf.concat(2, [tf.squeeze(x, axis=1) for x in X])  # bsize, b, a*r, r # tf 0.12
+        X = tf.concat([tf.squeeze(x, axis=1) for x in X], 2)
+        # X = tf.split(1, b, X)  # b, [bsize, a*r, r] # tf 0.12
+        X = tf.split(X, b, 1)
+        # X = tf.concat(2, [tf.squeeze(x, axis=1) for x in X])  # bsize, a*r, b*r # tf 0.12
+        X = tf.concat([tf.squeeze(x, axis=1) for x in X], 2)
+        return tf.reshape(X, (bsize, a*r, b*r, 1))
+
+    def _PS(X, r, n_out_channel):
+        if n_out_channel > 1:
+            assert int(X.get_shape()[-1]) == (r ** 2) * n_out_channel, _err_log
+            Xc = tf.split(X, n_out_channel, 3)
+            X = tf.concat([_phase_shift(x, r) for x in Xc], 3)
+        elif n_out_channel == 1:
+            assert int(X.get_shape()[-1]) == (r ** 2), _err_log
+            X = _phase_shift(X, r)
+        else:
+            print(_err_log)
+        return X
+
+    inputs = net.outputs
+
+    if n_out_channel is None:
+        assert int(inputs.get_shape()[-1])/ (scale ** 2) % 1 == 0, _err_log
+        n_out_channel = int(int(inputs.get_shape()[-1])/ (scale ** 2))
+
+    print("  [TL] SubpixelConv2d  %s: scale: %d n_out_channel: %s" % (name, scale, n_out_channel))
+
+    net_new = Layer(inputs, name=name)
+    net_new.outputs = _PS(inputs, r=scale, n_out_channel=n_out_channel)
+
+    net_new.all_layers = list(net.all_layers)
+    net_new.all_params = list(net.all_params)
+    net_new.all_drop = dict(net.all_drop)
+    net_new.all_layers.extend( [net_new.outputs] )
+    return net_new
+
 
 # ## Normalization layer
 class LocalResponseNormLayer(Layer):
@@ -2905,7 +3004,7 @@ class PoolLayer(Layer):
     """
     The :class:`PoolLayer` class is a Pooling layer, you can choose
     ``tf.nn.max_pool`` and ``tf.nn.avg_pool`` for 2D or
-    ``tf.nn.max_pool3d()`` and ``tf.nn.avg_pool3d()`` for 3D.
+    ``tf.nn.max_pool3d`` and ``tf.nn.avg_pool3d`` for 3D.
 
     Parameters
     ----------
@@ -3656,6 +3755,30 @@ def retrieve_seq_length_op2(data):
     return tf.reduce_sum(tf.cast(tf.greater(data, tf.zeros_like(data)), tf.int32), 1)
 
 
+def retrieve_seq_length_op3(data, pad_val=0):
+    data_shape_size = data.get_shape().ndims
+    if data_shape_size == 3:
+        return tf.reduce_sum(tf.cast(tf.reduce_any(tf.not_equal(data, pad_val), axis=2), dtype=tf.int32), 1)
+    elif data_shape_size == 2:
+        return tf.reduce_sum(tf.cast(tf.not_equal(data, pad_val), dtype=tf.int32), 1)
+    elif data_shape_size == 1:
+        raise ValueError("retrieve_seq_length_op3: data has wrong shape!")
+    else:
+        raise ValueError("retrieve_seq_length_op3: handling data_shape_size %s hasn't been implemented!" % (data_shape_size))
+
+
+def target_mask_op(data, pad_val=0):
+    data_shape_size = data.get_shape().ndims
+    if data_shape_size == 3:
+        return tf.cast(tf.reduce_any(tf.not_equal(data, pad_val), axis=2), dtype=tf.int32)
+    elif data_shape_size == 2:
+        return tf.cast(tf.not_equal(data, pad_val), dtype=tf.int32)
+    elif data_shape_size == 1:
+        raise ValueError("target_mask_op: data has wrong shape!")
+    else:
+        raise ValueError("target_mask_op: handling data_shape_size %s hasn't been implemented!" % (data_shape_size))
+
+
 # Dynamic RNN
 class DynamicRNNLayer(Layer):
     """
@@ -3761,6 +3884,7 @@ class DynamicRNNLayer(Layer):
         n_layer = 1,
         return_last = False,
         return_seq_2d = False,
+        dynamic_rnn_init_args={},
         name = 'dyrnn_layer',
     ):
         Layer.__init__(self, name=name)
@@ -3794,7 +3918,8 @@ class DynamicRNNLayer(Layer):
         self.batch_size = batch_size
 
         # Creats the cell function
-        self.cell = cell_fn(num_units=n_hidden, **cell_init_args)
+        cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args)
+        # self.cell = cell_fn(num_units=n_hidden, **cell_init_args)
 
         # Apply dropout
         if dropout:
@@ -3811,10 +3936,15 @@ class DynamicRNNLayer(Layer):
             except:
                 DropoutWrapper_fn = tf.nn.rnn_cell.DropoutWrapper
 
-            self.cell = DropoutWrapper_fn(
-                      self.cell,
-                      input_keep_prob=in_keep_prob,
-                      output_keep_prob=out_keep_prob)
+            cell_instance_fn1=cell_instance_fn
+            cell_instance_fn=DropoutWrapper_fn(
+                                cell_instance_fn1(),
+                                input_keep_prob=in_keep_prob,
+                                output_keep_prob=out_keep_prob)
+            # self.cell = DropoutWrapper_fn(
+            #           self.cell,
+            #           input_keep_prob=in_keep_prob,
+            #           output_keep_prob=out_keep_prob)
         # Apply multiple layers
         if n_layer > 1:
             try:
@@ -3822,11 +3952,15 @@ class DynamicRNNLayer(Layer):
             except:
                 MultiRNNCell_fn = tf.nn.rnn_cell.MultiRNNCell
 
+            cell_instance_fn2=cell_instance_fn
             try:
-                self.cell = MultiRNNCell_fn([self.cell] * n_layer, state_is_tuple=True)
+                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)], state_is_tuple=True)
+                # self.cell = MultiRNNCell_fn([self.cell] * n_layer, state_is_tuple=True)
             except:
-                self.cell = MultiRNNCell_fn([self.cell] * n_layer)
+                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
+                # self.cell = MultiRNNCell_fn([self.cell] * n_layer)
 
+        self.cell=cell_instance_fn()
         # Initialize initial_state
         if initial_state is None:
             self.initial_state = self.cell.zero_state(batch_size, dtype=tf.float32)#dtype="float")
@@ -3851,6 +3985,7 @@ class DynamicRNNLayer(Layer):
                 # dtype=tf.float64,
                 sequence_length=sequence_length,
                 initial_state = self.initial_state,
+                **dynamic_rnn_init_args
                 )
             rnn_variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
@@ -3985,6 +4120,7 @@ class BiDynamicRNNLayer(Layer):
         n_layer = 1,
         return_last = False,
         return_seq_2d = False,
+        dynamic_rnn_init_args={},
         name = 'bi_dyrnn_layer',
     ):
         Layer.__init__(self, name=name)
@@ -4019,8 +4155,9 @@ class BiDynamicRNNLayer(Layer):
 
         with tf.variable_scope(name, initializer=initializer) as vs:
             # Creats the cell function
-            self.fw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
-            self.bw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
+            cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args)
+            # self.fw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
+            # self.bw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
 
             # Apply dropout
             if dropout:
@@ -4037,14 +4174,20 @@ class BiDynamicRNNLayer(Layer):
                 except:
                     DropoutWrapper_fn = tf.nn.rnn_cell.DropoutWrapper
 
-                self.fw_cell = DropoutWrapper_fn(
-                    self.fw_cell,
-                    input_keep_prob=in_keep_prob,
-                    output_keep_prob=out_keep_prob)
-                self.bw_cell = DropoutWrapper_fn(
-                    self.bw_cell,
-                    input_keep_prob=in_keep_prob,
-                    output_keep_prob=out_keep_prob)
+                    cell_instance_fn1=cell_instance_fn
+                    cell_instance_fn=lambda: DropoutWrapper_fn(
+                                        cell_instance_fn1(),
+                                        input_keep_prob=in_keep_prob,
+                                        output_keep_prob=out_keep_prob)
+
+                # self.fw_cell = DropoutWrapper_fn(
+                #     self.fw_cell,
+                #     input_keep_prob=in_keep_prob,
+                #     output_keep_prob=out_keep_prob)
+                # self.bw_cell = DropoutWrapper_fn(
+                #     self.bw_cell,
+                #     input_keep_prob=in_keep_prob,
+                #     output_keep_prob=out_keep_prob)
             # Apply multiple layers
             if n_layer > 1:
                 try:
@@ -4052,8 +4195,12 @@ class BiDynamicRNNLayer(Layer):
                 except:
                     MultiRNNCell_fn = tf.nn.rnn_cell.MultiRNNCell
 
-                self.fw_cell = MultiRNNCell_fn([self.fw_cell] * n_layer)
-                self.bw_cell = MultiRNNCell_fn([self.bw_cell] * n_layer)
+                cell_instance_fn2=cell_instance_fn
+                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
+                # self.fw_cell = MultiRNNCell_fn([self.fw_cell] * n_layer)
+                # self.bw_cell = MultiRNNCell_fn([self.bw_cell] * n_layer)
+            self.fw_cell=cell_instance_fn()
+            self.bw_cell=cell_instance_fn()
             # Initial state of RNN
             if fw_initial_state is None:
                 self.fw_initial_state = self.fw_cell.zero_state(self.batch_size, dtype=tf.float32)
@@ -4079,6 +4226,7 @@ class BiDynamicRNNLayer(Layer):
                 sequence_length=sequence_length,
                 initial_state_fw=self.fw_initial_state,
                 initial_state_bw=self.bw_initial_state,
+                **dynamic_rnn_init_args
             )
             rnn_variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
