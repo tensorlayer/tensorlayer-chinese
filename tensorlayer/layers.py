@@ -2036,7 +2036,7 @@ def MeanPool3d(net, filter_size, strides, padding='valid', data_format='channels
     return net_new
 
 ## Super resolution
-def SubpixelConv2d(net, scale=2, n_out_channel=None, name='subpixel_conv2d'):
+def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subpixel_conv2d'):
     """The :class:`SubpixelConv2d` class is a sub-pixel 2d convolutional ayer, usually be used
     for super-resolution application.
 
@@ -2047,6 +2047,7 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, name='subpixel_conv2d'):
     n_out_channel : int or None, the number of output channels.
         Note that, the number of input channels == (scale x scale) x The number of output channels.
         If None, automatically set n_out_channel == the number of input channels / (scale x scale).
+    act : activation function.
     name : string.
         An optional name to attach to this layer.
 
@@ -2085,6 +2086,10 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, name='subpixel_conv2d'):
 
     _err_log = "SubpixelConv2d: The number of input channels == (scale x scale) x The number of output channels"
 
+    scope_name = tf.get_variable_scope().name
+    if scope_name:
+        name = scope_name + '/' + name
+
     def _phase_shift(I, r):
         if tf.__version__ < '1.0':
             raise Exception("Only support TF1.0+")
@@ -2120,10 +2125,12 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, name='subpixel_conv2d'):
         assert int(inputs.get_shape()[-1])/ (scale ** 2) % 1 == 0, _err_log
         n_out_channel = int(int(inputs.get_shape()[-1])/ (scale ** 2))
 
-    print("  [TL] SubpixelConv2d  %s: scale: %d n_out_channel: %s" % (name, scale, n_out_channel))
+    print("  [TL] SubpixelConv2d  %s: scale: %d n_out_channel: %s act: %s" % (name, scale, n_out_channel, act.__name__))
 
     net_new = Layer(inputs, name=name)
-    net_new.outputs = _PS(inputs, r=scale, n_out_channel=n_out_channel)
+    # with tf.name_scope(name):
+    with tf.variable_scope(name) as vs:
+        net_new.outputs = act(_PS(inputs, r=scale, n_out_channel=n_out_channel))
 
     net_new.all_layers = list(net.all_layers)
     net_new.all_params = list(net.all_params)
@@ -3796,12 +3803,11 @@ class DynamicRNNLayer(Layer):
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
-    sequence_length : a tensor, array or None
-        The sequence length of each row of input data, see ``Advanced Ops for Dynamic RNN``.
-            - If None, it uses ``retrieve_seq_length_op`` to compute the sequence_length, i.e. when the features of padding (on right hand side) are all zeros.
-            - If using word embedding, you may need to compute the sequence_length from the ID array (the integer features before word embedding) by using ``retrieve_seq_length_op2`` or ``retrieve_seq_length_op``.
-            - You can also input an numpy array.
-            - More details about TensorFlow dynamic_rnn in `Wild-ML Blog <http://www.wildml.com/2016/08/rnns-in-tensorflow-a-practical-guide-and-undocumented-features/>`_.
+    sequence_length : a tensor, array or None. The sequence length of each row of input data, see ``Advanced Ops for Dynamic RNN``.
+        - If None, it uses ``retrieve_seq_length_op`` to compute the sequence_length, i.e. when the features of padding (on right hand side) are all zeros.
+        - If using word embedding, you may need to compute the sequence_length from the ID array (the integer features before word embedding) by using ``retrieve_seq_length_op2`` or ``retrieve_seq_length_op``.
+        - You can also input an numpy array.
+        - More details about TensorFlow dynamic_rnn in `Wild-ML Blog <http://www.wildml.com/2016/08/rnns-in-tensorflow-a-practical-guide-and-undocumented-features/>`_.
     initial_state : None or RNN State
         If None, initial_state is zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
@@ -3918,8 +3924,8 @@ class DynamicRNNLayer(Layer):
         self.batch_size = batch_size
 
         # Creats the cell function
-        cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args)
-        # self.cell = cell_fn(num_units=n_hidden, **cell_init_args)
+        # cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args) # HanSheng
+        self.cell = cell_fn(num_units=n_hidden, **cell_init_args)
 
         # Apply dropout
         if dropout:
@@ -3936,15 +3942,14 @@ class DynamicRNNLayer(Layer):
             except:
                 DropoutWrapper_fn = tf.nn.rnn_cell.DropoutWrapper
 
-            cell_instance_fn1=cell_instance_fn
-            cell_instance_fn=DropoutWrapper_fn(
-                                cell_instance_fn1(),
-                                input_keep_prob=in_keep_prob,
-                                output_keep_prob=out_keep_prob)
-            # self.cell = DropoutWrapper_fn(
-            #           self.cell,
-            #           input_keep_prob=in_keep_prob,
-            #           output_keep_prob=out_keep_prob)
+            # cell_instance_fn1=cell_instance_fn        # HanSheng
+            # cell_instance_fn=DropoutWrapper_fn(
+            #                     cell_instance_fn1(),
+            #                     input_keep_prob=in_keep_prob,
+            #                     output_keep_prob=out_keep_prob)
+            self.cell = DropoutWrapper_fn(self.cell,
+                      input_keep_prob=in_keep_prob, output_keep_prob=1.0)#out_keep_prob)
+
         # Apply multiple layers
         if n_layer > 1:
             try:
@@ -3952,18 +3957,23 @@ class DynamicRNNLayer(Layer):
             except:
                 MultiRNNCell_fn = tf.nn.rnn_cell.MultiRNNCell
 
-            cell_instance_fn2=cell_instance_fn
+            # cell_instance_fn2=cell_instance_fn # HanSheng
             try:
-                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)], state_is_tuple=True)
-                # self.cell = MultiRNNCell_fn([self.cell] * n_layer, state_is_tuple=True)
-            except:
-                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
-                # self.cell = MultiRNNCell_fn([self.cell] * n_layer)
+                # cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)], state_is_tuple=True) # HanSheng
+                self.cell = MultiRNNCell_fn([self.cell] * n_layer, state_is_tuple=True)
+            except: # when GRU
+                # cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)]) # HanSheng
+                self.cell = MultiRNNCell_fn([self.cell] * n_layer)
 
-        self.cell=cell_instance_fn()
+        if dropout:
+            self.cell = DropoutWrapper_fn(self.cell,
+                      input_keep_prob=1.0, output_keep_prob=out_keep_prob)
+
+        # self.cell=cell_instance_fn() # HanSheng
+
         # Initialize initial_state
         if initial_state is None:
-            self.initial_state = self.cell.zero_state(batch_size, dtype=tf.float32)#dtype="float")
+            self.initial_state = self.cell.zero_state(batch_size, dtype=tf.float32)
         else:
             self.initial_state = initial_state
 
@@ -4155,9 +4165,9 @@ class BiDynamicRNNLayer(Layer):
 
         with tf.variable_scope(name, initializer=initializer) as vs:
             # Creats the cell function
-            cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args)
-            # self.fw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
-            # self.bw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
+            # cell_instance_fn=lambda: cell_fn(num_units=n_hidden, **cell_init_args) # HanSheng
+            self.fw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
+            self.bw_cell = cell_fn(num_units=n_hidden, **cell_init_args)
 
             # Apply dropout
             if dropout:
@@ -4174,20 +4184,20 @@ class BiDynamicRNNLayer(Layer):
                 except:
                     DropoutWrapper_fn = tf.nn.rnn_cell.DropoutWrapper
 
-                    cell_instance_fn1=cell_instance_fn
-                    cell_instance_fn=lambda: DropoutWrapper_fn(
-                                        cell_instance_fn1(),
-                                        input_keep_prob=in_keep_prob,
-                                        output_keep_prob=out_keep_prob)
+                    # cell_instance_fn1=cell_instance_fn            # HanSheng
+                    # cell_instance_fn=lambda: DropoutWrapper_fn(
+                    #                     cell_instance_fn1(),
+                    #                     input_keep_prob=in_keep_prob,
+                    #                     output_keep_prob=out_keep_prob)
 
-                # self.fw_cell = DropoutWrapper_fn(
-                #     self.fw_cell,
-                #     input_keep_prob=in_keep_prob,
-                #     output_keep_prob=out_keep_prob)
-                # self.bw_cell = DropoutWrapper_fn(
-                #     self.bw_cell,
-                #     input_keep_prob=in_keep_prob,
-                #     output_keep_prob=out_keep_prob)
+                self.fw_cell = DropoutWrapper_fn(
+                    self.fw_cell,
+                    input_keep_prob=in_keep_prob,
+                    output_keep_prob=out_keep_prob)
+                self.bw_cell = DropoutWrapper_fn(
+                    self.bw_cell,
+                    input_keep_prob=in_keep_prob,
+                    output_keep_prob=out_keep_prob)
             # Apply multiple layers
             if n_layer > 1:
                 try:
@@ -4195,12 +4205,12 @@ class BiDynamicRNNLayer(Layer):
                 except:
                     MultiRNNCell_fn = tf.nn.rnn_cell.MultiRNNCell
 
-                cell_instance_fn2=cell_instance_fn
-                cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
-                # self.fw_cell = MultiRNNCell_fn([self.fw_cell] * n_layer)
-                # self.bw_cell = MultiRNNCell_fn([self.bw_cell] * n_layer)
-            self.fw_cell=cell_instance_fn()
-            self.bw_cell=cell_instance_fn()
+                # cell_instance_fn2=cell_instance_fn            # HanSheng
+                # cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
+                self.fw_cell = MultiRNNCell_fn([self.fw_cell] * n_layer)
+                self.bw_cell = MultiRNNCell_fn([self.bw_cell] * n_layer)
+            # self.fw_cell=cell_instance_fn()
+            # self.bw_cell=cell_instance_fn()
             # Initial state of RNN
             if fw_initial_state is None:
                 self.fw_initial_state = self.fw_cell.zero_state(self.batch_size, dtype=tf.float32)
@@ -4325,23 +4335,24 @@ class Seq2Seq(Layer):
     >>> decode_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="decode_seqs")
     >>> target_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="target_seqs")
     >>> target_mask = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="target_mask") # tl.prepro.sequences_get_mask()
-    >>> with tf.variable_scope("model") as vs:#, reuse=reuse):
+    >>> with tf.variable_scope("model"):
     ...     # for chatbot, you can use the same embedding layer,
     ...     # for translation, you may want to use 2 seperated embedding layers
-    >>>     net_encode = EmbeddingInputlayer(
-    ...             inputs = encode_seqs,
-    ...             vocabulary_size = 10000,
-    ...             embedding_size = 200,
-    ...             name = 'seq_embedding')
-    >>>     vs.reuse_variables()
-    >>>     tl.layers.set_name_reuse(True)
-    >>>     net_decode = EmbeddingInputlayer(
-    ...             inputs = decode_seqs,
-    ...             vocabulary_size = 10000,
-    ...             embedding_size = 200,
-    ...             name = 'seq_embedding')
+    >>>     with tf.variable_scope("embedding") as vs:
+    >>>         net_encode = EmbeddingInputlayer(
+    ...                 inputs = encode_seqs,
+    ...                 vocabulary_size = 10000,
+    ...                 embedding_size = 200,
+    ...                 name = 'seq_embedding')
+    >>>         vs.reuse_variables()
+    >>>         tl.layers.set_name_reuse(True)
+    >>>         net_decode = EmbeddingInputlayer(
+    ...                 inputs = decode_seqs,
+    ...                 vocabulary_size = 10000,
+    ...                 embedding_size = 200,
+    ...                 name = 'seq_embedding')
     >>>     net = Seq2Seq(net_encode, net_decode,
-    ...             cell_fn = tf.nn.rnn_cell.LSTMCell,
+    ...             cell_fn = tf.contrib.rnn.BasicLSTMCell,
     ...             n_hidden = 200,
     ...             initializer = tf.random_uniform_initializer(-0.1, 0.1),
     ...             encode_sequence_length = retrieve_seq_length_op2(encode_seqs),
@@ -4624,8 +4635,9 @@ class LambdaLayer(Layer):
         name = 'lambda_layer',
     ):
         Layer.__init__(self, name=name)
+        assert layer is not None
+        assert fn is not None
         self.inputs = layer.outputs
-
         print("  [TL] LambdaLayer  %s" % self.name)
         with tf.variable_scope(name) as vs:
             self.outputs = fn(self.inputs, **fn_args)
@@ -4922,6 +4934,7 @@ class KerasLayer(Layer):
         assert keras_layer is not None
         self.inputs = layer.outputs
         print("  [TL] KerasLayer %s: %s" % (self.name, keras_layer))
+        print("       This API will be removed, please use LambdaLayer instead.")
         with tf.variable_scope(name) as vs:
             self.outputs = keras_layer(self.inputs, **keras_args)
             variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
@@ -4959,6 +4972,7 @@ class EstimatorLayer(Layer):
         assert model_fn is not None
         self.inputs = layer.outputs
         print("  [TL] EstimatorLayer %s: %s" % (self.name, model_fn))
+        print("       This API will be removed, please use LambdaLayer instead.")
         with tf.variable_scope(name) as vs:
             self.outputs = model_fn(self.inputs, **args)
             variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)

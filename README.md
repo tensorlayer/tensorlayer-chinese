@@ -112,7 +112,9 @@ tl.files.save_npz(network.all_params , name='model.npz')
 sess.close()
 ```
 
-我们提供简单的 APIs 如 `fit()` , `test()`，这和 Scikit-learn, Keras 很相识，都是为了加快编程速度。不过，如果您想更好地控制训练过程，您可以在您的代码中使用 TensorFlow 原本的方法，如 `sess.run` （`tutorial_mnist.py` 提供了一些例子）。更多关于DL和RL的例子，请见 [这里](http://tensorlayer.readthedocs.io/en/latest/user/example.html)。
+我们提供简单的 APIs 如 `fit()` , `test()`，这和 Scikit-learn, Keras 很相识，都是为了加快编程速度。不过，如果您想更好地控制训练过程，您可以在您的代码中使用 TensorFlow 原本的方法，如 `sess.run` （`tutorial_mnist.py` 提供了一些例子）。
+
+更多例子，请见 [这里](http://tensorlayer.readthedocs.io/en/latest/user/example.html)。
 
 # 文档
 
