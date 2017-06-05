@@ -21,17 +21,17 @@ API - 数据预处理
    flip_axis_multi
    shift
    shift_multi
-   
+
    shear
    shear_multi
    swirl
    swirl_multi
    elastic_transform
-   elastic_transform_multi  
+   elastic_transform_multi
 
    zoom
    zoom_multi
-   
+
    brightness
    brightness_multi
 
@@ -42,20 +42,25 @@ API - 数据预处理
 
    channel_shift
    channel_shift_multi
-   
+
    drop
-   
+
    transform_matrix_offset_center
    apply_transform
    projective_transform_by_points
-   
+
    array_to_img
+
+   find_contours
+   pt2map
+   binary_dilation
+   dilation
 
    pad_sequences
    precess_sequences
    sequences_add_start_id
    sequences_get_mask
-   
+
    distorted_images
    crop_central_whiten_images
 
