@@ -153,6 +153,21 @@ Numpy 与 PIL
 ^^^^^^^^^^^^^^
 .. autofunction:: array_to_img
 
+找轮廓
+^^^^^^^^
+.. autofunction:: find_contours
+
+一列点到图
+^^^^^^^^^^^^^^^^^
+.. autofunction:: pt2map
+
+二值膨胀
+^^^^^^^^^^^^^^^^^
+.. autofunction:: binary_dilation
+
+灰度膨胀
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: dilation
 
 
 
