@@ -8,6 +8,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 .. autosummary::
 
+   save_image
    save_images
    W
    CNN2d
@@ -17,6 +18,10 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 保存图片
 --------------
+
+保持单个图片
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_image
 
 保存多个图片
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

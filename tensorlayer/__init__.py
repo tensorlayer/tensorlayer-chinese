@@ -11,7 +11,6 @@ except ImportError:
     raise ImportError("__init__.py : Could not import TensorFlow." + install_instr)
 
 from . import activation
-act = activation
 from . import cost
 from . import files
 from . import iterate
@@ -23,8 +22,11 @@ from . import prepro
 from . import nlp
 from . import rein
 
+# alias
+act = activation
+vis = visualize
 
-__version__ = "1.4.5"
+__version__ = "1.5.0"
 
 global_flag = {}
 global_dict = {}
