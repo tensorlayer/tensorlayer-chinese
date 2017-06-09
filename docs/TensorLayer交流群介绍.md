@@ -5,6 +5,12 @@
 
 ##### ⚠️：二维码7天有效，若过期请通过微信号添加。若在手机微信打开本页面，可先点击二维码图片，再提取二维码。
 
+### 总群：董豪 zsdh123
+
+<div align="center">
+	<img src="images/donghao.jpeg" width="30%" height="30%"/>
+</div>
+
 ### 医疗AI：杨光 dr\_g\_yang    
 
 <div align="center">
