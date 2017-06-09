@@ -5,25 +5,25 @@
 
 ##### ⚠️：二维码7天有效，若过期请通过微信号添加。若在手机微信打开本页面，可先点击二维码图片，再提取二维码。
 
-### 总群：董豪 zsdh123
+### 总群：董博士 zsdh123
 
 <div align="center">
 	<img src="images/donghao.jpeg" width="30%" height="30%"/>
 </div>
 
-### 医疗AI：杨光 dr\_g\_yang    
+### 医疗AI：杨老师 dr\_g\_yang    
 
 <div align="center">
 	<img src="images/yangguang.jpeg" width="30%" height="30%"/>
 </div>
 
-### GAN：董豪 zsdh123
+### GAN：董博士 zsdh123
 
 <div align="center">
 	<img src="images/donghao.jpeg" width="30%" height="30%"/>
 </div>
 
-### CV：于思淼 q86724810
+### CV：于博士 q86724810
 
 <div align="center">
 	<img src="images/yusimiao.jpeg" width="30%" height="30%"/>
@@ -32,7 +32,7 @@
 ### NLP：待定 稍后公布
 
 
-### DL理论：莫元汉 MO224582
+### DL理论：莫博士 MO224582
 
 <div align="center">
 	<img src="images/moyuanhan.jpeg" width="30%" height="30%"/>
