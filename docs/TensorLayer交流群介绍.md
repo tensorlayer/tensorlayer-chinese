@@ -6,6 +6,12 @@
 ##### ⚠️：二维码7天有效，若过期请通过微信号添加。若在手机微信打开本页面，可先点击二维码图片，再提取二维码。
 ##### ⚠️：申请入群必须注明（实名－单位－研究方向），否则会被忽略。
 
+### Slack 讨论组
+请见[首页](https://github.com/zsdonghao/tensorlayer)
+
+### QQ 群
+请见[首页](https://github.com/zsdonghao/tensorlayer/blob/master/img/img_qq.png)
+
 ### 总群：董博士 zsdh123（不分讨论领域）
 
 <div align="center">
