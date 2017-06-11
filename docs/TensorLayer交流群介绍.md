@@ -7,19 +7,19 @@
 ##### ⚠️：申请入群必须注明（实名－单位－研究方向），否则会被忽略。
 
 ### 总群：董博士 zsdh123（不分讨论领域）
-
+本群不分具体话题，以最新人工智能技术分享讨论为主。
 <div align="center">
 	<img src="images/donghao.jpeg" width="30%" height="30%"/>
 </div>
 
 ### 医疗AI：杨老师 dr\_g\_yang    
-
+本群将基于TensorLayer对医疗相关的应用展开讨论。内容涵盖算法讨论，论文分享，经验交流，合作洽谈，创新创业以及任何关于医疗器械，医学图像，信号等等的话题。
 <div align="center">
 	<img src="images/yangguang.jpeg" width="30%" height="30%"/>
 </div>
 
 ### GAN：董博士 zsdh123
-
+本群以GAN讨论为主，对于刚接触GAN的同学，请先学习群里提供的[DCGAN](https://github.com/zsdonghao/dcgan)和[text-to-image synthesis](https://github.com/zsdonghao/text-to-image)例子。
 <div align="center">
 	<img src="images/donghao.jpeg" width="30%" height="30%"/>
 </div>
