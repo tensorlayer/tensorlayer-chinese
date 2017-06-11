@@ -42,11 +42,11 @@
 
 
 ---
-### Slack 讨论组
+## Slack 讨论组
 Slack是自带分组讨论功能的国际化讨论平台，可与外文用户一起交流，加入方式请见[首页](https://github.com/zsdonghao/tensorlayer)。
 
 ---
-### QQ 群
+## QQ 群
 不分讨论话题，加入方式请[点击](https://github.com/zsdonghao/tensorlayer/blob/master/img/img_qq.png)。
 
 
