@@ -19,13 +19,13 @@
 </div>
 
 ### GAN：董博士 zsdh123
-本群以GAN讨论为主，对于刚接触GAN的同学，请先学习群里提供的[DCGAN](https://github.com/zsdonghao/dcgan)和[text-to-image synthesis](https://github.com/zsdonghao/text-to-image)例子。
+本群以GAN讨论为主，对于刚接触GAN的同学，请先学习群里提供的[DCGAN](https://github.com/zsdonghao/dcgan)和[Text-to-Image Synthesis](https://github.com/zsdonghao/text-to-image)例子。
 <div align="center">
 	<img src="images/donghao.jpeg" width="30%" height="30%"/>
 </div>
 
 ### CV：于博士 q86724810
-
+本群讨论实用性机器视觉技术为主。
 <div align="center">
 	<img src="images/yusimiao.jpeg" width="30%" height="30%"/>
 </div>
