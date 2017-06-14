@@ -16,7 +16,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 
   # 保存模型为 .npz
   tl.files.save_npz(network.all_params , name='model.npz')
-  
+
   # 从 .npz 加载模型
   load_params = tl.files.load_npz(path='', name='model.npz')
   tl.files.assign_params(sess, load_params, network)
@@ -41,7 +41,9 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_wmt_en_fr_dataset
 
    save_npz
+   save_npz_dict
    load_npz
+   load_npz_dict
    assign_params
    load_and_assign_npz
 
@@ -54,7 +56,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_folder_list
    exists_or_mkdir
    maybe_download_and_extract
-   
+
 下载数据集
 ------------------------
 
@@ -93,13 +95,22 @@ WMT'15 Website 的英文译法文数据
 保存与加载模型
 ----------------------
 
-保持模型到.npz文件
+以列表保存模型到 .npz
 ^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_npz
 
-从.npz文件加载模型参数
+以字典保存模型到 .npz
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_npz_dict
+
+从save_npz加载模型参数列表
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
+
+从save_npz_dict加载模型参数列表
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_npz_dict
+
 
 把模型参数载入模型
 ^^^^^^^^^^^^^^^^^^^
