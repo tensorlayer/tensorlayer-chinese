@@ -2,7 +2,7 @@ API - 损失函数
 =======================
 
 为了尽可能地保持TensorLayer的简洁性，我们最小化损失函数的数量。
-因此我们鼓励直接使用TensorFlow官方的函数，比如你可以通过 ``tf.nn.l2_loss``, 
+因此我们鼓励直接使用TensorFlow官方的函数，比如你可以通过 ``tf.nn.l2_loss``,
 ``tf.contrib.layers.l1_regularizer``, ``tf.contrib.layers.l2_regularizer`` and
 ``tf.contrib.layers.sum_regularizer`` 来实现L1, L2 和 sum 规则化， 参考 `TensorFlow API <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
 
@@ -111,6 +111,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    sigmoid_cross_entropy
    binary_cross_entropy
    mean_squared_error
+   normalize_mean_squared_error
    dice_coe
    dice_hard_coe
    iou_coe
@@ -138,6 +139,10 @@ Binary cross entropy
 Mean squared error
 -----------------------
 .. autofunction:: mean_squared_error
+
+Normalized mean squared error
+---------------------------------
+.. autofunction:: normalize_mean_squared_error
 
 Dice coefficient
 -------------------
