@@ -33,7 +33,7 @@
 </div>
 
 ### DL理论：莫博士 MO224582
-本群以Ian Goodfellow、Yoshua Bengio和Aaron Courville编写的[《Deep Learning》](http://www.deeplearningbook.org)一书为基础，讨论各类深度学习理论问题。
+本群以Ian Goodfellow、Yoshua Bengio和Aaron Courville编写的[《Deep Learning》](https://github.com/zsdonghao/deep-learning-book)一书为基础，讨论各类深度学习理论问题。
 <div align="center">
 	<img src="images/moyuanhan.jpeg" width="30%" height="30%"/>
 </div>
