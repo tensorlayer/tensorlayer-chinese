@@ -62,7 +62,7 @@ API - 神经网络层
   y = network.outputs
   y_op = tf.argmax(tf.nn.softmax(y), 1)
 
-  cost = tl.cost.cross_entropy(y, y_)
+  cost = tl.cost.cross_entropy(y, y_, name='ce')
 
   train_params = network.all_params
 
@@ -109,63 +109,40 @@ API - 神经网络层
 
 .. code-block:: python
 
-  class DenseLayer(Layer):
-      """
-      `DenseLayer` 是一个全连接层
+  class MyDenseLayer(Layer):
+    def __init__(
+        self,
+        layer = None,
+        n_units = 100,
+        act = tf.nn.relu,
+        name ='simple_dense',
+    ):
+        # 校验名字是否已被使用（不变）
+        Layer.__init__(self, name=name)
 
-      参数
-      ----------
-      layer : 一个 `Layer` 实例
-          输入一个 `Layer` 类。
-      n_units : 一个整数
-          The number of units of the layer.
-      act : 激活函数 （activation function）
-          TensorFlow 激活函数。
-      W_init : Weights初始化器（weights initializer）
-          Weight matrix的初始化器。
-      b_init : Biases初始化器（biases initializer）
-          Bias vector 的初始化器，若为None，则无 bias。
-      W_init_args : 一个字典（dictionary）
-          Weights 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
-      b_init_args : 一个字典（dictionary）
-          Biases 使用 tf.get_variable 建立时，输入 tf.get_variable 的参数。
-      name : 字符串或 None
-          该层的名字。
-      """
-      def __init__(
-          self,
-          layer = None,
-          n_units = 100,
-          act = tf.nn.relu,
-          W_init = tf.truncated_normal_initializer(stddev=0.1),
-          b_init = tf.constant_initializer(value=0.0),
-          W_init_args = {},
-          b_init_args = {},
-          name ='dense_layer',
-      ):
-          self.inputs = layer.outputs
-          if self.inputs.get_shape().ndims != 2:
-              raise Exception("The input dimension must be rank 2")
-          n_in = int(self.inputs._shape[-1])
-          self.n_units = n_units
-          print("  tensorlayer:Instantiate DenseLayer %s: %d, %s" % (self.name, self.n_units, act))
-          with tf.variable_scope(name) as vs:
-              W = tf.get_variable(name='W', shape=(n_in, n_units), initializer=W_init, **W_init_args )
-              if b_init:
-                  b = tf.get_variable(name='b', shape=(n_units), initializer=b_init, **b_init_args )
-                  self.outputs = act(tf.matmul(self.inputs, W) + b)#, name=name)
-              else:
-                  self.outputs = act(tf.matmul(self.inputs, W))
+        # 本层输入是上层的输出（不变）
+        self.inputs = layer.outputs
 
-          # Hint : list(), dict() is pass by value (shallow).
-          self.all_layers = list(layer.all_layers)
-          self.all_params = list(layer.all_params)
-          self.all_drop = dict(layer.all_drop)
-          self.all_layers.extend( [self.outputs] )
-          if b_init:
-             self.all_params.extend( [W, b] )
-          else:
-             self.all_params.extend( [W] )
+        # 输出信息（自定义部分）
+        print("  MyDenseLayer %s: %d, %s" % (self.name, n_units, act))
+
+        # 本层的功能实现（自定义部分）
+        n_in = int(self.inputs._shape[-1])  # 获取上一层输出的数量
+        with tf.variable_scope(name) as vs:
+            # 新建参数
+            W = tf.get_variable(name='W', shape=(n_in, n_units))
+            b = tf.get_variable(name='b', shape=(n_units))
+            # tensor操作
+            self.outputs = act(tf.matmul(self.inputs, W) + b)
+
+        # 获取之前层的参数（不变）
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+
+        # 更新层的参数（自定义部分）
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( [W, b] )
 
 自定义层
 ----------
@@ -185,13 +162,24 @@ API - 神经网络层
           layer = None,
           name ='double_layer',
       ):
+          # 校验名字是否已被使用（不变）
           Layer.__init__(self, name=name)
+
+          # 本层输入是上层的输出（不变）
           self.inputs = layer.outputs
+
+          # 输出信息（自定义部分）
+          print("  I am DoubleLayer")
+
+          # 本层的功能实现（自定义部分）
           self.outputs = self.inputs * 2
 
+          # 获取之前层的参数（不变）
           self.all_layers = list(layer.all_layers)
           self.all_params = list(layer.all_params)
           self.all_drop = dict(layer.all_drop)
+
+          # 更新层的参数（自定义部分）
           self.all_layers.extend( [self.outputs] )
 
 
@@ -201,14 +189,6 @@ API - 神经网络层
 
 逐层贪婪预训练方法(Greedy layer-wise pretrain)是深度神经网络的初始化非常重要的一种方法，
 不过对不同的网络结构和应用，往往有不同的预训练的方法。
-
-
-
-For example, the pre-train process of `Vanilla Sparse Autoencoder <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_
-can be implemented by using KL divergence as the following code,
-but for `Deep Rectifier Network <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_,
-the sparsity can be implemented by using the L1 regularization of activation output.
-
 
 例如 `"普通"稀疏自编码器(Vanilla Sparse Autoencoder ) <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_ 如下面的代码所示，使用 KL divergence 实现（对应于sigmoid)，
 但是对于 `深度整流神经网络(Deep Rectifier Network) <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_ ，
@@ -274,13 +254,14 @@ the sparsity can be implemented by using the L1 regularization of activation out
    PadLayer
    UpSampling2dLayer
    DownSampling2dLayer
+   AtrousConv1dLayer
    AtrousConv2dLayer
    SeparableConv2dLayer
 
    Conv1d
    Conv2d
    DeConv2d
-   
+
    MaxPool1d
    MeanPool1d
    MaxPool2d
@@ -367,8 +348,8 @@ Basic 层
 
 .. autoclass:: InputLayer
   :members:
-  
-  
+
+
 One-hot 输入层
 ----------------
 .. autoclass:: OneHotInputLayer
@@ -454,6 +435,11 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: DownSampling2dLayer
+
+1D多孔卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: AtrousConv1dLayer
 
 2D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
