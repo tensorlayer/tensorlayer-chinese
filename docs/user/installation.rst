@@ -166,7 +166,7 @@ CUDA 驱动安装
 
 加速库 cuDNN 安装
 ^^^^^^^^^^^^^^^^^
-cuDNN是NVIDIA针对深度学习计算的一个加速，建议安装。您可能需要注册一个账号才能下载cuDNN，然后根据CUDA的版本和windows的版本下载相应的cuDNN源码，我们建议下载最新版的cuDNN5.1。下载下来之后直接解压，解压之后有三个夹bin,lib,include，把解压之后的三个文件夹直接复制到CUDA的安装目录。（默认的安装目录为：`C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0`）
+cuDNN是NVIDIA针对深度学习计算的一个加速，建议安装。您可能需要注册一个账号才能下载cuDNN，然后根据CUDA的版本和windows的版本下载相应的cuDNN源码，我们建议下载最新版的cuDNN5.1。下载下来之后直接解压，解压之后有三个夹bin,lib,include，把解压之后的三个文件夹直接复制到CUDA的安装目录。（默认的安装目录为：`C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v8.0`）
 
 TensorLayer 框架搭建
 -----------------------
