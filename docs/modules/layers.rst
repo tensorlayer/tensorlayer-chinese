@@ -439,7 +439,7 @@ Dropconnect + 全链接层
 1D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: AtrousConv1dLayer
+.. autofunction:: AtrousConv1dLayer
 
 2D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
