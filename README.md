@@ -18,9 +18,12 @@
 
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
-* 🆕 NEWS 兼容 [TF-Slim](http://tensorlayercn.readthedocs.io/zh/latest/modules/layers.html#tf-slim) 和 [Keras](http://tensorlayercn.readthedocs.io/zh/latest/modules/layers.html#keras)
-* 🆕 兼容 TF1.0
-* 🆕 [使用技巧](https://github.com/wagamamaz/tensorlayer-tricks)
+# 新闻
+* Release [SpatialTransformer2dAffineLayer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#spatial-transformer) for [Spatial Transformer Networks](https://github.com/zsdonghao/Spatial-Transformer-Nets) see [example code](https://github.com/zsdonghao/Spatial-Transformer-Nets).
+* Join [Slack](https://join.slack.com/tensorlayer/shared_invite/MTk1MjM0NDk5MDg5LTE0OTcwOTQyNTEtODFjY2QzYjdmZQ) Now.
+* [Attention Seq2seq](https://github.com/zsdonghao/tensorlayer/issues/164) help wanted.
+* Release [Sub-pixel Convolution](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#super-resolution-layer) for Super-resolution.
+* You can now use TensorLayer with [TF-Slim](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-tf-slim) and [Keras](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-keras) together!
 
 TensorLayer grow out from a need to combine the power of TensorFlow with the right building modules for deep neural networks. According to our years of research and practical experiences of tackling real-world machine learning problems, we come up with three design goals for TensorLayer:
 
