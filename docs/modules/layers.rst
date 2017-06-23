@@ -271,6 +271,10 @@ API - 神经网络层
 
    SubpixelConv2d
 
+   SpatialTransformer2dAffineLayer
+   transformer
+   batch_transformer
+
    BatchNormLayer
    LocalResponseNormLayer
 
@@ -496,6 +500,22 @@ Dropconnect + 全链接层
 Super-resolution 层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: SubpixelConv2d
+
+
+空间变换网络
+-----------------------
+
+2D 仿射变换层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: SpatialTransformer2dAffineLayer
+
+2D 仿射变换函数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: transformer
+
+批 2D 仿射变换函数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: batch_transformer
 
 
 池化层
