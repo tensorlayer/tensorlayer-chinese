@@ -83,7 +83,7 @@ network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
 network = tl.layers.DenseLayer(network, n_units=10, act = tf.identity, name='output_layer')
 y = network.outputs
-cost = tl.cost.cross_entropy(y, y_, 'cost')
+cost = tl.cost.cross_entropy(y, y_,'cost')
 correct_prediction = tf.equal(tf.argmax(y, 1), y_)
 acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 y_op = tf.argmax(tf.nn.softmax(y), 1)
