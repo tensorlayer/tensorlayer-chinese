@@ -22,6 +22,7 @@ Computer Vision
  - InceptionV3 (ImageNet). A Convolutional neural network implementation for classifying ImageNet dataset, see ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
  - Wide ResNet (CIFAR) by `ritchieng <https://github.com/ritchieng/wideresnet-tensorlayer>`_.
  - More CNN implementations of `TF-Slim <https://github.com/tensorflow/models/tree/master/slim#pre-trained-models>`_ can be connected to TensorLayer via SlimNetsLayer.
+ - `Spatial Transformer Networks <https://arxiv.org/abs/1506.02025>`_ by `zsdonghao <https://github.com/zsdonghao/Spatial-Transformer-Nets>`_.
 
 Natural Language Processing
 ==============================
@@ -31,6 +32,12 @@ Natural Language Processing
  - Restore Embedding matrix. Restore a pre-train embedding matrix, see ``tutorial_generate_text.py`` on `GitHub`_.
  - Text Generation. Generates new text scripts, using LSTM network, see ``tutorial_generate_text.py`` on `GitHub`_.
  - Machine Translation (WMT). Translate English to French. Apply Attention mechanism and Seq2seq to WMT English-to-French translation data, see ``tutorial_translate.py`` on `GitHub`_.
+
+Adversarial Learning
+========================
+ - DCGAN - Generating images by `Deep Convolutional Generative Adversarial Networks <http://arxiv.org/abs/1511.06434>`_ by `zsdonghao <https://github.com/zsdonghao/dcgan>`_.
+ - `Generative Adversarial Text to Image Synthesis <https://github.com/zsdonghao/text-to-image>`_ by `zsdonghao <https://github.com/zsdonghao/text-to-image>`_.
+ - `Unsupervised Image to Image Translation with Generative Adversarial Networks <https://github.com/zsdonghao/Unsup-Im2Im>`_ by `zsdonghao <https://github.com/zsdonghao/Unsup-Im2Im>`_.
 
 Reinforcement Learning
 ==============================
@@ -42,15 +49,13 @@ Applications
 ==============
 
 - Image Captioning - Reimplementation of Google's `im2txt <https://github.com/tensorflow/models/tree/master/im2txt>`_ by `zsdonghao <https://github.com/zsdonghao/Image-Captioning>`_.
-- DCGAN - Generating images by `Deep Convolutional Generative Adversarial Networks <http://arxiv.org/abs/1511.06434>`_ by `zsdonghao <https://github.com/zsdonghao/dcgan>`_.
-- `Generative Adversarial Text to Image Synthesis <https://github.com/zsdonghao/text-to-image>`_ by `zsdonghao <https://github.com/zsdonghao/text-to-image>`_.
-- `Unsupervised Image to Image Translation with Generative Adversarial Networks <https://github.com/zsdonghao/Unsup-Im2Im>`_ by `zsdonghao <https://github.com/zsdonghao/Unsup-Im2Im>`_.
 - A simple web service - `TensorFlask <https://github.com/JoelKronander/TensorFlask>`_ by `JoelKronander <https://github.com/JoelKronander>`_.
 
 Special Examples
 =================
 
  - Merge TF-Slim into TensorLayer. ``tutorial_inceptionV3_tfslim.py`` on `GitHub`_.
+ - Merge Keras into TensorLayer. ``tutorial_keras.py`` on `GitHub`_.
  - MultiplexerLayer. ``tutorial_mnist_multiplexer.py`` on `GitHub`_.
  - Data augmentation with TFRecord. Effective way to load and pre-process data, see ``tutorial_tfrecord*.py`` and ``tutorial_cifar10_tfrecord.py`` on `GitHub`_.
  - Data augmentation with TensorLayer, see ``tutorial_image_preprocess.py`` on `GitHub`_.
