@@ -39,6 +39,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_imbd_dataset
    load_nietzsche_dataset
    load_wmt_en_fr_dataset
+   load_flickr25k_dataset
 
    save_npz
    save_npz_dict
@@ -98,6 +99,9 @@ WMT'15 Website 的英文译法文数据
 
 .. autofunction:: load_wmt_en_fr_dataset
 
+Flickr25k
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_flickr25k_dataset
 
 保存与加载模型
 ----------------------
