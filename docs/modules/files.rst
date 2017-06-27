@@ -89,17 +89,9 @@ IMBD
 ^^^^^^^
 .. autofunction:: load_imbd_dataset
 
-
 Nietzsche
 ^^^^^^^^^^^^^^
 .. autofunction:: load_nietzsche_dataset
-
-
-Flickr1M
-^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_flickr1M_dataset
-
-
 
 WMT'15 Website 的英文译法文数据
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -109,6 +101,12 @@ WMT'15 Website 的英文译法文数据
 Flickr25k
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_flickr25k_dataset
+
+Flickr1M
+^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_flickr1M_dataset
+
+
 
 保存与加载模型
 ----------------------
