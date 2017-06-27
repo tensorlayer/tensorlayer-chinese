@@ -1,4 +1,4 @@
-1.5.2#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # TensorLayer documentation build configuration file, created by
