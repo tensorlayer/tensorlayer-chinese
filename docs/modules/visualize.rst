@@ -8,6 +8,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 .. autosummary::
 
+   read_image
    save_image
    save_images
    W
@@ -16,10 +17,14 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
    images2d
    tsne_embedding
 
-保存图片
+读取与保存图片
 --------------
 
-保持单个图片
+读取单个图片
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: read_image
+
+保存单个图片
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_image
 

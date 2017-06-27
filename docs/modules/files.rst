@@ -50,12 +50,19 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    save_any_to_npy
    load_npy_to_any
 
-   npz_to_W_pdf
-
+   file_exists
+   folder_exists
+   del_file
+   del_folder
+   read_file
    load_file_list
    load_folder_list
    exists_or_mkdir
    maybe_download_and_extract
+
+   natural_keys
+
+   npz_to_W_pdf
 
 下载数据集
 ------------------------
@@ -133,13 +140,29 @@ WMT'15 Website 的英文译法文数据
 .. autofunction:: load_npy_to_any
 
 
-可视化 npz 文件
-----------------------
-.. autofunction:: npz_to_W_pdf
 
-
-文件夹相关函数
+文件夹/文件相关函数
 ------------------
+
+判断文件存在
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: file_exists
+
+判断文件夹存在
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: folder_exists
+
+删除文件
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: del_file
+
+删除文件夹
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: del_folder
+
+读取文件
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: read_file
 
 从文件夹中读取文件名列表
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -156,3 +179,16 @@ WMT'15 Website 的英文译法文数据
 下载或解压
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: maybe_download_and_extract
+
+
+排序
+------------
+
+字符串按数字排序
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: natural_keys
+
+
+可视化 npz 文件
+----------------------
+.. autofunction:: npz_to_W_pdf
