@@ -269,6 +269,7 @@ API - 神经网络层
    MaxPool3d
    MeanPool3d
 
+   SubpixelConv1d
    SubpixelConv2d
 
    SpatialTransformer2dAffineLayer
@@ -497,8 +498,15 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^
 .. autofunction:: MeanPool3d
 
-Super-resolution 层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Super-Resolution 层
+-----------------------
+
+1D 子像素卷积层
+^^^^^^^^^^^^^^^^
+.. autofunction:: SubpixelConv1d
+
+2D 子像素卷积层
+^^^^^^^^^^^^^^^^
 .. autofunction:: SubpixelConv2d
 
 

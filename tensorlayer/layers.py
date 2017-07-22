@@ -1523,7 +1523,7 @@ class UpSampling2dLayer(Layer):
     Parameters
     -----------
     layer : a layer class with 4-D Tensor of shape [batch, height, width, channels] or 3-D Tensor of shape [height, width, channels].
-    size : a tupe of int or float.
+    size : a tuple of int or float.
         (height, width) scale factor or new size of height and width.
     is_scale : boolean, if True (default), size is scale factor, otherwise, size is number of pixels of height and width.
     method : 0, 1, 2, 3. ResizeMethod. Defaults to ResizeMethod.BILINEAR.
@@ -1550,12 +1550,12 @@ class UpSampling2dLayer(Layer):
             if is_scale:
                 size_h = size[0] * int(self.inputs.get_shape()[0])
                 size_w = size[1] * int(self.inputs.get_shape()[1])
-                size = [size_h, size_w]
+                size = [int(size_h), int(size_w)]
         elif len(self.inputs.get_shape()) == 4:
             if is_scale:
                 size_h = size[0] * int(self.inputs.get_shape()[1])
                 size_w = size[1] * int(self.inputs.get_shape()[2])
-                size = [size_h, size_w]
+                size = [int(size_h), int(size_w)]
         else:
             raise Exception("Donot support shape %s" % self.inputs.get_shape())
         print("  [TL] UpSampling2dLayer %s: is_scale:%s size:%s method:%d align_corners:%s" %
@@ -1604,12 +1604,12 @@ class DownSampling2dLayer(Layer):
             if is_scale:
                 size_h = size[0] * int(self.inputs.get_shape()[0])
                 size_w = size[1] * int(self.inputs.get_shape()[1])
-                size = [size_h, size_w]
+                size = [int(size_h), int(size_w)]
         elif len(self.inputs.get_shape()) == 4:
             if is_scale:
                 size_h = size[0] * int(self.inputs.get_shape()[1])
                 size_w = size[1] * int(self.inputs.get_shape()[2])
-                size = [size_h, size_w]
+                size = [int(size_h), int(size_w)]
         else:
             raise Exception("Donot support shape %s" % self.inputs.get_shape())
         print("  [TL] DownSampling2dLayer %s: is_scale:%s size:%s method:%d, align_corners:%s" %
@@ -1959,8 +1959,14 @@ def DeConv2d(net, n_out_channel = 32, filter_size=(3, 3),
     assert len(strides) == 2, "len(strides) should be 2, DeConv2d and DeConv2dLayer are different."
     if act is None:
         act = tf.identity
-    if batch_size is None:
-        batch_size = tf.shape(net.outputs)[0]
+    # if batch_size is None:
+    #     batch_size = tf.shape(net.outputs)[0]
+    fixed_batch_size = net.outputs.get_shape().with_rank_at_least(1)[0]
+    if fixed_batch_size.value:
+        batch_size = fixed_batch_size.value
+    else:
+        from tensorflow.python.ops import array_ops
+        batch_size = array_ops.shape(net.outputs)[0]
     net = DeConv2dLayer(layer = net,
                     act = act,
                     shape = [filter_size[0], filter_size[1], n_out_channel, int(net.outputs.get_shape()[-1])],
@@ -2161,6 +2167,91 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subp
     if scope_name:
         name = scope_name + '/' + name
 
+    def _PS(X, r, n_out_channel):
+        if n_out_channel >= 1:
+            assert int(X.get_shape()[-1]) == (r ** 2) * n_out_channel, _err_log
+            bsize, a, b, c = X.get_shape().as_list()
+            bsize = tf.shape(X)[0] # Handling Dimension(None) type for undefined batch dim
+            Xs=tf.split(X,r,3) #b*h*w*r*r
+            Xr=tf.concat(Xs,2) #b*h*(r*w)*r
+            X=tf.reshape(Xr,(bsize,r*a,r*b,n_out_channel)) # b*(r*h)*(r*w)*c
+        else:
+            print(_err_log)
+        return X
+
+    inputs = net.outputs
+
+    if n_out_channel is None:
+        assert int(inputs.get_shape()[-1])/ (scale ** 2) % 1 == 0, _err_log
+        n_out_channel = int(int(inputs.get_shape()[-1])/ (scale ** 2))
+
+    print("  [TL] SubpixelConv2d  %s: scale: %d n_out_channel: %s act: %s" % (name, scale, n_out_channel, act.__name__))
+
+    net_new = Layer(inputs, name=name)
+    # with tf.name_scope(name):
+    with tf.variable_scope(name) as vs:
+        net_new.outputs = act(_PS(inputs, r=scale, n_out_channel=n_out_channel))
+
+    net_new.all_layers = list(net.all_layers)
+    net_new.all_params = list(net.all_params)
+    net_new.all_drop = dict(net.all_drop)
+    net_new.all_layers.extend( [net_new.outputs] )
+    return net_new
+
+def SubpixelConv2d_old(net, scale=2, n_out_channel=None, act=tf.identity, name='subpixel_conv2d'):
+    """The :class:`SubpixelConv2d` class is a sub-pixel 2d convolutional ayer, usually be used
+    for Super-Resolution applications, `example code <https://github.com/zsdonghao/SRGAN/>`_.
+
+    Parameters
+    ------------
+    net : TensorLayer layer.
+    scale : int, upscaling ratio, a wrong setting will lead to Dimension size error.
+    n_out_channel : int or None, the number of output channels.
+        Note that, the number of input channels == (scale x scale) x The number of output channels.
+        If None, automatically set n_out_channel == the number of input channels / (scale x scale).
+    act : activation function.
+    name : string.
+        An optional name to attach to this layer.
+
+    Examples
+    ---------
+    >>> # examples here just want to tell you how to set the n_out_channel.
+    >>> x = np.random.rand(2, 16, 16, 4)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 4), name="X")
+    >>> net = InputLayer(X, name='input')
+    >>> net = SubpixelConv2d(net, scale=2, n_out_channel=1, name='subpixel_conv2d')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 4) (2, 32, 32, 1)
+    >>>
+    >>> x = np.random.rand(2, 16, 16, 4*10)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 4*10), name="X")
+    >>> net = InputLayer(X, name='input2')
+    >>> net = SubpixelConv2d(net, scale=2, n_out_channel=10, name='subpixel_conv2d2')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 40) (2, 32, 32, 10)
+    >>>
+    >>> x = np.random.rand(2, 16, 16, 25*10)
+    >>> X = tf.placeholder("float32", shape=(2, 16, 16, 25*10), name="X")
+    >>> net = InputLayer(X, name='input3')
+    >>> net = SubpixelConv2d(net, scale=5, n_out_channel=None, name='subpixel_conv2d3')
+    >>> y = sess.run(net.outputs, feed_dict={X: x})
+    >>> print(x.shape, y.shape)
+    ... (2, 16, 16, 250) (2, 80, 80, 10)
+
+    References
+    ------------
+    - `Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network <https://arxiv.org/pdf/1609.05158.pdf>`_
+    """
+    # github/Tetrachrome/subpixel  https://github.com/Tetrachrome/subpixel/blob/master/subpixel.py
+
+    _err_log = "SubpixelConv2d: The number of input channels == (scale x scale) x The number of output channels"
+
+    scope_name = tf.get_variable_scope().name
+    if scope_name:
+        name = scope_name + '/' + name
+
     def _phase_shift(I, r):
         if tf.__version__ < '1.0':
             raise Exception("Only support TF1.0+")
@@ -2209,6 +2300,50 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subp
     net_new.all_layers.extend( [net_new.outputs] )
     return net_new
 
+
+def SubpixelConv1d(net, scale=2, act=tf.identity, name='subpixel_conv1d'):
+    """One-dimensional subpixel upsampling layer.
+    Calls a tensorflow function that directly implements this functionality.
+    We assume input has dim (batch, width, r)
+
+    Parameters
+    ------------
+    net : TensorLayer layer.
+    scale : int, upscaling ratio, a wrong setting will lead to Dimension size error.
+    act : activation function.
+    name : string.
+        An optional name to attach to this layer.
+
+    Examples
+    ----------
+    >>> t_signal = tf.placeholder('float32', [10, 100, 4], name='x')
+    >>> n = InputLayer(t_signal, name='in')
+    >>> n = SubpixelConv1d(n, scale=2, name='s')
+    >>> print(n.outputs.shape)
+    ... (10, 200, 2)
+
+    References
+    -----------
+    - `Audio Super Resolution Implementation <https://github.com/kuleshov/audio-super-res/blob/master/src/models/layers/subpixel.py>`_.
+    """
+    def _PS(I, r):
+        X = tf.transpose(I, [2,1,0]) # (r, w, b)
+        X = tf.batch_to_space_nd(X, [r], [[0,0]]) # (1, r*w, b)
+        X = tf.transpose(X, [2,1,0])
+        return X
+
+    print("  [TL] SubpixelConv1d  %s: scale: %d act: %s" % (name, scale, act.__name__))
+
+    inputs = net.outputs
+    net_new = Layer(inputs, name=name)
+    with tf.name_scope(name):
+        net_new.outputs = act(_PS(inputs, r=scale))
+
+    net_new.all_layers = list(net.all_layers)
+    net_new.all_params = list(net.all_params)
+    net_new.all_drop = dict(net.all_drop)
+    net_new.all_layers.extend( [net_new.outputs] )
+    return net_new
 
 ## Spatial Transformer Nets
 def transformer(U, theta, out_size, name='SpatialTransformer2dAffine', **kwargs):

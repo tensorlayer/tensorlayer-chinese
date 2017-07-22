@@ -9,6 +9,7 @@ API - 强化学习
 
   discount_episode_rewards
   cross_entropy_reward_loss
+  log_weight
   choice_action_by_probs
 
 
@@ -18,7 +19,14 @@ API - 强化学习
 
 损失函数
 ---------------------
+
+Weighted Cross Entropy
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: cross_entropy_reward_loss
+
+Log weight
+^^^^^^^^^^^^^^
+.. autofunction:: log_weight
 
 采样选择函数
 ---------------------

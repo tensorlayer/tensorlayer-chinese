@@ -121,10 +121,11 @@ def normalized_mean_square_error(output, target):
     return nmse
 
 
-def dice_coe(output, target, epsilon=1e-10):
-    """Sørensen–Dice coefficient for comparing the similarity of two distributions,
-    usually be used for binary image segmentation i.e. labels are binary.
-    The coefficient = [0, 1], 1 if totally match.
+
+def dice_coe(output, target, loss_type='jaccard', axis=[1,2,3], smooth=1e-5):
+    """Soft dice (Sørensen or Jaccard) coefficient for comparing the similarity
+    of two batch of data, usually be used for binary image segmentation
+    i.e. labels are binary. The coefficient between 0 to 1, 1 means totally match.
 
     Parameters
     -----------
@@ -132,68 +133,50 @@ def dice_coe(output, target, epsilon=1e-10):
         A distribution with shape: [batch_size, ....], (any dimensions).
     target : tensor
         A distribution with shape: [batch_size, ....], (any dimensions).
-    epsilon : float
-        An optional name to attach to this layer.
+    loss_type : string
+        ``jaccard`` or ``sorensen``, default is ``jaccard``.
+    axis : list of integer
+        All dimensions are reduced, default ``[1,2,3]``.
+    smooth : float
+        This small value will be added to the numerator and denominator.
+        If both output and target are empty, it makes sure dice is 1.
+        If either output or target are empty (all pixels are background), dice = ```smooth/(small_value + smooth)``,
+        then if smooth is very small, dice close to 0 (even the image values lower than the threshold),
+        so in this case, higher smooth can have a higher dice.
 
     Examples
     ---------
     >>> outputs = tl.act.pixel_wise_softmax(network.outputs)
-    >>> dice_loss = 1 - tl.cost.dice_coe(outputs, y_, epsilon=1e-5)
+    >>> dice_loss = 1 - tl.cost.dice_coe(outputs, y_)
 
     References
     -----------
-    - `wiki-dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
+    - `Wiki-Dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
     """
-    # inse = tf.reduce_sum( tf.mul(output, target) )
-    # l = tf.reduce_sum( tf.mul(output, output) )
-    # r = tf.reduce_sum( tf.mul(target, target) )
-    inse = tf.reduce_sum( output * target )
-    l = tf.reduce_sum( output * output )
-    r = tf.reduce_sum( target * target )
-    dice = 2 * (inse) / (l + r)
-    if epsilon == 0:
-        return dice
+    inse = tf.reduce_sum(output * target, axis=axis)
+    if loss_type == 'jaccard':
+        l = tf.reduce_sum(output * output, axis=axis)
+        r = tf.reduce_sum(target * target, axis=axis)
+    elif loss_type == 'sorensen':
+        l = tf.reduce_sum(output, axis=axis)
+        r = tf.reduce_sum(target, axis=axis)
     else:
-        return tf.clip_by_value(dice, 0, 1.0-epsilon)
+        raise Exception("Unknow loss_type")
+    ## old axis=[0,1,2,3]
+    # dice = 2 * (inse) / (l + r)
+    # epsilon = 1e-5
+    # dice = tf.clip_by_value(dice, 0, 1.0-epsilon) # if all empty, dice = 1
+    ## new haodong
+    dice = (2. * inse + smooth) / (l + r + smooth)
+    ##
+    dice = tf.reduce_mean(dice)
+    return dice
 
 
-def dice_hard_coe(output, target, epsilon=1e-10):
-    """Non-differentiable Sørensen–Dice coefficient for comparing the similarity of two distributions,
-    usually be used for binary image segmentation i.e. labels are binary.
-    The coefficient = [0, 1], 1 if totally match.
-
-    Parameters
-    -----------
-    output : tensor
-        A distribution with shape: [batch_size, ....], (any dimensions).
-    target : tensor
-        A distribution with shape: [batch_size, ....], (any dimensions).
-    epsilon : float
-        An optional name to attach to this layer.
-
-    Examples
-    ---------
-    >>> outputs = pixel_wise_softmax(network.outputs)
-    >>> dice_loss = 1 - dice_coe(outputs, y_, epsilon=1e-5)
-
-    References
-    -----------
-    - `wiki-dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
-    """
-    output = tf.cast(output > 0.5, dtype=tf.float32)
-    target = tf.cast(target > 0.5, dtype=tf.float32)
-    inse = tf.reduce_sum( output * target )
-    l = tf.reduce_sum( output * output )
-    r = tf.reduce_sum( target * target )
-    dice = 2 * (inse) / (l + r)
-    if epsilon == 0:
-        return dice
-    else:
-        return tf.clip_by_value(dice, 0, 1.0-epsilon)
-
-def iou_coe(output, target, threshold=0.5, epsilon=1e-10):
-    """Non-differentiable Intersection over Union, usually be used for evaluating binary image segmentation.
-    The coefficient = [0, 1], 1 means totally match.
+def dice_hard_coe(output, target, threshold=0.5, axis=[1,2,3], smooth=1e-5):
+    """Non-differentiable Sørensen–Dice coefficient for comparing the similarity
+    of two batch of data, usually be used for binary image segmentation i.e. labels are binary.
+    The coefficient between 0 to 1, 1 if totally match.
 
     Parameters
     -----------
@@ -203,23 +186,97 @@ def iou_coe(output, target, threshold=0.5, epsilon=1e-10):
         A distribution with shape: [batch_size, ....], (any dimensions).
     threshold : float
         The threshold value to be true.
-    epsilon : float
-        A small value to avoid zero denominator when both output and target output nothing.
+    axis : list of integer
+        All dimensions are reduced, default ``[1,2,3]``.
+    smooth : float
+        This small value will be added to the numerator and denominator, see ``dice_coe``.
 
-    Examples
-    ---------
-    >>> outputs = tl.act.pixel_wise_softmax(network.outputs)
-    >>> iou = tl.cost.iou_coe(outputs[:,:,:,0], y_[:,:,:,0])
+    References
+    -----------
+    - `Wiki-Dice <https://en.wikipedia.org/wiki/Sørensen–Dice_coefficient>`_
+    """
+    output = tf.cast(output > threshold, dtype=tf.float32)
+    target = tf.cast(target > threshold, dtype=tf.float32)
+    inse = tf.reduce_sum(tf.multiply(output, target), axis=axis)
+    l = tf.reduce_sum(output, axis=axis)
+    r = tf.reduce_sum(target, axis=axis)
+    ## old axis=[0,1,2,3]
+    # hard_dice = 2 * (inse) / (l + r)
+    # epsilon = 1e-5
+    # hard_dice = tf.clip_by_value(hard_dice, 0, 1.0-epsilon)
+    ## new haodong
+    hard_dice = (2. * inse + smooth) / (l + r + smooth)
+    ##
+    hard_dice = tf.reduce_mean(hard_dice)
+    return hard_dice
+
+
+def iou_coe(output, target, threshold=0.5, axis=[1,2,3], smooth=1e-5):
+    """Non-differentiable Intersection over Union (IoU) for comparing the
+    similarity of two batch of data, usually be used for evaluating binary image segmentation.
+    The coefficient between 0 to 1, 1 means totally match.
+
+    Parameters
+    -----------
+    output : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    target : tensor
+        A distribution with shape: [batch_size, ....], (any dimensions).
+    threshold : float
+        The threshold value to be true.
+    axis : list of integer
+        All dimensions are reduced, default ``[1,2,3]``.
+    smooth : float
+        This small value will be added to the numerator and denominator, see ``dice_coe``.
 
     Notes
     ------
-    - IOU cannot be used as training loss, people usually use dice coefficient for training, and IOU for evaluating.
+    - IoU cannot be used as training loss, people usually use dice coefficient for training, IoU and hard-dice for evaluating.
     """
     pre = tf.cast(output > threshold, dtype=tf.float32)
     truth = tf.cast(target > threshold, dtype=tf.float32)
-    intersection = tf.reduce_sum(pre * truth)
-    union = tf.reduce_sum(tf.cast((pre + truth) > threshold, dtype=tf.float32))
-    return tf.reduce_sum(intersection) / (tf.reduce_sum(union) + epsilon)
+    inse = tf.reduce_sum(tf.multiply(pre, truth), axis=axis) # AND
+    union = tf.reduce_sum(tf.cast(tf.add(pre, truth)>= 1, dtype=tf.float32), axis=axis) # OR
+    ## old axis=[0,1,2,3]
+    # epsilon = 1e-5
+    # batch_iou = inse / (union + epsilon)
+    ## new haodong
+    batch_iou = (inse + smooth) / (union + smooth)
+    iou = tf.reduce_mean(batch_iou)
+    return iou#, pre, truth, inse, union
+
+# ## test soft/hard dice and iou
+# import numpy as np
+# y = np.zeros((1,10,10,1))
+# # y[0,0:5,0:5]=1.0
+# o = np.zeros((1,10,10,1))
+# # o[:,:,:,:] = 0            # what we want: dice=0   iou=0  OK
+# # o[0,0:2,0:2]=0.3          # what we want: dice larger iou=0  OK
+# # o[0,0:2,0:2]=0.6          # what we want: dice larger  iou small  OK
+# # o[0,0:3,0:3]=0.6          # what we want: dice larger iou larger OK
+# # o[0,0:3,0:3]=1            # what we want: dice larger iou same OK
+# # o[0,0:5,0:5]=1            # what we want: dice=1 iou=1  OK
+# # o[0,0:5,0:5]=0.3          # what we want: dice smaller  iou=0  OK
+# # o[0,0:5,0:5]=1e-2           # what we want: dice≈0 iou=0  OK
+# # o[0,8:10,8:10]=1.0        # what we want: dice=0 iou=0  OK
+# # o[0,8:10,8:10]=1e-10        # what we want: dice=0 iou=0  OK
+# # y[:,:,:,:] = o[:,:,:,:] = 0 # what we want: dice=1 iou=1  OK
+# ## why in u-net, dice=1 hard-dice=1 iou=1 exist?? print bug?
+#
+# d = dice_coe(o, y, 'jaccard', smooth=1.)
+# hd = dice_hard_coe(o, y, smooth=1e-5)
+# i = iou_coe(o, y, smooth=1e-5)
+# sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
+# # sess.run(tf.local_variables_initializer())
+# print(sess.run([d,hd,i]))
+# # p, t, i, u = sess.run([pre, truth, inse, union])
+# # import pprint
+# # pprint.pprint(((y>0.5)*(o>0.5)).astype(int).tolist())
+# # pprint.pprint(p.tolist())
+# # pprint.pprint(t.tolist())
+# # pprint.pprint(i)
+# # pprint.pprint(u)
+# exit()
 
 
 def cross_entropy_seq(logits, target_seqs, batch_size=None):#, batch_size=1, num_steps=None):
