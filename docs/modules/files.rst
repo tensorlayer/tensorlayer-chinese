@@ -43,11 +43,13 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_flickr1M_dataset
 
    save_npz
-   save_npz_dict
    load_npz
-   load_npz_dict
    assign_params
    load_and_assign_npz
+   save_npz_dict
+   load_npz_dict
+   save_ckpt
+   load_ckpt
 
    save_any_to_npy
    load_npy_to_any
@@ -115,18 +117,9 @@ Flickr1M
 ^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_npz
 
-以字典保存模型到 .npz
-^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_npz_dict
-
 从save_npz加载模型参数列表
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
-
-从save_npz_dict加载模型参数列表
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_npz_dict
-
 
 把模型参数载入模型
 ^^^^^^^^^^^^^^^^^^^
@@ -135,6 +128,27 @@ Flickr1M
 从.npz中加载参数并导入模型
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_and_assign_npz
+
+
+以字典保存模型到 .npz
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_npz_dict
+
+从save_npz_dict加载模型参数列表
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_npz_dict
+
+
+以列表保存模型到 .ckpt
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_ckpt
+
+从.ckpt中加载参数并导入模型
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_ckpt
+
+
+
 
 
 保存与加载数据
