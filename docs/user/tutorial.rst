@@ -66,7 +66,7 @@ TensorLayer很简单
   # 定义损失函数和衡量指标
   # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
   y = network.outputs
-  cost = tl.cost.cross_entropy(y, y_)
+  cost = tl.cost.cross_entropy(y, y_, name = 'cost')
   correct_prediction = tf.equal(tf.argmax(y, 1), y_)
   acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
   y_op = tf.argmax(tf.nn.softmax(y), 1)

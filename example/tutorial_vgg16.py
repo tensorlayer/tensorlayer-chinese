@@ -198,7 +198,7 @@ network = fc_layers(net_cnn)
 y = network.outputs
 probs = tf.nn.softmax(y)
 y_op = tf.argmax(tf.nn.softmax(y), 1)
-cost = tl.cost.cross_entropy(y, y_)
+cost = tl.cost.cross_entropy(y, y_,name = 'cost')
 
 correct_prediction = tf.equal(tf.cast(tf.argmax(y, 1), tf.float32), tf.cast(y_, tf.float32))
 acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))

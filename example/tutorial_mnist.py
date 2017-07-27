@@ -54,7 +54,7 @@ def main_test_layers(model='relu'):
     x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
     y_ = tf.placeholder(tf.int32, shape=[None, ], name='y_')
 
-    # Note: the softmax is implemented internally in tl.cost.cross_entropy(y, y_)
+    # Note: the softmax is implemented internally in tl.cost.cross_entropy(y, y_, name = 'cost' )
     # to speed up computation, so we use identity in the last layer.
     # see tf.nn.sparse_softmax_cross_entropy_with_logits()
     if model == 'relu':
@@ -94,7 +94,7 @@ def main_test_layers(model='relu'):
     y_op = tf.argmax(tf.nn.softmax(y), 1)
     cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
     # Alternatively, you can use TensorLayer's function to compute cost:
-    # cost = tl.cost.cross_entropy(y, y_)
+    # cost = tl.cost.cross_entropy(y, y_,name = 'cost')
 
     # You can add more penalty to the cost function as follow.
     # cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) + tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])

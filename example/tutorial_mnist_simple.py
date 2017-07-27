@@ -24,7 +24,7 @@ network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
 network = tl.layers.DenseLayer(network, n_units=800,
                                 act = tf.nn.relu, name='relu2')
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
-# the softmax is implemented internally in tl.cost.cross_entropy(y, y_) to
+# the softmax is implemented internally in tl.cost.cross_entropy(y, y_, name = 'cost') to
 # speed up computation, so we use identity here.
 # see tf.nn.sparse_softmax_cross_entropy_with_logits()
 network = tl.layers.DenseLayer(network, n_units=10,
@@ -33,7 +33,7 @@ network = tl.layers.DenseLayer(network, n_units=10,
 
 # define cost function and metric.
 y = network.outputs
-cost = tl.cost.cross_entropy(y, y_)
+cost = tl.cost.cross_entropy(y, y_,name = 'cost')
 correct_prediction = tf.equal(tf.argmax(y, 1), y_)
 acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 y_op = tf.argmax(tf.nn.softmax(y), 1)

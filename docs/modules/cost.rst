@@ -28,7 +28,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
 
 .. code-block:: python
 
-  cost = tl.cost.cross_entropy(y, y_)
+  cost = tl.cost.cross_entropy(y, y_, name = 'cost')
   cost = cost + tf.contrib.layers.l2_regularizer(0.001)(network.all_params[0]) + tf.contrib.layers.l2_regularizer(0.001)(network.all_params[2])
 
 此外，TensorLayer 提供了通过给定名称，很方便地获取参数列表的方法，所以您可以如下对某些参数执行L2规则化。
@@ -38,7 +38,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
   l2 = 0
   for w in tl.layers.get_variables_with_name('W_conv2d', train_only=True, printable=False):#[-3:]:
       l2 += tf.contrib.layers.l2_regularizer(1e-4)(w)
-  cost = tl.cost.cross_entropy(y, y_) + l2
+  cost = tl.cost.cross_entropy(y, y_, name = 'cost') + l2
 
 
 
@@ -70,7 +70,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
 .. code-block:: python
 
   y = network.outputs
-  # Alternatively, you can use tl.cost.cross_entropy(y, y_) instead.
+  # Alternatively, you can use tl.cost.cross_entropy(y, y_, name = 'cost') instead.
   cross_entropy = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
   cost = cross_entropy
   cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) +
