@@ -36,7 +36,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_cifar10_dataset
    load_ptb_dataset
    load_matt_mahoney_text8_dataset
-   load_imbd_dataset
+   load_imdb_dataset
    load_nietzsche_dataset
    load_wmt_en_fr_dataset
    load_flickr25k_dataset
@@ -89,7 +89,7 @@ Matt Mahoney's text8
 
 IMBD
 ^^^^^^^
-.. autofunction:: load_imbd_dataset
+.. autofunction:: load_imdb_dataset
 
 Nietzsche
 ^^^^^^^^^^^^^^
