@@ -4,14 +4,10 @@
 例子 Examples
 =============
 
-
-
 Basics
 ============
 
  - Multi-layer perceptron (MNIST). A multi-layer perceptron implementation for MNIST classification task, see `tutorial_mnist_simple.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_mnist_simple.py>`_.
-
-..
  - Multi-layer perceptron (MNIST) classification using Iterator, see `tutorial_mlp_dropout1.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_mlp_dropout1.py>`_ and `tutorial_mlp_dropout2.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_mlp_dropout2.py>`_.
 
 Computer Vision
@@ -70,28 +66,6 @@ Special Examples
  - Data augmentation with TFRecord. Effective way to load and pre-process data, see `tutorial_tfrecord*.py <https://github.com/zsdonghao/tensorlayer/tree/master/example>`_ and `tutorial_cifar10_tfrecord.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_cifar10_tfrecord.py>`_.
  - Data augmentation with TensorLayer, see `tutorial_image_preprocess.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_image_preprocess.py>`_.
  - TensorDB by `fangde <https://github.com/fangde>`_ see `here <https://github.com/akaraspt/tl_paper>`_.
-
-..
-  Applications
-  =============
-
-  There are some good applications implemented by TensorLayer.
-  You may able to find some useful examples for your project.
-  If you want to share your application, please contact tensorlayer@gmail.com.
-
-  1D CNN + LSTM for Biosignal
-  ---------------------------------
-
-  Author : `Akara Supratak <https://akaraspt.github.io>`_
-
-  Introduction
-  ^^^^^^^^^^^^
-
-  Implementation
-  ^^^^^^^^^^^^^^
-
-  Citation
-  ^^^^^^^^
 
 
 
