@@ -426,7 +426,7 @@ epub_exclude_files = ['search.html']
 # If false, no index is generated.
 #
 # epub_use_index = True
-extensions = ['numpydoc',
+extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.intersphinx',
               'sphinx.ext.todo',
@@ -435,7 +435,7 @@ extensions = ['numpydoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.inheritance_diagram',
               'sphinx.ext.autosummary',
-              'sphinx.ext.autodoc']
+              'numpydoc.numpydoc']
 pygments_style = 'sphinx'
 html_theme = "sphinx_rtd_theme"
 html_theme_path = ["_themes", ]
