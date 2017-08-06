@@ -2,7 +2,7 @@ tensorflow
 numpydoc
 scipy
 scikit-image
-Sphinx>=1.5.3
+Sphinx>=1.6
 recommonmark==0.4.0
 sphinx_rtd_theme
 mock
