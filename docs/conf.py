@@ -30,16 +30,16 @@ sys.path.insert(0, os.path.abspath("../")) # Important
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.doctest',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.autodoc',
-    'numpydoc',
-]
+# extensions = [
+#    'sphinx.ext.doctest',
+#    'sphinx.ext.coverage',
+#    'sphinx.ext.mathjax',
+#    'sphinx.ext.viewcode',
+#    'sphinx.ext.githubpages',
+#    'sphinx.ext.autosummary',
+#    'sphinx.ext.autodoc',
+#    'numpydoc',
+# ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -426,16 +426,16 @@ epub_exclude_files = ['search.html']
 # If false, no index is generated.
 #
 # epub_use_index = True
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.doctest',
+extensions = ['sphinx.ext.doctest',
               'sphinx.ext.intersphinx',
               'sphinx.ext.todo',
               'sphinx.ext.ifconfig',
               'sphinx.ext.viewcode',
               'sphinx.ext.mathjax',
-              'numpydoc',
               'sphinx.ext.inheritance_diagram',
-              'sphinx.ext.autosummary']
+              'sphinx.ext.autosummary',
+              'sphinx.ext.autodoc',
+              'numpydoc']
 pygments_style = 'sphinx'
 html_theme = "sphinx_rtd_theme"
 html_theme_path = ["_themes", ]
