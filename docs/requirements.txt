@@ -1,5 +1,5 @@
 tensorflow
-numpydoc
+numpydoc==0.6.0
 scipy
 scikit-image
 Sphinx>=1.6
