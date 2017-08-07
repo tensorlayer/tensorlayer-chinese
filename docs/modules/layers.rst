@@ -278,6 +278,7 @@ API - 神经网络层
 
    BatchNormLayer
    LocalResponseNormLayer
+   InstanceNormLayer
 
    TimeDistributedLayer
 
@@ -553,6 +554,11 @@ Batch Normalization
 Local Response Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LocalResponseNormLayer
+
+Instance Normalization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InstanceNormLayer
+
 
 TimeDistributed 包装器
 -------------------------

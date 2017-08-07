@@ -231,10 +231,10 @@ def initialize_global_variables(sess=None):
     sess : a Session
     """
     assert sess is not None
-    try:    # TF12
-        sess.run(tf.global_variables_initializer())
-    except: # TF11
-        sess.run(tf.initialize_all_variables())
+    # try:    # TF12+
+    sess.run(tf.global_variables_initializer())
+    # except: # TF11
+    #     sess.run(tf.initialize_all_variables())
 
 
 ## Basic layer
@@ -1218,8 +1218,8 @@ class Conv2dLayer(Layer):
         The arguments for the weights tf.get_variable().
     b_init_args : dictionary
         The arguments for the biases tf.get_variable().
-    use_cudnn_on_gpu : an optional string from: "NHWC", "NCHW". Defaults to "NHWC".
-    data_format : an optional bool. Defaults to True.
+    use_cudnn_on_gpu : bool, default is None.
+    data_format : string "NHWC" or "NCHW", default is "NHWC"
     name : a string or None
         An optional name to attach to this layer.
 
@@ -1871,6 +1871,23 @@ def Conv1d(net, n_filter=32, filter_size=5, stride=1, dilation_rate=1, act=None,
     dilation_rate : As it is 1D conv, the default is "NWC".
     act : None or activation function.
     others : see :class:`Conv1dLayer`.
+
+    Examples
+    ---------
+    >>> x = tf.placeholder(tf.float32, [batch_size, width])
+    >>> y_ = tf.placeholder(tf.int64, shape=[batch_size,])
+    >>> n = InputLayer(x, name='in')
+    >>> n = ReshapeLayer(n, [-1, width, 1], name='rs')
+    >>> n = Conv1d(n, 64, 3, 1, act=tf.nn.relu, name='c1')
+    >>> n = MaxPool1d(n, 2, 2, padding='valid', name='m1')
+    >>> n = Conv1d(n, 128, 3, 1, act=tf.nn.relu, name='c2')
+    >>> n = MaxPool1d(n, 2, 2, padding='valid', name='m2')
+    >>> n = Conv1d(n, 128, 3, 1, act=tf.nn.relu, name='c3')
+    >>> n = MaxPool1d(n, 2, 2, padding='valid', name='m3')
+    >>> n = FlattenLayer(n, name='f')
+    >>> n = DenseLayer(n, 500, tf.nn.relu, name='d1')
+    >>> n = DenseLayer(n, 100, tf.nn.relu, name='d2')
+    >>> n = DenseLayer(n, 2, tf.identity, name='o')
     """
     if act is None:
         act = tf.identity
@@ -3473,6 +3490,53 @@ class BatchNormLayer(Layer):
 #         self.all_layers.extend( [self.outputs] )
 #         self.all_params.extend( [beta, gamma] )
 
+class InstanceNormLayer(Layer):
+    """The :class:`InstanceNormLayer` class is a for instance normalization.
+
+    Parameters
+    -----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    act : activation function.
+    epsilon : float
+        A small float number.
+    scale_init : beta initializer
+        The initializer for initializing beta
+    offset_init : gamma initializer
+        The initializer for initializing gamma
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+    self,
+    layer = None,
+    act = tf.identity,
+    epsilon = 1e-5,
+    scale_init = tf.truncated_normal_initializer(mean=1.0, stddev=0.02),
+    offset_init = tf.constant_initializer(0.0),
+    name ='instan_norm',
+    ):
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+        print("  [TL] InstanceNormLayer %s: epsilon:%f act:%s" %
+                            (self.name, epsilon, act.__name__))
+
+        with tf.variable_scope(name) as vs:
+            mean, var = tf.nn.moments(self.inputs, [1, 2], keep_dims=True)
+            scale = tf.get_variable('scale',[self.inputs.get_shape()[-1]],
+                initializer=tf.truncated_normal_initializer(mean=1.0, stddev=0.02))
+            offset = tf.get_variable('offset',[self.inputs.get_shape()[-1]],initializer=tf.constant_initializer(0.0))
+            self.outputs = scale * tf.div(self.inputs-mean, tf.sqrt(var+epsilon)) + offset
+            self.outputs = act(self.outputs)
+            variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
+
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        self.all_params.extend( variables )
+
+
 ## Pooling layer
 class PoolLayer(Layer):
     """
@@ -3550,7 +3614,7 @@ class PadLayer(Layer):
         assert paddings is not None, "paddings should be a Tensor of type int32. see https://www.tensorflow.org/api_docs/python/tf/pad"
         self.inputs = layer.outputs
         print("  [TL] PadLayer   %s: paddings:%s mode:%s" %
-                            (self.name, list(paddings.get_shape()), mode))
+                            (self.name, list(paddings), mode))
 
         self.outputs = tf.pad(self.inputs, paddings=paddings, mode=mode, name=name)
 
