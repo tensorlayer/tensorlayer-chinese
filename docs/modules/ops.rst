@@ -8,6 +8,7 @@ API - 操作系统管理
 .. autosummary::
 
    exit_tf
+   open_tb
    clear_all
    set_gpu_fraction
    disable_print
@@ -22,6 +23,10 @@ TensorFlow 操作函数
 中断 Nvidia 进程
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: exit_tf
+
+打开 TensorBoard
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: open_tb
 
 删除 placeholder
 ^^^^^^^^^^^^^^^^^^
