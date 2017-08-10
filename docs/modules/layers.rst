@@ -295,6 +295,7 @@ API - 神经网络层
 
    FlattenLayer
    ReshapeLayer
+   TransposeLayer
    LambdaLayer
 
    ConcatLayer
@@ -637,6 +638,11 @@ Flatten层
 Reshape层
 ^^^^^^^^^^^
 .. autoclass:: ReshapeLayer
+
+Transpose层
+^^^^^^^^^^^^^
+.. autoclass:: TransposeLayer
+
 
 Lambda层
 -----------

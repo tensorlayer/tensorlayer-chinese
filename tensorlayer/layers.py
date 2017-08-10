@@ -2182,7 +2182,7 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subp
 
     scope_name = tf.get_variable_scope().name
     if scope_name:
-        name = scope_name + '/' + name
+        whole_name = scope_name + '/' + name
 
     def _PS(X, r, n_out_channel):
         if n_out_channel >= 1:
@@ -2204,7 +2204,7 @@ def SubpixelConv2d(net, scale=2, n_out_channel=None, act=tf.identity, name='subp
 
     print("  [TL] SubpixelConv2d  %s: scale: %d n_out_channel: %s act: %s" % (name, scale, n_out_channel, act.__name__))
 
-    net_new = Layer(inputs, name=name)
+    net_new = Layer(inputs, name=whole_name)
     # with tf.name_scope(name):
     with tf.variable_scope(name) as vs:
         net_new.outputs = act(_PS(inputs, r=scale, n_out_channel=n_out_channel))
@@ -3713,11 +3713,11 @@ class RNNLayer(Layer):
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/>`_
     cell_init_args : a dictionary
         The arguments for the cell initializer.
-    n_hidden : a int
+    n_hidden : an int
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
-    n_steps : a int
+    n_steps : an int
         The sequence length.
     initial_state : None or RNN State
         If None, initial_state is zero_state.
@@ -3977,11 +3977,11 @@ class BiRNNLayer(Layer):
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/>`_
     cell_init_args : a dictionary
         The arguments for the cell initializer.
-    n_hidden : a int
+    n_hidden : an int
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
-    n_steps : a int
+    n_steps : an int
         The sequence length.
     fw_initial_state : None or forward RNN State
         If None, initial_state is zero_state.
@@ -3989,7 +3989,7 @@ class BiRNNLayer(Layer):
         If None, initial_state is zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
-    n_layer : a int, default is 1.
+    n_layer : an int, default is 1.
         The number of RNN layers.
     return_last : boolean
         - If True, return the last output, "Sequence input and single output"
@@ -4330,7 +4330,7 @@ class DynamicRNNLayer(Layer):
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/>`_
     cell_init_args : a dictionary
         The arguments for the cell initializer.
-    n_hidden : a int
+    n_hidden : an int
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
@@ -4343,7 +4343,7 @@ class DynamicRNNLayer(Layer):
         If None, initial_state is zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
-    n_layer : a int, default is 1.
+    n_layer : an int, default is 1.
         The number of RNN layers.
     return_last : boolean
         - If True, return the last output, "Sequence input and single output"
@@ -4588,7 +4588,7 @@ class BiDynamicRNNLayer(Layer):
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/>`_
     cell_init_args : a dictionary
         The arguments for the cell initializer.
-    n_hidden : a int
+    n_hidden : an int
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
@@ -4604,7 +4604,7 @@ class BiDynamicRNNLayer(Layer):
         If None, initial_state is zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
-    n_layer : a int, default is 1.
+    n_layer : an int, default is 1.
         The number of RNN layers.
     return_last : boolean
         If True, return the last output, "Sequence input and single output"\n
@@ -4739,6 +4739,13 @@ class BiDynamicRNNLayer(Layer):
                 # cell_instance_fn=lambda: MultiRNNCell_fn([cell_instance_fn2() for _ in range(n_layer)])
                 self.fw_cell = MultiRNNCell_fn([cell_creator() for _ in range(n_layer)])
                 self.bw_cell = MultiRNNCell_fn([cell_creator() for _ in range(n_layer)])
+
+            if dropout:
+                self.fw_cell = DropoutWrapper_fn(self.fw_cell,
+                          input_keep_prob=1.0, output_keep_prob=out_keep_prob)
+                self.bw_cell = DropoutWrapper_fn(self.bw_cell,
+                          input_keep_prob=1.0, output_keep_prob=out_keep_prob)
+
             # self.fw_cell=cell_instance_fn()
             # self.bw_cell=cell_instance_fn()
             # Initial state of RNN
@@ -4830,7 +4837,7 @@ class Seq2Seq(Layer):
         - see `RNN Cells in TensorFlow <https://www.tensorflow.org/api_docs/python/>`_
     cell_init_args : a dictionary
         The arguments for the cell initializer.
-    n_hidden : a int
+    n_hidden : an int
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
@@ -4840,7 +4847,7 @@ class Seq2Seq(Layer):
         If None, initial_state is of encoder zero_state.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
-    n_layer : a int, default is 1.
+    n_layer : an int, default is 1.
         The number of RNN layers.
     return_seq_2d : boolean
         - When return_last = False
@@ -5371,6 +5378,41 @@ class TileLayer(Layer):
         self.all_layers.extend( [self.outputs] )
         # self.all_params.extend( variables )
 
+
+class TransposeLayer(Layer):
+    """
+    The :class:`TransposeLayer` class transpose the dimension of a teneor, see `tf.transpose() <https://www.tensorflow.org/api_docs/python/tf/transpose>`_ .
+
+    Parameters
+    ----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    perm: list, a permutation of the dimensions
+        Similar with numpy.transpose.
+    name : a string or None
+        An optional name to attach to this layer.
+    """
+    def __init__(
+        self,
+        layer = None,
+        perm = None,
+        name = 'transpose',
+    ):
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+        assert perm is not None
+
+        print("  [TL] TransposeLayer  %s: perm:%s" % (self.name, perm))
+        # with tf.variable_scope(name) as vs:
+        self.outputs = tf.transpose(self.inputs, perm=perm, name=name)
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+        # self.all_params.extend( variables )
+
+
+
 ## TF-Slim layer
 class SlimNetsLayer(Layer):
     """
@@ -5662,7 +5704,7 @@ class MultiplexerLayer(Layer):
 #     ----------
 #     layer : a list of :class:`Layer` instances
 #         The `Layer` class feeding into this layer.
-#     n_outputs : a int
+#     n_outputs : an int
 #         The number of output
 #     name : a string or None
 #         An optional name to attach to this layer.
