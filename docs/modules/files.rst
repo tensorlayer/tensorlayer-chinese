@@ -48,7 +48,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    assign_params
    load_and_assign_npz
    save_npz_dict
-   load_npz_dict
+   load_and_assign_npz_dict
    save_ckpt
    load_ckpt
 
@@ -140,7 +140,7 @@ CycleGAN
 
 从save_npz_dict加载模型参数列表
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_npz_dict
+.. autofunction:: load_and_assign_npz_dict
 
 
 以列表保存模型到 .ckpt
