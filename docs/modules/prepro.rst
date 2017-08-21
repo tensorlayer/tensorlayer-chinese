@@ -55,6 +55,8 @@ API - 数据预处理
    pt2map
    binary_dilation
    dilation
+   binary_erosion
+   erosion
 
    pad_sequences
    precess_sequences
@@ -169,6 +171,13 @@ Numpy 与 PIL
 ^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: dilation
 
+二值腐蚀
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: binary_erosion
+
+灰度腐蚀
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: erosion
 
 
 序列

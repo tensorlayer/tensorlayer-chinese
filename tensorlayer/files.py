@@ -96,7 +96,7 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), path='data/cifar10/', plotable=F
     Parameters
     ----------
     shape : tupe
-        The shape of digit images: e.g. (-1, 3, 32, 32) , (-1, 32, 32, 3) , (-1, 32*32*3)
+        The shape of digit images: e.g. (-1, 3, 32, 32) , (-1, 32, 32, 3) , (-1, 32, 32, 3)
     plotable : True, False
         Whether to plot some image examples.
     second : int
@@ -107,23 +107,6 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), path='data/cifar10/', plotable=F
     Examples
     --------
     >>> X_train, y_train, X_test, y_test = tl.files.load_cifar10_dataset(shape=(-1, 32, 32, 3), plotable=True)
-
-    Notes
-    ------
-    CIFAR-10 images can only be display without color change under uint8.
-    >>> X_train = np.asarray(X_train, dtype=np.uint8)
-    >>> plt.ion()
-    >>> fig = plt.figure(1232)
-    >>> count = 1
-    >>> for row in range(10):
-    >>>     for col in range(10):
-    >>>         a = fig.add_subplot(10, 10, count)
-    >>>         plt.imshow(X_train[count-1], interpolation='nearest')
-    >>>         plt.gca().xaxis.set_major_locator(plt.NullLocator())    # 不显示刻度(tick)
-    >>>         plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    >>>         count = count + 1
-    >>> plt.draw()
-    >>> plt.pause(3)
 
     References
     ----------
@@ -649,7 +632,7 @@ def load_cyclegan_dataset(filename='summer2winter_yosemite', path='data/cyclegan
 
     def load_image_from_folder(path):
         path_imgs = load_file_list(path=path, regx='\\.jpg', printable=False)
-        return read_images(path_imgs, path=path, n_threads=10, printable=False)
+        return visualize.read_images(path_imgs, path=path, n_threads=10, printable=False)
     im_train_A = load_image_from_folder(path+"/"+filename+"/trainA")
     im_train_B = load_image_from_folder(path+"/"+filename+"/trainB")
     im_test_A = load_image_from_folder(path+"/"+filename+"/testA")
@@ -826,7 +809,7 @@ def load_and_assign_npz(sess=None, name=None, network=None):
 ## Load and save network dict npz
 def save_npz_dict(save_list=[], name='model.npz', sess=None):
     """Input parameters and the file name, save parameters as a dictionary into .npz file.
-    Use ``tl.files.load_assign_npz_dict()`` to restore.
+    Use ``tl.files.load_and_assign_npz_dict()`` to restore.
 
     Parameters
     ----------
@@ -869,8 +852,9 @@ def load_and_assign_npz_dict(name='model.npz', sess=None):
                 raise Exception("[!] Multiple candidate variables to be assigned for name %s" % key)
             elif len(varlist) == 0:
                 raise KeyError
-            ops.append(varlist[0].assign(params[key]))
-            print("[*] params restored: %s" % key)
+            else:
+                ops.append(varlist[0].assign(params[key]))
+                print("[*] params restored: %s" % key)
         except KeyError:
             print("[!] Warning: Tensor named %s not found in network." % key)
 
