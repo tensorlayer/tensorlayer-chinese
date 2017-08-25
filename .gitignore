@@ -1,3 +1,4 @@
 docs/_build
-tensorlayer/__pacache__
+tensorlayer/__pycache__
+tensorlayer/*pyc
 .DS_Store

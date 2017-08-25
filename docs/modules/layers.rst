@@ -304,6 +304,9 @@ API - 神经网络层
    ExpandDimsLayer
    TileLayer
 
+   StackLayer
+   UnStackLayer
+
    EstimatorLayer
    SlimNetsLayer
    KerasLayer
@@ -669,6 +672,21 @@ Expand 层
 Tile 层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: TileLayer
+
+
+
+Stack 层
+-------------
+
+Stack 层
+^^^^^^^^^^^^^^
+.. autoclass:: StackLayer
+
+Unstack 层
+^^^^^^^^^^^^^^^
+.. autofunction:: UnStackLayer
+
+
 
 
 Estimator 层
