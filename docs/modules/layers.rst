@@ -280,6 +280,8 @@ API - 神经网络层
    LocalResponseNormLayer
    InstanceNormLayer
 
+   ROIPoolingLayer
+
    TimeDistributedLayer
 
    RNNLayer
@@ -562,6 +564,15 @@ Local Response Normalization
 Instance Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InstanceNormLayer
+
+
+物体检测
+-------------------
+
+ROI 层
+^^^^^^^^^
+.. autoclass:: ROIPoolingLayer
+
 
 
 TimeDistributed 包装器
