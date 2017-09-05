@@ -4,6 +4,7 @@
 例子 Examples
 =============
 
+
 Basics
 ============
 
@@ -34,6 +35,7 @@ Natural Language Processing
  - Restore Embedding matrix. Restore a pre-train embedding matrix, see `tutorial_generate_text.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_generate_text.py>`_.
  - Text Generation. Generates new text scripts, using LSTM network, see `tutorial_generate_text.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_generate_text.py>`_.
  - Chinese Text Anti-Spam by `pakrchen <https://github.com/pakrchen/text-antispam>`_.
+ - New example `Chatbot in 200 lines of code <https://github.com/zsdonghao/seq2seq-chatbot>`_ for `Seq2Seq <http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#simple-seq2seq>`_.
 
 Adversarial Learning
 ========================
@@ -68,9 +70,6 @@ Special Examples
  - Data augmentation with TFRecord. Effective way to load and pre-process data, see `tutorial_tfrecord*.py <https://github.com/zsdonghao/tensorlayer/tree/master/example>`_ and `tutorial_cifar10_tfrecord.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_cifar10_tfrecord.py>`_.
  - Data augmentation with TensorLayer, see `tutorial_image_preprocess.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_image_preprocess.py>`_.
  - TensorDB by `fangde <https://github.com/fangde>`_ see `here <https://github.com/akaraspt/tl_paper>`_.
-
-
-
 
 
 .. _GitHub: https://github.com/zsdonghao/tensorlayer

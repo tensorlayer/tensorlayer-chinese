@@ -19,6 +19,7 @@
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
 # 新闻
+* 新例子 [Chatbot in 200 lines of code](https://github.com/zsdonghao/seq2seq-chatbot) for [Seq2Seq](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#simple-seq2seq).
 * 发布 [ROI layer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#roi-layer) 用于物体识别.
 * 发布 [SpatialTransformer2dAffineLayer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#spatial-transformer) 用于 [Spatial Transformer Networks](https://github.com/zsdonghao/Spatial-Transformer-Nets) 请见 [例子代码](https://github.com/zsdonghao/Spatial-Transformer-Nets).
 * 欢迎加入 [Slack](https://github.com/zsdonghao/tensorlayer) 讨论组.
