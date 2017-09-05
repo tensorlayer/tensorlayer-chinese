@@ -59,8 +59,11 @@ API - 数据预处理
    erosion
 
    pad_sequences
-   precess_sequences
+   remove_pad_sequences
+   process_sequences
    sequences_add_start_id
+   sequences_add_end_id
+   sequences_add_end_id_after_pad
    sequences_get_mask
 
    distorted_images
@@ -189,6 +192,11 @@ Padding
 ^^^^^^^^^^
 .. autofunction:: pad_sequences
 
+
+Remove Padding
+^^^^^^^^^^^^^^^^^
+.. autofunction:: remove_pad_sequences
+
 Process
 ^^^^^^^^^
 .. autofunction:: process_sequences
@@ -196,6 +204,16 @@ Process
 Add Start ID
 ^^^^^^^^^^^^^^^
 .. autofunction:: sequences_add_start_id
+
+
+Add End ID
+^^^^^^^^^^^^^^^
+.. autofunction:: sequences_add_end_id
+
+Add End ID after pad
+^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: sequences_add_end_id_after_pad
+
 
 Get Mask
 ^^^^^^^^^
