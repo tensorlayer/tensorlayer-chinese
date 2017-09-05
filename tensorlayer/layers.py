@@ -100,7 +100,7 @@ def set_name_reuse(enable=True):
     ...                     embedding_size = embedding_size,
     ...                     name = 'e_embedding')
     >>>        network = tl.layers.DynamicRNNLayer(network,
-    ...                     cell_fn = tf.nn.rnn_cell.BasicLSTMCell,
+    ...                     cell_fn = tf.contrib.rnn.BasicLSTMCell,
     ...                     n_hidden = embedding_size,
     ...                     dropout = (0.7 if is_train else None),
     ...                     initializer = w_init,
@@ -3727,8 +3727,8 @@ class TimeDistributedLayer(Layer):
 
         with ops.suppress_stdout():
             for i in range(0, timestep):
-                with tf.variable_scope(name, reuse=(False if i==0 else True)) as vs:
-                    set_name_reuse((False if i==0 else True))
+                with tf.variable_scope(name, reuse=(set_keep['name_reuse'] if i==0 else True)) as vs:
+                    set_name_reuse((set_keep['name_reuse'] if i==0 else True))
                     net = layer_class(InputLayer(x[i], name=args['name']+str(i)), **args)
                     # net = layer_class(InputLayer(x[i], name="input_"+args['name']), **args)
                     x[i] = net.outputs
@@ -3803,27 +3803,25 @@ class RNNLayer(Layer):
     --------
     - For words
     >>> input_data = tf.placeholder(tf.int32, [batch_size, num_steps])
-    >>> network = tl.layers.EmbeddingInputlayer(
+    >>> net = tl.layers.EmbeddingInputlayer(
     ...                 inputs = input_data,
     ...                 vocabulary_size = vocab_size,
     ...                 embedding_size = hidden_size,
     ...                 E_init = tf.random_uniform_initializer(-init_scale, init_scale),
     ...                 name ='embedding_layer')
-    >>> if is_training:
-    >>>     network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop1')
-    >>> network = tl.layers.RNNLayer(network,
-    ...             cell_fn=tf.nn.rnn_cell.BasicLSTMCell,
+    >>> net = tl.layers.DropoutLayer(net, keep=keep_prob, is_fix=True, is_train=is_train, name='drop1')
+    >>> net = tl.layers.RNNLayer(net,
+    ...             cell_fn=tf.contrib.rnn.BasicLSTMCell,
     ...             cell_init_args={'forget_bias': 0.0},# 'state_is_tuple': True},
     ...             n_hidden=hidden_size,
     ...             initializer=tf.random_uniform_initializer(-init_scale, init_scale),
     ...             n_steps=num_steps,
     ...             return_last=False,
     ...             name='basic_lstm_layer1')
-    >>> lstm1 = network
-    >>> if is_training:
-    >>>     network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop2')
-    >>> network = tl.layers.RNNLayer(network,
-    ...             cell_fn=tf.nn.rnn_cell.BasicLSTMCell,
+    >>> lstm1 = net
+    >>> net = tl.layers.DropoutLayer(net, keep=keep_prob, is_fix=True, is_train=is_train, name='drop2')
+    >>> net = tl.layers.RNNLayer(net,
+    ...             cell_fn=tf.contrib.rnn.BasicLSTMCell,
     ...             cell_init_args={'forget_bias': 0.0}, # 'state_is_tuple': True},
     ...             n_hidden=hidden_size,
     ...             initializer=tf.random_uniform_initializer(-init_scale, init_scale),
@@ -3831,10 +3829,9 @@ class RNNLayer(Layer):
     ...             return_last=False,
     ...             return_seq_2d=True,
     ...             name='basic_lstm_layer2')
-    >>> lstm2 = network
-    >>> if is_training:
-    >>>     network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop3')
-    >>> network = tl.layers.DenseLayer(network,
+    >>> lstm2 = net
+    >>> net = tl.layers.DropoutLayer(net, keep=keep_prob, is_fix=True, is_train=is_train, name='drop3')
+    >>> net = tl.layers.DenseLayer(net,
     ...             n_units=vocab_size,
     ...             W_init=tf.random_uniform_initializer(-init_scale, init_scale),
     ...             b_init=tf.random_uniform_initializer(-init_scale, init_scale),
@@ -3842,34 +3839,34 @@ class RNNLayer(Layer):
 
     - For CNN+LSTM
     >>> x = tf.placeholder(tf.float32, shape=[batch_size, image_size, image_size, 1])
-    >>> network = tl.layers.InputLayer(x, name='input_layer')
-    >>> network = tl.layers.Conv2dLayer(network,
+    >>> net = tl.layers.InputLayer(x, name='input_layer')
+    >>> net = tl.layers.Conv2dLayer(net,
     ...                         act = tf.nn.relu,
     ...                         shape = [5, 5, 1, 32],  # 32 features for each 5x5 patch
     ...                         strides=[1, 2, 2, 1],
     ...                         padding='SAME',
     ...                         name ='cnn_layer1')
-    >>> network = tl.layers.PoolLayer(network,
+    >>> net = tl.layers.PoolLayer(net,
     ...                         ksize=[1, 2, 2, 1],
     ...                         strides=[1, 2, 2, 1],
     ...                         padding='SAME',
     ...                         pool = tf.nn.max_pool,
     ...                         name ='pool_layer1')
-    >>> network = tl.layers.Conv2dLayer(network,
+    >>> net = tl.layers.Conv2dLayer(net,
     ...                         act = tf.nn.relu,
     ...                         shape = [5, 5, 32, 10], # 10 features for each 5x5 patch
     ...                         strides=[1, 2, 2, 1],
     ...                         padding='SAME',
     ...                         name ='cnn_layer2')
-    >>> network = tl.layers.PoolLayer(network,
+    >>> net = tl.layers.PoolLayer(net,
     ...                         ksize=[1, 2, 2, 1],
     ...                         strides=[1, 2, 2, 1],
     ...                         padding='SAME',
     ...                         pool = tf.nn.max_pool,
     ...                         name ='pool_layer2')
-    >>> network = tl.layers.FlattenLayer(network, name='flatten_layer')
-    >>> network = tl.layers.ReshapeLayer(network, shape=[-1, num_steps, int(network.outputs._shape[-1])])
-    >>> rnn1 = tl.layers.RNNLayer(network,
+    >>> net = tl.layers.FlattenLayer(net, name='flatten_layer')
+    >>> net = tl.layers.ReshapeLayer(net, shape=[-1, num_steps, int(net.outputs._shape[-1])])
+    >>> rnn1 = tl.layers.RNNLayer(net,
     ...                         cell_fn=tf.nn.rnn_cell.LSTMCell,
     ...                         cell_init_args={},
     ...                         n_hidden=200,
@@ -3878,7 +3875,7 @@ class RNNLayer(Layer):
     ...                         return_last=False,
     ...                         return_seq_2d=True,
     ...                         name='rnn_layer')
-    >>> network = tl.layers.DenseLayer(rnn1, n_units=3,
+    >>> net = tl.layers.DenseLayer(rnn1, n_units=3,
     ...                         act = tl.activation.identity, name='output_layer')
 
     Notes
@@ -4430,19 +4427,19 @@ class DynamicRNNLayer(Layer):
     Examples
     --------
     >>> input_seqs = tf.placeholder(dtype=tf.int64, shape=[batch_size, None], name="input_seqs")
-    >>> network = tl.layers.EmbeddingInputlayer(
+    >>> net = tl.layers.EmbeddingInputlayer(
     ...             inputs = input_seqs,
     ...             vocabulary_size = vocab_size,
     ...             embedding_size = embedding_size,
     ...             name = 'seq_embedding')
-    >>> network = tl.layers.DynamicRNNLayer(network,
+    >>> net = tl.layers.DynamicRNNLayer(net,
     ...             cell_fn = tf.contrib.rnn.BasicLSTMCell, # for TF0.2 tf.nn.rnn_cell.BasicLSTMCell,
     ...             n_hidden = embedding_size,
     ...             dropout = 0.7,
     ...             sequence_length = tl.layers.retrieve_seq_length_op2(input_seqs),
     ...             return_seq_2d = True,     # stack denselayer or compute cost after it
     ...             name = 'dynamic_rnn')
-    ... network = tl.layers.DenseLayer(network, n_units=vocab_size,
+    ... net = tl.layers.DenseLayer(net, n_units=vocab_size,
     ...             act=tf.identity, name="output")
 
     References
@@ -4888,8 +4885,10 @@ class Seq2Seq(Layer):
         The initializer for initializing the parameters.
     encode_sequence_length : tensor for encoder sequence length, see :class:`DynamicRNNLayer` .
     decode_sequence_length : tensor for decoder sequence length, see :class:`DynamicRNNLayer` .
-    initial_state : None or forward RNN State
-        If None, initial_state is of encoder zero_state.
+    initial_state_encode : None or RNN state (from placeholder or other RNN).
+        If None, initial_state_encode is of zero state.
+    initial_state_decode : None or RNN state (from placeholder or other RNN).
+        If None, initial_state_decode is of the final state of the RNN encoder.
     dropout : `tuple` of `float`: (input_keep_prob, output_keep_prob).
         The input and output keep probability.
     n_layer : an int, default is 1.
@@ -4939,7 +4938,7 @@ class Seq2Seq(Layer):
     ...             initializer = tf.random_uniform_initializer(-0.1, 0.1),
     ...             encode_sequence_length = retrieve_seq_length_op2(encode_seqs),
     ...             decode_sequence_length = retrieve_seq_length_op2(decode_seqs),
-    ...             initial_state = None,
+    ...             initial_state_encode = None,
     ...             dropout = None,
     ...             n_layer = 1,
     ...             return_seq_2d = True,
@@ -4968,7 +4967,8 @@ class Seq2Seq(Layer):
         initializer = tf.random_uniform_initializer(-0.1, 0.1),
         encode_sequence_length = None,
         decode_sequence_length = None,
-        initial_state = None,
+        initial_state_encode = None,
+        initial_state_decode = None,
         dropout = None,
         n_layer = 1,
         # return_last = False,
@@ -4994,7 +4994,7 @@ class Seq2Seq(Layer):
                      cell_fn = cell_fn,
                      cell_init_args = cell_init_args,
                      n_hidden = n_hidden,
-                     initial_state = initial_state,
+                     initial_state = initial_state_encode,
                      dropout = dropout,
                      n_layer = n_layer,
                      sequence_length = encode_sequence_length,
@@ -5007,7 +5007,7 @@ class Seq2Seq(Layer):
                      cell_fn = cell_fn,
                      cell_init_args = cell_init_args,
                      n_hidden = n_hidden,
-                     initial_state = network_encode.final_state,
+                     initial_state = (network_encode.final_state if initial_state_decode is None else initial_state_decode),
                      dropout = dropout,
                      n_layer = n_layer,
                      sequence_length = decode_sequence_length,
@@ -5019,7 +5019,8 @@ class Seq2Seq(Layer):
             rnn_variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
         # Final state
-        self.final_state = network_decode.final_state
+        self.final_state_encode = network_encode.final_state
+        self.final_state_decode = network_decode.final_state
 
         # self.sequence_length = sequence_length
         self.all_layers = list(network_decode.all_layers)
@@ -5111,20 +5112,20 @@ class FlattenLayer(Layer):
     Examples
     --------
     >>> x = tf.placeholder(tf.float32, shape=[None, 28, 28, 1])
-    >>> network = tl.layers.InputLayer(x, name='input_layer')
-    >>> network = tl.layers.Conv2dLayer(network,
+    >>> net = tl.layers.InputLayer(x, name='input_layer')
+    >>> net = tl.layers.Conv2dLayer(net,
     ...                    act = tf.nn.relu,
     ...                    shape = [5, 5, 32, 64],
     ...                    strides=[1, 1, 1, 1],
     ...                    padding='SAME',
     ...                    name ='cnn_layer')
-    >>> network = tl.layers.Pool2dLayer(network,
+    >>> net = tl.layers.Pool2dLayer(net,
     ...                    ksize=[1, 2, 2, 1],
     ...                    strides=[1, 2, 2, 1],
     ...                    padding='SAME',
     ...                    pool = tf.nn.max_pool,
     ...                    name ='pool_layer',)
-    >>> network = tl.layers.FlattenLayer(network, name='flatten_layer')
+    >>> net = tl.layers.FlattenLayer(net, name='flatten_layer')
     """
     def __init__(
         self,
@@ -5235,9 +5236,9 @@ class LambdaLayer(Layer):
     Examples
     ---------
     >>> x = tf.placeholder(tf.float32, shape=[None, 1], name='x')
-    >>> network = tl.layers.InputLayer(x, name='input_layer')
-    >>> network = LambdaLayer(network, lambda x: 2*x, name='lambda_layer')
-    >>> y = network.outputs
+    >>> net = tl.layers.InputLayer(x, name='input_layer')
+    >>> net = LambdaLayer(net, lambda x: 2*x, name='lambda_layer')
+    >>> y = net.outputs
     >>> sess = tf.InteractiveSession()
     >>> out = sess.run(y, feed_dict={x : [[1],[2]]})
     ... [[2],[4]]
@@ -5285,20 +5286,20 @@ class ConcatLayer(Layer):
     >>> inputs = tl.layers.InputLayer(x, name='input_layer')
     >>> net1 = tl.layers.DenseLayer(inputs, n_units=800, act = tf.nn.relu, name='relu1_1')
     >>> net2 = tl.layers.DenseLayer(inputs, n_units=300, act = tf.nn.relu, name='relu2_1')
-    >>> network = tl.layers.ConcatLayer(layer = [net1, net2], name ='concat_layer')
+    >>> net = tl.layers.ConcatLayer(layer = [net1, net2], name ='concat_layer')
     ...     [TL] InputLayer input_layer (?, 784)
     ...     [TL] DenseLayer relu1_1: 800, <function relu at 0x1108e41e0>
     ...     [TL] DenseLayer relu2_1: 300, <function relu at 0x1108e41e0>
     ...     [TL] ConcatLayer concat_layer, 1100
     ...
     >>> tl.layers.initialize_global_variables(sess)
-    >>> network.print_params()
+    >>> net.print_params()
     ...     param 0: (784, 800) (mean: 0.000021, median: -0.000020 std: 0.035525)
     ...     param 1: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
     ...     param 2: (784, 300) (mean: 0.000000, median: -0.000048 std: 0.042947)
     ...     param 3: (300,) (mean: 0.000000, median: 0.000000 std: 0.000000)
     ...     num of params: 863500
-    >>> network.print_layers()
+    >>> net.print_layers()
     ...     layer 0: Tensor("Relu:0", shape=(?, 800), dtype=float32)
     ...     layer 1: Tensor("Relu_1:0", shape=(?, 300), dtype=float32)
     ...

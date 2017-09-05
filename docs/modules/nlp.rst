@@ -24,16 +24,17 @@ API - 自然语言处理
    build_reverse_dictionary
    build_words_dataset
    save_vocab
-   
+
    words_to_word_ids
    word_ids_to_words
-   
+
    basic_tokenizer
    create_vocabulary
    initialize_vocabulary
    sentence_to_token_ids
    data_to_token_ids
 
+   moses_multi_bleu
 
 训练嵌入矩阵的迭代函数
 ------------------------------
@@ -139,3 +140,11 @@ ID到单词
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: sentence_to_token_ids
 .. autofunction:: data_to_token_ids
+
+
+衡量指标
+---------------------------
+
+BLEU
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: moses_multi_bleu
