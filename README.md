@@ -51,7 +51,7 @@ TensorLayer 运行需要 TensorFlow, numpy 和 matplotlib。 对于 GPU 加速�
 如果您已经安装过 TensorFlow，最简单的安装命令如下 (以英文[Github](http://github.com/zsdonghao/tensorlayer)为准)：
 
 ```bash
-[for stable version] pip install tensorlayer==1.2.2b    
+[for stable version] pip install tensorlayer
 [for master version] pip install git+https://github.com/zsdonghao/tensorlayer.git
 ```
 
