@@ -566,7 +566,7 @@ Instance Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InstanceNormLayer
 
-Instance Normalization
+Layer Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LayerNormLayer
 
