@@ -410,7 +410,7 @@ class Word2vecEmbeddingInputlayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     --------------
     nce_cost : a tensor
         The NCE loss.
@@ -543,7 +543,7 @@ class EmbeddingInputlayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     ------------
     outputs : a tensor
         The outputs of embedding layer.
@@ -3538,6 +3538,56 @@ class InstanceNormLayer(Layer):
         self.all_layers.extend( [self.outputs] )
         self.all_params.extend( variables )
 
+class LayerNormLayer(Layer):
+    """
+    The :class:`LayerNormLayer` class is for layer normalization, see `tf.contrib.layers.layer_norm <https://www.tensorflow.org/api_docs/python/tf/contrib/layers/layer_norm>`_.
+
+    Parameters
+    ----------
+    layer : a :class:`Layer` instance
+        The `Layer` class feeding into this layer.
+    act : activation function
+        The function that is applied to the layer activations.
+    others : see  `tf.contrib.layers.layer_norm <https://www.tensorflow.org/api_docs/python/tf/contrib/layers/layer_norm>`_
+    """
+    def __init__(self,
+                layer=None,
+                center=True,
+                scale=True,
+                act=tf.identity,
+                reuse=None,
+                variables_collections=None,
+                outputs_collections=None,
+                trainable=True,
+                begin_norm_axis=1,
+                begin_params_axis=-1,
+                name='layernorm'
+                ):
+
+        if tf.__version__ < "1.3":
+            raise Exception("Please use TF 1.3+")
+
+        Layer.__init__(self, name=name)
+        self.inputs = layer.outputs
+        print("  [TL] LayerNormLayer %s: act:%s" %
+                            (self.name, act.__name__))
+        self.outputs = tf.contrib.layers.layer_norm(self.inputs,
+            center=center,
+            scale=scale,
+            activation_fn=act,
+            reuse=reuse,
+            variables_collections=variables_collections,
+            outputs_collections=outputs_collections,
+            trainable=trainable,
+            begin_norm_axis=begin_norm_axis,
+            begin_params_axis=begin_params_axis,
+            scope=name
+            )
+        self.all_layers = list(layer.all_layers)
+        self.all_params = list(layer.all_params)
+        self.all_drop = dict(layer.all_drop)
+        self.all_layers.extend( [self.outputs] )
+
 
 ## Pooling layer
 class PoolLayer(Layer):
@@ -3777,7 +3827,7 @@ class RNNLayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     --------------
     outputs : a tensor
         The output of this RNN.
@@ -4044,7 +4094,7 @@ class BiRNNLayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     --------------
     outputs : a tensor
         The output of this RNN.
@@ -4634,7 +4684,7 @@ class BiDynamicRNNLayer(Layer):
         The number of hidden units in the layer.
     initializer : initializer
         The initializer for initializing the parameters.
-    sequence_length : a tensor, array or None
+    sequence_length : a tensor, array or None.
         The sequence length of each row of input data, see ``Advanced Ops for Dynamic RNN``.
             - If None, it uses ``retrieve_seq_length_op`` to compute the sequence_length, i.e. when the features of padding (on right hand side) are all zeros.
             - If using word embedding, you may need to compute the sequence_length from the ID array (the integer features before word embedding) by using ``retrieve_seq_length_op2`` or ``retrieve_seq_length_op``.
@@ -4659,7 +4709,7 @@ class BiDynamicRNNLayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     -----------------------
     outputs : a tensor
         The output of this RNN.
@@ -4865,7 +4915,7 @@ class BiDynamicRNNLayer(Layer):
 class Seq2Seq(Layer):
     """
     The :class:`Seq2Seq` class is a Simple :class:`DynamicRNNLayer` based Seq2seq layer without using `tl.contrib.seq2seq <https://www.tensorflow.org/api_guides/python/contrib.seq2seq>`_.
-    See `Model <https://camo.githubusercontent.com/242210d7d0151cae91107ee63bff364a860db5dd/687474703a2f2f6936342e74696e797069632e636f6d2f333031333674652e706e67>`_
+    See `Model <https://camo.githubusercontent.com/9e88497fcdec5a9c716e0de5bc4b6d1793c6e23f/687474703a2f2f73757269796164656570616e2e6769746875622e696f2f696d672f736571327365712f73657132736571322e706e67>`_
     and `Sequence to Sequence Learning with Neural Networks <https://arxiv.org/abs/1409.3215>`_.
 
     - Please check the example `Chatbot in 200 lines of code <https://github.com/zsdonghao/seq2seq-chatbot>`_.
@@ -4902,7 +4952,7 @@ class Seq2Seq(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
-    Variables
+    Attributes
     ------------
     outputs : a tensor
         The output of RNN decoder.
@@ -5973,9 +6023,9 @@ class EmbeddingAttentionSeq2seqWrapper(Layer):
         cell = cell_creator()
         if num_layers > 1:
           try: # TF1.0
-            cell = tf.contrib.rnn.MultiRNNCell([single_cell] * num_layers)
+            cell = tf.contrib.rnn.MultiRNNCell([cell] * num_layers)
           except:
-            cell = tf.nn.rnn_cell.MultiRNNCell([single_cell] * num_layers)
+            cell = tf.nn.rnn_cell.MultiRNNCell([cell] * num_layers)
 
         # ============== Seq Decode Layer ============
         # The seq2seq function: we use embedding for the input and attention.

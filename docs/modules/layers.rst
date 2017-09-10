@@ -279,6 +279,7 @@ API - 神经网络层
    BatchNormLayer
    LocalResponseNormLayer
    InstanceNormLayer
+   LayerNormLayer
 
    ROIPoolingLayer
 
@@ -565,6 +566,9 @@ Instance Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InstanceNormLayer
 
+Instance Normalization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: LayerNormLayer
 
 物体检测
 -------------------
