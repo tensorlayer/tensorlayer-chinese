@@ -1,4 +1,4 @@
-API - 数据与模型的可视化
+API - 可视化
 ============================
 
 TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <https://www.tensorflow.org/get_started/summaries_and_tensorboard>`_。
