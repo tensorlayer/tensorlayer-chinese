@@ -1,15 +1,15 @@
 #! /usr/bin/python
 # -*- coding: utf8 -*-
 
-
+# import matplotlib
+# matplotlib.use('GTK')
 import tensorflow as tf
 import tensorlayer as tl
 from tensorlayer.layers import set_keep
 import numpy as np
-import time
 from PIL import Image
-import os
-import io
+import os, io, time
+
 
 """
 You will learn:
@@ -45,7 +45,7 @@ for index, img in enumerate(X_train):
     ## Visualize a image
     # tl.visualize.frame(np.asarray(img, dtype=np.uint8), second=1, saveable=False, name='frame', fig_idx=1236)
     label = int(y_train[index])
-    print(label)
+    # print(label)
     ## Convert the bytes back to image as follow:
         # image = Image.frombytes('RGB', (32, 32), img_raw)
     # image = np.fromstring(img_raw, np.float32)
@@ -89,9 +89,10 @@ img_batch, label_batch = tf.train.shuffle_batch([img, label],
 
 print("img_batch   : %s" % img_batch._shape)
 print("label_batch : %s" % label_batch._shape)
-init = tf.initialize_all_variables()
+# init = tf.initialize_all_variables()
 with tf.Session() as sess:
-    sess.run(init)
+    # sess.run(init)
+    tl.layers.initialize_global_variables(sess)
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
@@ -101,6 +102,7 @@ with tf.Session() as sess:
         # exit()
         print(val.shape, l)
         tl.visualize.images2d(val, second=1, saveable=False, name='batch'+str(i), dtype=np.uint8, fig_idx=2020121)
+        tl.vis.save_images(val, [2, 2], '_batch_%d.png' % i)
 
     coord.request_stop()
     coord.join(threads)

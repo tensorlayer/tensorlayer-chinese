@@ -1,4 +1,4 @@
-# Copyright 2016 TensorLayer. All Rights Reserved.
+ # Copyright 2016 TensorLayer. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 """
 Vector Representations of Words
 ---------------------------------
-This is the minimalistic implementation in
-tensorflow/examples/tutorials/word2vec/word2vec_basic.py   (reimplementation)
+This is the minimalistic reimplementation of
+tensorflow/examples/tutorials/word2vec/word2vec_basic.py
 This basic example contains the code needed to download some data,
 train on it a bit and visualize the result by using t-SNE.
 
@@ -39,76 +39,86 @@ https://www.tensorflow.org/versions/r0.9/tutorials/word2vec/index.html#vector-re
 
 """
 
-# from __future__ import absolute_import
-# from __future__ import division
-# from __future__ import print_function
 
 import collections
 import math
 import os
 import random
-# import zipfile
-
 import numpy as np
-# from six.moves import urllib
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 import tensorlayer as tl
 import time
 
+flags = tf.flags
+flags.DEFINE_string("model", "one", "A type of model.")
+FLAGS = flags.FLAGS
 
 
 def main_word2vec_basic():
 
     """ Step 1: Download the data, read the context into a list of strings.
+    Set hyperparameters.
     """
+
     words = tl.files.load_matt_mahoney_text8_dataset()
     data_size = len(words)
     print('Data size', data_size) # print(words)    # b'their', b'families', b'who', b'were', b'expelled', b'from', b'jerusalem',
 
+    resume = False  # load existing model, data and dictionaries
+    _UNK = "_UNK"
 
-    # vanilla setting (tensorflow/examples/tutorials/word2vec/word2vec_basic.py)
-    # vocabulary_size = 50000 # maximum number of word in vocabulary
-    # batch_size = 128
-    # embedding_size = 128  # Dimension of the embedding vector (hidden layer).
-    # skip_window = 1       # How many words to consider left and right.
-    # num_skips = 2         # How many times to reuse an input to generate a label.
-    #                       #     (should be double of 'skip_window' so as to
-    #                       #     use both left and right words)
-    # num_sampled = 64      # Number of negative examples to sample.
-    #                       #     more negative samples, higher loss
-    # learning_rate = 1.0
-    # n_epoch = 1
-
-    # optimized setting 1:
-    # vocabulary_size = 80000
-    # batch_size = 120
-    # embedding_size = 200
-    # skip_window = 2
-    # num_skips = 4
-    # num_sampled = 64
-    # learning_rate = 1.0
-    # n_epoch = 1
-
-    # optimized setting 2 (tensorflow/models/embedding/word2vec.py)
-    # vocabulary_size = 80000
-    # batch_size = 20     # Note: small batch_size need more steps for a Epoch
-    # embedding_size = 200
-    # skip_window = 5
-    # num_skips = 10
-    # num_sampled = 100
-    # learning_rate = 0.2
-    # n_epoch = 15
-
-    # optimized setting 3 (tensorflow/models/embedding/word2vec_optimized.py)
-    vocabulary_size = 80000
-    batch_size = 500
-    embedding_size = 200
-    skip_window = 5
-    num_skips = 10
-    num_sampled = 25
-    learning_rate = 0.025
-    n_epoch = 15
+    if FLAGS.model == "one":
+        # toy setting (tensorflow/examples/tutorials/word2vec/word2vec_basic.py)
+        vocabulary_size = 50000 # maximum number of word in vocabulary
+        batch_size = 128
+        embedding_size = 128  # Dimension of the embedding vector (hidden layer).
+        skip_window = 1       # How many words to consider left and right.
+        num_skips = 2         # How many times to reuse an input to generate a label.
+                              #     (should be double of 'skip_window' so as to
+                              #     use both left and right words)
+        num_sampled = 64      # Number of negative examples to sample.
+                              #     more negative samples, higher loss
+        learning_rate = 1.0
+        n_epoch = 20
+        model_file_name = "model_word2vec_50k_128"
+        # Eval 2084/15851 accuracy = 15.7%
+    if FLAGS.model == "two":
+        # (tensorflow/models/embedding/word2vec.py)
+        vocabulary_size = 80000
+        batch_size = 20     # Note: small batch_size need more steps for a Epoch
+        embedding_size = 200
+        skip_window = 5
+        num_skips = 10
+        num_sampled = 100
+        learning_rate = 0.2
+        n_epoch = 15
+        model_file_name = "model_word2vec_80k_200"
+        # 7.9%
+    if FLAGS.model == "three":
+        # (tensorflow/models/embedding/word2vec_optimized.py)
+        vocabulary_size = 80000
+        batch_size = 500
+        embedding_size = 200
+        skip_window = 5
+        num_skips = 10
+        num_sampled = 25
+        learning_rate = 0.025
+        n_epoch = 20
+        model_file_name = "model_word2vec_80k_200_opt"
+        # bad 0%
+    if FLAGS.model == "four":
+        # see: Learning word embeddings efficiently with noise-contrastive estimation
+        vocabulary_size = 80000
+        batch_size = 100
+        embedding_size = 600
+        skip_window = 5
+        num_skips = 10
+        num_sampled = 25
+        learning_rate = 0.03
+        n_epoch = 200 * 10
+        model_file_name = "model_word2vec_80k_600"
+        # bad
 
     num_steps = int((data_size/batch_size) * n_epoch)   # total number of iteration
 
@@ -116,29 +126,28 @@ def main_word2vec_basic():
     print('   learning_rate: %f' % learning_rate)
     print('   batch_size: %d' % batch_size)
 
-    model_file_name = "model_word2vec"
-    resume = True  # load existing .ckpt
+
     """ Step 2: Build the dictionary and replace rare words with 'UNK' token.
     """
+    print()
     if resume:
         print("Load existing data and dictionaries" + "!"*10)
         all_var = tl.files.load_npy_to_any(name=model_file_name+'.npy')
-        data = all_var['data']
-        count = all_var['count']
+        data = all_var['data']; count = all_var['count']
         dictionary = all_var['dictionary']
         reverse_dictionary = all_var['reverse_dictionary']
     else:
         data, count, dictionary, reverse_dictionary = \
-                        tl.files.build_words_dataset(words, vocabulary_size, True)
+                tl.nlp.build_words_dataset(words, vocabulary_size, True, _UNK)
 
     print('Most 5 common words (+UNK)', count[:5]) # [['UNK', 418391], (b'the', 1061396), (b'of', 593677), (b'and', 416629), (b'one', 411764)]
     print('Sample data', data[:10], [reverse_dictionary[i] for i in data[:10]]) # [5243, 3081, 12, 6, 195, 2, 3135, 46, 59, 156] [b'anarchism', b'originated', b'as', b'a', b'term', b'of', b'abuse', b'first', b'used', b'against']
-
 
     del words  # Hint to reduce memory.
 
     """ Step 3: Function to generate a training batch for the Skip-Gram model.
     """
+    print()
     data_index = 0
     batch, labels, data_index = tl.nlp.generate_skip_gram_batch(data=data,
                         batch_size=20, num_skips=4, skip_window=2, data_index=0)
@@ -147,8 +156,9 @@ def main_word2vec_basic():
             '->', labels[i, 0], reverse_dictionary[labels[i, 0]])
 
 
-    """ Step 4: Build and train a Skip-Gram model.
+    """ Step 4: Build a Skip-Gram model.
     """
+    print()
     # We pick a random validation set to sample nearest neighbors. Here we limit the
     # validation samples to the words that have a low numeric ID, which by
     # construction are also the most frequent.
@@ -168,45 +178,31 @@ def main_word2vec_basic():
     valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
 
     # Look up embeddings for inputs.
-    # Note: a row of 'embeddings' is the vector representation of a word.
-    # for the sake of speed, it is better to slice the embedding matrix
-    # instead of transfering a word id to one-hot-format vector and then
-    # multiply by the embedding matrix.
-    # embed is the outputs of the hidden layer (embedding layer), it is a
-    # row vector with 'embedding_size' values.
-    embeddings = tf.Variable(
-        tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0))
-    embed = tf.nn.embedding_lookup(embeddings, train_inputs)
-
-    # Construct the variables for the NCE loss (i.e. negative sampling)
-    nce_weights = tf.Variable(
-        tf.truncated_normal([vocabulary_size, embedding_size],
-                            stddev=1.0 / math.sqrt(embedding_size)))
-    nce_biases = tf.Variable(tf.zeros([vocabulary_size]))
-
-    # Compute the average NCE loss for the batch.
-    # tf.nce_loss automatically draws a new sample of the negative labels
-    # each time we evaluate the loss.
-    cost = tf.reduce_mean(
-        tf.nn.nce_loss(weights=nce_weights, biases=nce_biases,
-                       inputs=embed, labels=train_labels,
-                       num_sampled=num_sampled, num_classes=vocabulary_size,
-                       num_true=1))
-    # num_sampled: An int. The number of classes to randomly sample per batch
-    #              Number of negative examples to sample.
-    # num_classes: An int. The number of possible classes.
-    # num_true = 1: An int. The number of target classes per training example.
-    #            DH: if 1, predict one word given one word, like bigram model?  Check!
-
+    emb_net = tl.layers.Word2vecEmbeddingInputlayer(
+            inputs = train_inputs,
+            train_labels = train_labels,
+            vocabulary_size = vocabulary_size,
+            embedding_size = embedding_size,
+            num_sampled = num_sampled,
+            nce_loss_args = {},
+            E_init = tf.random_uniform_initializer(minval=-1.0, maxval=1.0),
+            E_init_args = {},
+            nce_W_init = tf.truncated_normal_initializer(stddev=float(1.0/np.sqrt(embedding_size))),
+            nce_W_init_args = {},
+            nce_b_init = tf.constant_initializer(value=0.0),
+            nce_b_init_args = {},
+            name ='word2vec_layer',
+        )
     # Construct the optimizer. Note: AdamOptimizer is very slow in this case
-    train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
+    cost = emb_net.nce_cost
+    train_params = emb_net.all_params
+    # train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost, var_list=train_params)
+    train_op = tf.train.AdagradOptimizer(learning_rate, initial_accumulator_value=0.1,
+        use_locking=False).minimize(cost, var_list=train_params)
 
     # Compute the cosine similarity between minibatch examples and all embeddings.
     # For simple visualization of validation set.
-    norm = tf.sqrt(tf.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
-        # print(norm) # shape=(50000, 1)
-    normalized_embeddings = embeddings / norm
-    # Equal To: normalized_embeddings = tf.nn.l2_normalize(embeddings, 1)
+    normalized_embeddings = emb_net.normalized_embeddings
     valid_embed = tf.nn.embedding_lookup(
                                 normalized_embeddings, valid_dataset)
     similarity = tf.matmul(
@@ -216,14 +212,22 @@ def main_word2vec_basic():
 
     """ Step 5: Begin training.
     """
-    sess.run(tf.initialize_all_variables())
+    print()
+    # sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
     if resume:
         print("Load existing model" + "!"*10)
+        # Load from ckpt or npz file
         saver = tf.train.Saver()
         saver.restore(sess, model_file_name+'.ckpt')
+        # load_params = tl.files.load_npz(name=model_file_name+'.npz')
+        # tl.files.assign_params(sess, load_params, emb_net)
+
+    emb_net.print_params()
+    emb_net.print_layers()
 
     # save vocabulary to txt
-    tl.files.save_vocab(count, name='vocab_text8.txt')
+    tl.nlp.save_vocab(count, name='vocab_text8.txt')
 
     average_loss = 0
 
@@ -260,10 +264,12 @@ def main_word2vec_basic():
                     log_str = "%s %s," % (log_str, close_word)
                 print(log_str)
 
-        if step % (print_freq * 10) == 0:
+        if (step % (print_freq * 20) == 0) and (step != 0):
             print("Save model, data and dictionaries" + "!"*10);
+            # Save to ckpt or npz file
             saver = tf.train.Saver()
             save_path = saver.save(sess, model_file_name+'.ckpt')
+            # tl.files.save_npz(emb_net.all_params, name=model_file_name+'.npz')
             tl.files.save_any_to_npy(save_dict={'data': data, 'count': count,
                 'dictionary': dictionary, 'reverse_dictionary':
                 reverse_dictionary}, name=model_file_name+'.npy')
@@ -276,25 +282,21 @@ def main_word2vec_basic():
                 train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
         step += 1
 
-    final_embeddings = normalized_embeddings.eval()
 
-    """ Step 6: Visualize the embeddings by t-SNE.
+    """ Step 6: Visualize the normalized embedding matrix by t-SNE.
     """
+    print()
+    final_embeddings = normalized_embeddings.eval()
     tl.visualize.tsne_embedding(final_embeddings, reverse_dictionary,
-                plot_only=500, second=5, saveable=True, name='word2vec_basic')
-
+                plot_only=500, second=5, saveable=False, name='word2vec_basic')
 
     """ Step 7: Evaluate by analogy questions.
         see tensorflow/models/embedding/word2vec_optimized.py
     """
+    print()
     #   from tensorflow/models/embedding/word2vec.py
-    analogy_questions = tl.files.read_analogies_file( \
+    analogy_questions = tl.nlp.read_analogies_file( \
                 eval_file='questions-words.txt', word2id=dictionary)
-    # print(analogy_questions)
-    # print(analogy_questions[0][0])
-    # print(reverse_dictionary[analogy_questions[0][0]])
-    # print(dictionary[b'athens'])
-    # exit()
     # The eval feeds three vectors of word ids for a, b, c, each of
     # which is of size N, where N is the number of analogies we want to
     # evaluate in one batch.
@@ -315,8 +317,9 @@ def main_word2vec_basic():
     # Compute cosine distance between each pair of target and vocab.
     # dist has shape [N, vocab_size].
     dist = tf.matmul(target, normalized_embeddings, transpose_b=True)
-    # For each question (row in dist), find the top 4 words.
-    _, pred_idx = tf.nn.top_k(dist, 4)
+    # For each question (row in dist), find the top 'n_answer' words.
+    n_answer = 4
+    _, pred_idx = tf.nn.top_k(dist, n_answer)
     def predict(analogy):
         """Predict the top 4 answers for analogy questions."""
         idx, = sess.run([pred_idx], {
@@ -335,16 +338,16 @@ def main_word2vec_basic():
         limit = start + 2500
         sub = analogy_questions[start:limit, :] # question
         idx = predict(sub)      # 4 answers for each question
-        # print('question:', tl.files.word_ids_to_words(sub[0], reverse_dictionary))
-        # print('answers:', tl.files.word_ids_to_words(idx[0], reverse_dictionary))
+        # print('question:', tl.nlp.word_ids_to_words(sub[0], reverse_dictionary))
+        # print('answers:', tl.nlp.word_ids_to_words(idx[0], reverse_dictionary))
         start = limit
         for question in xrange(sub.shape[0]):
-            for j in xrange(4):
+            for j in xrange(n_answer):
                 # if one of the top 4 answers in correct, win !
                 if idx[question, j] == sub[question, 3]:
                     # Bingo! We predicted correctly. E.g., [italy, rome, france, paris].
-                    print(tl.files.word_ids_to_words(idx[question, j], reverse_dictionary) \
-                        , ':', tl.files.word_ids_to_words(sub[question, :], reverse_dictionary))
+                    print(j+1, tl.nlp.word_ids_to_words([idx[question, j]], reverse_dictionary) \
+                        , ':', tl.nlp.word_ids_to_words(sub[question, :], reverse_dictionary))
                     correct += 1
                     break
                 elif idx[question, j] in sub[question, :3]:
@@ -353,7 +356,6 @@ def main_word2vec_basic():
                 else:
                     # The correct label is not the precision@1
                     break
-    print()
     print("Eval %4d/%d accuracy = %4.1f%%" % (correct, total,
                                              correct * 100.0 / total))
 

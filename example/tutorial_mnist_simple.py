@@ -16,24 +16,21 @@ x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
 y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 
 # define the network
-network = tl.layers.InputLayer(x, name='input_layer')
+network = tl.layers.InputLayer(x, name='input')
 network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
-network = tl.layers.DenseLayer(network, n_units=800,
-                                act = tf.nn.relu, name='relu1')
+network = tl.layers.DenseLayer(network, 800, tf.nn.relu, name='relu1')
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
-network = tl.layers.DenseLayer(network, n_units=800,
-                                act = tf.nn.relu, name='relu2')
+network = tl.layers.DenseLayer(network, 800, tf.nn.relu, name='relu2')
 network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
-# the softmax is implemented internally in tl.cost.cross_entropy(y, y_, name = 'cost') to
+# the softmax is implemented internally in tl.cost.cross_entropy(y, y_) to
 # speed up computation, so we use identity here.
 # see tf.nn.sparse_softmax_cross_entropy_with_logits()
 network = tl.layers.DenseLayer(network, n_units=10,
-                                act = tf.identity,
-                                name='output_layer')
+                                act=tf.identity, name='output')
 
 # define cost function and metric.
 y = network.outputs
-cost = tl.cost.cross_entropy(y, y_,name = 'cost')
+cost = tl.cost.cross_entropy(y, y_, name='cost')
 correct_prediction = tf.equal(tf.argmax(y, 1), y_)
 acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 y_op = tf.argmax(tf.nn.softmax(y), 1)
@@ -43,8 +40,8 @@ train_params = network.all_params
 train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
                             epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-# initialize all variables
-sess.run(tf.initialize_all_variables())
+# initialize all variables in the session
+tl.layers.initialize_global_variables(sess)
 
 # print network information
 network.print_params()

@@ -52,13 +52,13 @@ def main_test_layers(model='relu'):
 
     # placeholder
     x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
-    y_ = tf.placeholder(tf.int32, shape=[None, ], name='y_')
+    y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 
-    # Note: the softmax is implemented internally in tl.cost.cross_entropy(y, y_, name = 'cost' )
+    # Note: the softmax is implemented internally in tl.cost.cross_entropy(y, y_)
     # to speed up computation, so we use identity in the last layer.
     # see tf.nn.sparse_softmax_cross_entropy_with_logits()
     if model == 'relu':
-        network = tl.layers.InputLayer(x, name='input_layer')
+        network = tl.layers.InputLayer(x, name='input')
         network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
         network = tl.layers.DenseLayer(network, n_units=800,
                                         act = tf.nn.relu, name='relu1')
@@ -68,9 +68,9 @@ def main_test_layers(model='relu'):
         network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
         network = tl.layers.DenseLayer(network, n_units=10,
                                         act = tf.identity,
-                                        name='output_layer')
+                                        name='output')
     elif model == 'dropconnect':
-        network = tl.layers.InputLayer(x, name='input_layer')
+        network = tl.layers.InputLayer(x, name='input')
         network = tl.layers.DropconnectDenseLayer(network, keep = 0.8,
                                                 n_units=800, act = tf.nn.relu,
                                                 name='dropconnect_relu1')
@@ -80,21 +80,18 @@ def main_test_layers(model='relu'):
         network = tl.layers.DropconnectDenseLayer(network, keep = 0.5,
                                                 n_units=10,
                                                 act = tf.identity,
-                                                name='output_layer')
+                                                name='output')
 
     # To print all attributes of a Layer.
     # attrs = vars(network)
     # print(', '.join("%s: %s\n" % item for item in attrs.items()))
-    #
     # print(network.all_drop)     # {'drop1': 0.8, 'drop2': 0.5, 'drop3': 0.5}
-    # print(drop1, drop2, drop3)  # Tensor("Placeholder_2:0", dtype=float32) Tensor("Placeholder_3:0", dtype=float32) Tensor("Placeholder_4:0", dtype=float32)
-    # exit()
 
     y = network.outputs
+    cost = tl.cost.cross_entropy(y, y_, name='xentropy')
+    correct_prediction = tf.equal(tf.argmax(y, 1), y_)
+    acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     y_op = tf.argmax(tf.nn.softmax(y), 1)
-    cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
-    # Alternatively, you can use TensorLayer's function to compute cost:
-    # cost = tl.cost.cross_entropy(y, y_,name = 'cost')
 
     # You can add more penalty to the cost function as follow.
     # cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) + tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
@@ -103,14 +100,14 @@ def main_test_layers(model='relu'):
 
     params = network.all_params
     # train
-    n_epoch = 1
+    n_epoch = 100
     batch_size = 128
     learning_rate = 0.0001
-    print_freq = 10
+    print_freq = 5
     train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
                                 epsilon=1e-08, use_locking=False).minimize(cost)
 
-    sess.run(tf.initialize_all_variables()) # initialize all variables
+    tl.layers.initialize_global_variables(sess)
 
     network.print_params()
     network.print_layers()
@@ -132,16 +129,26 @@ def main_test_layers(model='relu'):
 
         if epoch + 1 == 1 or (epoch + 1) % print_freq == 0:
             print("Epoch %d of %d took %fs" % (epoch + 1, n_epoch, time.time() - start_time))
-            dp_dict = tl.utils.dict_to_one( network.all_drop ) # disable all dropout/dropconnect/denoising layers
-            feed_dict = {x: X_train, y_: y_train}
-            feed_dict.update(dp_dict)
-            print("   train loss: %f" % sess.run(cost, feed_dict=feed_dict))
-            dp_dict = tl.utils.dict_to_one( network.all_drop )
-            feed_dict = {x: X_val, y_: y_val}
-            feed_dict.update(dp_dict)
-            print("   val loss: %f" % sess.run(cost, feed_dict=feed_dict))
-            print("   val acc: %f" % np.mean(y_val ==
-                                    sess.run(y_op, feed_dict=feed_dict)))
+            train_loss, train_acc, n_batch = 0, 0, 0
+            for X_train_a, y_train_a in tl.iterate.minibatches(
+                                    X_train, y_train, batch_size, shuffle=True):
+                dp_dict = tl.utils.dict_to_one( network.all_drop )    # disable noise layers
+                feed_dict = {x: X_train_a, y_: y_train_a}
+                feed_dict.update(dp_dict)
+                err, ac = sess.run([cost, acc], feed_dict=feed_dict)
+                train_loss += err; train_acc += ac; n_batch += 1
+            print("   train loss: %f" % (train_loss/ n_batch))
+            # print("   train acc: %f" % (train_acc/ n_batch))
+            val_loss, val_acc, n_batch = 0, 0, 0
+            for X_val_a, y_val_a in tl.iterate.minibatches(
+                                        X_val, y_val, batch_size, shuffle=True):
+                dp_dict = tl.utils.dict_to_one( network.all_drop )    # disable noise layers
+                feed_dict = {x: X_val_a, y_: y_val_a}
+                feed_dict.update(dp_dict)
+                err, ac = sess.run([cost, acc], feed_dict=feed_dict)
+                val_loss += err; val_acc += ac; n_batch += 1
+            print("   val loss: %f" % (val_loss/ n_batch))
+            print("   val acc: %f" % (val_acc/ n_batch))
             try:
                 # You can visualize the weight of 1st hidden layer as follow.
                 tl.visualize.W(network.all_params[0].eval(), second=10,
@@ -154,17 +161,21 @@ def main_test_layers(model='relu'):
                             to save the feature images for different dataset")
 
     print('Evaluation')
-    dp_dict = tl.utils.dict_to_one( network.all_drop )
-    feed_dict = {x: X_test, y_: y_test}
-    feed_dict.update(dp_dict)
-    print("   test loss: %f" % sess.run(cost, feed_dict=feed_dict))
-    print("   test acc: %f" % np.mean(y_test == sess.run(y_op,
-                                                        feed_dict=feed_dict)))
+    test_loss, test_acc, n_batch = 0, 0, 0
+    for X_test_a, y_test_a in tl.iterate.minibatches(
+                                X_test, y_test, batch_size, shuffle=True):
+        dp_dict = tl.utils.dict_to_one( network.all_drop )    # disable noise layers
+        feed_dict = {x: X_test_a, y_: y_test_a}
+        feed_dict.update(dp_dict)
+        err, ac = sess.run([cost, acc], feed_dict=feed_dict)
+        test_loss += err; test_acc += ac; n_batch += 1
+    print("   test loss: %f" % (test_loss/n_batch))
+    print("   test acc: %f" % (test_acc/n_batch))
 
     # Add ops to save and restore all the variables, including variables for training.
     # ref: https://www.tensorflow.org/versions/r0.8/how_tos/variables/index.html
     saver = tf.train.Saver()
-    save_path = saver.save(sess, "model.ckpt")
+    save_path = saver.save(sess, "./model.ckpt")
     print("Model saved in file: %s" % save_path)
 
 
@@ -206,7 +217,7 @@ def main_test_denoise_AE(model='relu'):
 
     print("Build Network")
     if model == 'relu':
-        network = tl.layers.InputLayer(x, name='input_layer')
+        network = tl.layers.InputLayer(x, name='input')
         network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')    # if drop some inputs, it is denoise AE
         network = tl.layers.DenseLayer(network, n_units=196,
                                     act = tf.nn.relu, name='relu1')
@@ -214,7 +225,7 @@ def main_test_denoise_AE(model='relu'):
                                     act = tf.nn.softplus, name='recon_layer1')
     elif model == 'sigmoid':
         # sigmoid - set keep to 1.0, if you want a vanilla Autoencoder
-        network = tl.layers.InputLayer(x, name='input_layer')
+        network = tl.layers.InputLayer(x, name='input')
         network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')
         network = tl.layers.DenseLayer(network, n_units=196,
                                     act=tf.nn.sigmoid, name='sigmoid1')
@@ -222,7 +233,7 @@ def main_test_denoise_AE(model='relu'):
                                     act=tf.nn.sigmoid, name='recon_layer1')
 
     ## ready to train
-    sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
 
     ## print all params
     print("All Network Params")
@@ -243,7 +254,7 @@ def main_test_denoise_AE(model='relu'):
     # ref: https://www.tensorflow.org/versions/r0.8/how_tos/variables/index.html
     saver = tf.train.Saver()
     # you may want to save the model
-    save_path = saver.save(sess, "model.ckpt")
+    save_path = saver.save(sess, "./model.ckpt")
     print("Model saved in file: %s" % save_path)
     sess.close()
 
@@ -280,7 +291,7 @@ def main_test_stacked_denoise_AE(model='relu'):
 
     # Define network
     print("\nBuild Network")
-    network = tl.layers.InputLayer(x, name='input_layer')
+    network = tl.layers.InputLayer(x, name='input')
     # denoise layer for AE
     network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')
     # 1st layer
@@ -298,13 +309,12 @@ def main_test_stacked_denoise_AE(model='relu'):
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
     network = tl.layers.DenseLayer(network, n_units=10,
                                             act = tf.identity,
-                                            name='output_layer')
+                                            name='output')
 
     # Define fine-tune process
     y = network.outputs
     y_op = tf.argmax(tf.nn.softmax(y), 1)
-    ce = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
-    cost = ce
+    cost = tl.cost.cross_entropy(y, y_, name='cost')
 
     n_epoch = 200
     batch_size = 128
@@ -318,19 +328,19 @@ def main_test_stacked_denoise_AE(model='relu'):
         epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
     # Initialize all variables including weights, biases and the variables in train_op
-    sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
 
     # Pre-train
     print("\nAll Network Params before pre-train")
     network.print_params()
     print("\nPre-train Layer 1")
     recon_layer1.pretrain(sess, x=x, X_train=X_train, X_val=X_val,
-                            denoise_name='denoising1', n_epoch=200,
+                            denoise_name='denoising1', n_epoch=100,
                             batch_size=128, print_freq=10, save=True,
                             save_name='w1pre_')
     print("\nPre-train Layer 2")
     recon_layer2.pretrain(sess, x=x, X_train=X_train, X_val=X_val,
-                            denoise_name='denoising1', n_epoch=200,
+                            denoise_name='denoising1', n_epoch=100,
                             batch_size=128, print_freq=10, save=False)
     print("\nAll Network Params after pre-train")
     network.print_params()
@@ -405,17 +415,21 @@ def main_test_stacked_denoise_AE(model='relu'):
     # ref: https://www.tensorflow.org/versions/r0.8/how_tos/variables/index.html
     saver = tf.train.Saver()
     # you may want to save the model
-    save_path = saver.save(sess, "model.ckpt")
+    save_path = saver.save(sess, "./model.ckpt")
     print("Model saved in file: %s" % save_path)
     sess.close()
 
 def main_test_cnn_layer():
     """Reimplementation of the TensorFlow official MNIST CNN tutorials:
-        # https://www.tensorflow.org/versions/r0.8/tutorials/mnist/pros/index.html
-        # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/models/image/mnist/convolutional.py
-        More TensorFlow official CNN tutorials can be found here:
-        # tutorial_cifar10.py
-        # https://www.tensorflow.org/versions/master/tutorials/deep_cnn/index.html
+    - https://www.tensorflow.org/versions/r0.8/tutorials/mnist/pros/index.html
+    - https://github.com/tensorflow/tensorflow/blob/master/tensorflow/models/image/mnist/convolutional.py
+
+    More TensorFlow official CNN tutorials can be found here:
+    - tutorial_cifar10.py
+    - https://www.tensorflow.org/versions/master/tutorials/deep_cnn/index.html
+
+    - For simplified CNN layer see "Convolutional layer (Simplified)"
+      in read the docs website.
     """
     X_train, y_train, X_val, y_val, X_test, y_test = \
                     tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
@@ -445,44 +459,54 @@ def main_test_cnn_layer():
     x = tf.placeholder(tf.float32, shape=[batch_size, 28, 28, 1])   # [batch_size, height, width, channels]
     y_ = tf.placeholder(tf.int64, shape=[batch_size,])
 
-    network = tl.layers.InputLayer(x, name='input_layer')
-    network = tl.layers.Conv2dLayer(network,
-                        act = tf.nn.relu,
-                        shape = [5, 5, 1, 32],  # 32 features for each 5x5 patch
-                        strides=[1, 1, 1, 1],
-                        padding='SAME',
-                        name ='cnn_layer1')     # output: (?, 28, 28, 32)
-    network = tl.layers.PoolLayer(network,
-                        ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1],
-                        padding='SAME',
-                        pool = tf.nn.max_pool,
-                        name ='pool_layer1',)   # output: (?, 14, 14, 32)
-    network = tl.layers.Conv2dLayer(network,
-                        act = tf.nn.relu,
-                        shape = [5, 5, 32, 64], # 64 features for each 5x5 patch
-                        strides=[1, 1, 1, 1],
-                        padding='SAME',
-                        name ='cnn_layer2')     # output: (?, 14, 14, 64)
-    network = tl.layers.PoolLayer(network,
-                        ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1],
-                        padding='SAME',
-                        pool = tf.nn.max_pool,
-                        name ='pool_layer2',)   # output: (?, 7, 7, 64)
-    network = tl.layers.FlattenLayer(network, name='flatten_layer')   # output: (?, 3136)
-    network = tl.layers.DropoutLayer(network, keep=0.5, name='drop1') # output: (?, 3136)
+    network = tl.layers.InputLayer(x, name='input')
+    ## Professional conv API for tensorflow user
+    # network = tl.layers.Conv2dLayer(network,
+    #                     act = tf.nn.relu,
+    #                     shape = [5, 5, 1, 32],  # 32 features for each 5x5 patch
+    #                     strides=[1, 1, 1, 1],
+    #                     padding='SAME',
+    #                     name ='cnn1')     # output: (?, 28, 28, 32)
+    # network = tl.layers.PoolLayer(network,
+    #                     ksize=[1, 2, 2, 1],
+    #                     strides=[1, 2, 2, 1],
+    #                     padding='SAME',
+    #                     pool = tf.nn.max_pool,
+    #                     name ='pool1',)   # output: (?, 14, 14, 32)
+    # network = tl.layers.Conv2dLayer(network,
+    #                     act = tf.nn.relu,
+    #                     shape = [5, 5, 32, 64], # 64 features for each 5x5 patch
+    #                     strides=[1, 1, 1, 1],
+    #                     padding='SAME',
+    #                     name ='cnn2')     # output: (?, 14, 14, 64)
+    # network = tl.layers.PoolLayer(network,
+    #                     ksize=[1, 2, 2, 1],
+    #                     strides=[1, 2, 2, 1],
+    #                     padding='SAME',
+    #                     pool = tf.nn.max_pool,
+    #                     name ='pool2',)   # output: (?, 7, 7, 64)
+    ## Simplified conv API for beginner (the same with the above layers)
+    network = tl.layers.Conv2d(network, n_filter=32, filter_size=(5, 5), strides=(1, 1),
+            act=tf.nn.relu, padding='SAME', name='cnn1')
+    network = tl.layers.MaxPool2d(network, filter_size=(2, 2), strides=(2, 2),
+            padding='SAME', name='pool1')
+    network = tl.layers.Conv2d(network, n_filter=64, filter_size=(5, 5), strides=(1, 1),
+            act=tf.nn.relu, padding='SAME', name='cnn2')
+    network = tl.layers.MaxPool2d(network, filter_size=(2, 2), strides=(2, 2),
+            padding='SAME', name='pool2')
+    ## end of conv
+    network = tl.layers.FlattenLayer(network, name='flatten')
+    network = tl.layers.DropoutLayer(network, keep=0.5, name='drop1')
     network = tl.layers.DenseLayer(network, n_units=256,
-                                    act = tf.nn.relu, name='relu1')   # output: (?, 256)
-    network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2') # output: (?, 256)
+                                    act = tf.nn.relu, name='relu1')
+    network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
     network = tl.layers.DenseLayer(network, n_units=10,
                                     act = tf.identity,
-                                    name='output_layer')    # output: (?, 10)
+                                    name='output')
 
     y = network.outputs
 
-    ce = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
-    cost = ce
+    cost = tl.cost.cross_entropy(y, y_, 'cost')
 
     correct_prediction = tf.equal(tf.argmax(y, 1), y_)
     acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -496,7 +520,7 @@ def main_test_cnn_layer():
     train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
         epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-    sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
     network.print_params()
     network.print_layers()
 
@@ -556,17 +580,11 @@ def main_test_cnn_layer():
 
 if __name__ == '__main__':
     sess = tf.InteractiveSession()
-    sess = tl.ops.set_gpu_fraction(sess, gpu_fraction = 0.3)
-    try:
-        """Dropout and Dropconnect"""
-        main_test_layers(model='relu')                # model = relu, dropconnect
-        """Single Denoising Autoencoder"""
-        # main_test_denoise_AE(model='sigmoid')       # model = relu, sigmoid
-        """Stacked Denoising Autoencoder"""
-        # main_test_stacked_denoise_AE(model='relu')  # model = relu, sigmoid
-        """CNN"""
-        # main_test_cnn_layer()
-        tl.ops.exit_tf(sess)      # close sess, tensorboard and nvidia-process
-    except KeyboardInterrupt:
-        print('\nKeyboardInterrupt')
-        tl.ops.exit_tf(sess)
+    """Dropout and Dropconnect"""
+    main_test_layers(model='relu')                # model = relu, dropconnect
+    """Single Denoising Autoencoder"""
+    # main_test_denoise_AE(model='sigmoid')       # model = relu, sigmoid
+    """Stacked Denoising Autoencoder"""
+    # main_test_stacked_denoise_AE(model='relu')  # model = relu, sigmoid
+    """CNN"""
+    # main_test_cnn_layer()

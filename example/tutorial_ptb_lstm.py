@@ -190,36 +190,39 @@ def main(_):
     def inference(x, is_training, num_steps, reuse=None):
         """If reuse is True, the inferences use the existing parameters,
         then different inferences share the same parameters.
+
+        Note :
+        - For DynamicRNNLayer, you can set dropout and the number of RNN layer internally.
         """
         print("\nnum_steps : %d, is_training : %s, reuse : %s" %
                                                 (num_steps, is_training, reuse))
-        initializer = tf.random_uniform_initializer(init_scale, init_scale)
+        initializer = tf.random_uniform_initializer(-init_scale, init_scale)
         with tf.variable_scope("model", reuse=reuse):
             tl.layers.set_name_reuse(reuse)
             network = tl.layers.EmbeddingInputlayer(
-                        inputs = x,
-                        vocabulary_size = vocab_size,
-                        embedding_size = hidden_size,
-                        E_init = tf.random_uniform_initializer(-init_scale, init_scale),
-                        name ='embedding_layer')
-            if is_training:
-                network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop1')
+                        inputs=x,
+                        vocabulary_size=vocab_size,
+                        embedding_size=hidden_size,
+                        E_init=initializer,
+                        name='embedding')
+            network = tl.layers.DropoutLayer(network, keep=keep_prob,
+                        is_fix=True, is_train=is_training, name='drop1')
             network = tl.layers.RNNLayer(network,
-                        cell_fn=tf.nn.rnn_cell.BasicLSTMCell,
+                        cell_fn=tf.contrib.rnn.BasicLSTMCell,#tf.nn.rnn_cell.BasicLSTMCell,
                         cell_init_args={'forget_bias': 0.0},# 'state_is_tuple': True},
                         n_hidden=hidden_size,
-                        initializer=tf.random_uniform_initializer(-init_scale, init_scale),
+                        initializer=initializer,
                         n_steps=num_steps,
                         return_last=False,
                         name='basic_lstm_layer1')
             lstm1 = network
-            if is_training:
-                network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop2')
+            network = tl.layers.DropoutLayer(network, keep=keep_prob,
+                        is_fix=True, is_train=is_training, name='drop2')
             network = tl.layers.RNNLayer(network,
-                        cell_fn=tf.nn.rnn_cell.BasicLSTMCell,
+                        cell_fn=tf.contrib.rnn.BasicLSTMCell,#tf.nn.rnn_cell.BasicLSTMCell,
                         cell_init_args={'forget_bias': 0.0}, # 'state_is_tuple': True},
                         n_hidden=hidden_size,
-                        initializer=tf.random_uniform_initializer(-init_scale, init_scale),
+                        initializer=initializer,
                         n_steps=num_steps,
                         return_last=False,
                         return_seq_2d=True,
@@ -229,13 +232,11 @@ def main(_):
             # you can reshape the outputs as follow:
             # network = tl.layers.ReshapeLayer(network,
             #       shape=[-1, int(network.outputs._shape[-1])], name='reshape')
-            if is_training:
-                network = tl.layers.DropoutLayer(network, keep=keep_prob, name='drop3')
-            network = tl.layers.DenseLayer(network,
-                        n_units=vocab_size,
-                        W_init=tf.random_uniform_initializer(-init_scale, init_scale),
-                        b_init=tf.random_uniform_initializer(-init_scale, init_scale),
-                        act = tf.identity, name='output_layer')
+            network = tl.layers.DropoutLayer(network, keep=keep_prob,
+                        is_fix=True, is_train=is_training, name='drop3')
+            network = tl.layers.DenseLayer(network, n_units=vocab_size,
+                        W_init=initializer, b_init=initializer,
+                        act=tf.identity, name='output')
         return network, lstm1, lstm2
 
     # Inference for Training
@@ -248,9 +249,11 @@ def main(_):
     network_test, lstm1_test, lstm2_test = inference(input_data_test,
                             is_training=False, num_steps=1, reuse=True)
 
-    sess.run(tf.initialize_all_variables())
+    # sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
 
-    def loss_fn(outputs, targets, batch_size, num_steps):
+    def loss_fn(outputs, targets):#, batch_size, num_steps):
+        # See tl.cost.cross_entropy_seq()
         # Returns the cost function of Cross-entropy of two sequences, implement
         # softmax internally.
         # outputs : 2D tensor [batch_size*num_steps, n_units of output layer]
@@ -259,19 +262,20 @@ def main(_):
         # n_examples = batch_size * num_steps
         # so
         # cost is the averaged cost of each mini-batch (concurrent process).
-        loss = tf.nn.seq2seq.sequence_loss_by_example(
+        loss = tf.contrib.legacy_seq2seq.sequence_loss_by_example(  # loss = tf.nn.seq2seq.sequence_loss_by_example( # TF0.12
             [outputs],
             [tf.reshape(targets, [-1])],
-            [tf.ones([batch_size * num_steps])])
+            [tf.ones_like(tf.reshape(targets, [-1]), dtype=tf.float32)])
+            # [tf.ones([batch_size * num_steps])])
         cost = tf.reduce_sum(loss) / batch_size
         return cost
 
     # Cost for Training
-    cost = loss_fn(network.outputs, targets, batch_size, num_steps)
+    cost = loss_fn(network.outputs, targets)#, batch_size, num_steps)
     # Cost for Validating
-    cost_val = loss_fn(network_val.outputs, targets, batch_size, num_steps)
+    cost_val = loss_fn(network_val.outputs, targets)#, batch_size, num_steps)
     # Cost for Testing (Evaluation)
-    cost_test = loss_fn(network_test.outputs, targets_test, 1, 1)
+    cost_test = loss_fn(network_test.outputs, targets_test)#, 1, 1)
 
     # Truncated Backpropagation for training
     with tf.variable_scope('learning_rate'):
@@ -282,7 +286,8 @@ def main(_):
     optimizer = tf.train.GradientDescentOptimizer(lr)
     train_op = optimizer.apply_gradients(zip(grads, tvars))
 
-    sess.run(tf.initialize_all_variables())
+    # sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
 
     network.print_params()
     network.print_layers()
@@ -374,6 +379,7 @@ def main(_):
     test_perplexity = np.exp(costs / iters)
     print("Test Perplexity: %.3f took %.2fs" % (test_perplexity, time.time() - start_time))
 
+    print("More example: Text generation using Trump's speech data: https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_generate_text.py -- def main_lstm_generate_text():")
 
 if __name__ == "__main__":
     tf.app.run()

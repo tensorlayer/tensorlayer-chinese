@@ -62,7 +62,7 @@ SEQ_FIR = cwd + '/data/cat_caption.json'
 VOC_FIR = cwd + '/vocab.txt'
 # read image captions from JSON
 with tf.gfile.FastGFile(SEQ_FIR, "r") as f:
-    caption_data = json.load(f)
+    caption_data = json.loads(str(f.read()))#, encoding = "utf-8"))
 
 processed_capts, img_capts = [], []
 for idx in range(len(caption_data['images'])):
@@ -117,7 +117,7 @@ features, sequence_features = tf.parse_single_sequence_example(serialized_exampl
 c = tf.contrib.learn.run_n(features, n=1, feed_dict=None)
 from PIL import Image
 im = Image.frombytes('RGB', (299, 299), c[0]['image/img_raw'])
-tl.visualize.frame(im, second=1, saveable=False, name='frame', fig_idx=1236)
+tl.visualize.frame(np.asarray(im), second=1, saveable=False, name='frame', fig_idx=1236)
 c = tf.contrib.learn.run_n(sequence_features, n=1, feed_dict=None)
 print(c[0])
 
@@ -227,8 +227,8 @@ def distort_image(image, thread_id):
 #   image_summary("final_image", image)
 #
 #   # Rescale to [-1,1] instead of [0, 1]
-#   image = tf.sub(image, 0.5)
-#   image = tf.mul(image, 2.0)
+#   image = tf.subtract(image, 0.5)
+#   image = tf.multiply(image, 2.0)
 #   return image
 
 def prefetch_input_data(reader,
@@ -298,7 +298,8 @@ def prefetch_input_data(reader,
     enqueue_ops.append(values_queue.enqueue([value]))
   tf.train.queue_runner.add_queue_runner(tf.train.queue_runner.QueueRunner(
       values_queue, enqueue_ops))
-  tf.scalar_summary(
+
+  tf.summary.scalar(
       "queue/%s/fraction_of_%d_full" % (values_queue.name, capacity),
       tf.cast(values_queue.size(), tf.float32) * (1. / capacity))
 
@@ -334,10 +335,18 @@ context, sequence = tf.parse_single_sequence_example(
 img = tf.decode_raw(context["image/img_raw"], tf.uint8)
 img = tf.reshape(img, [height, width, 3])
 img = tf.image.convert_image_dtype(img, dtype=tf.float32)
-img = tf.image.resize_images(img,
-                           new_height=resize_height,
-                           new_width=resize_width,
+
+try:
+    # for TensorFlow 0.11
+    img = tf.image.resize_images(img,
+                           size=(resize_height, resize_width),
                            method=tf.image.ResizeMethod.BILINEAR)
+except:
+    # for TensorFlow 0.10
+    img = tf.image.resize_images(img,
+                               new_height=resize_height,
+                               new_width=resize_width,
+                               method=tf.image.ResizeMethod.BILINEAR)
 # Crop to final dimensions.
 if is_training:
     img = tf.random_crop(img, [height, width, 3])
@@ -348,8 +357,8 @@ else:
 if is_training:
     img = distort_image(img, thread_id=0)
 # Rescale to [-1, 1] instead of [0, 1]
-img = tf.sub(img, 0.5)
-img = tf.mul(img, 2.0)
+img = tf.subtract(img, 0.5)
+img = tf.multiply(img, 2.0)
 img_cap = sequence["image/caption"]
 img_cap_ids = sequence["image/caption_ids"]
 img_batch, img_cap_batch, img_cap_ids_batch = tf.train.batch([img, img_cap, img_cap_ids],   # Note: shuffle_batch doesn't support dynamic_pad
@@ -358,7 +367,8 @@ img_batch, img_cap_batch, img_cap_ids_batch = tf.train.batch([img, img_cap, img_
                                                     dynamic_pad=True,   # string list pad with '', int list pad with 0
                                                     num_threads=4)
 sess = tf.Session()
-sess.run(tf.initialize_all_variables())
+# sess.run(tf.initialize_all_variables())
+tl.layers.initialize_global_variables(sess)
 coord = tf.train.Coordinator()
 threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 for _ in range(3):
@@ -434,7 +444,7 @@ def batch_with_dynamic_pad(images_and_captions,
   enqueue_list = []
   for image, caption in images_and_captions:
     caption_length = tf.shape(caption)[0]
-    input_length = tf.expand_dims(tf.sub(caption_length, 1), 0)
+    input_length = tf.expand_dims(tf.subtract(caption_length, 1), 0)
 
     input_seq = tf.slice(caption, [0], input_length)
     target_seq = tf.slice(caption, [1], input_length)
@@ -450,9 +460,9 @@ def batch_with_dynamic_pad(images_and_captions,
 
   if add_summaries:
     lengths = tf.add(tf.reduce_sum(mask, 1), 1)
-    tf.scalar_summary("caption_length/batch_min", tf.reduce_min(lengths))
-    tf.scalar_summary("caption_length/batch_max", tf.reduce_max(lengths))
-    tf.scalar_summary("caption_length/batch_mean", tf.reduce_mean(lengths))
+    tf.summary.scalar("caption_length/batch_min", tf.reduce_min(lengths))
+    tf.summary.scalar("caption_length/batch_max", tf.reduce_max(lengths))
+    tf.summary.scalar("caption_length/batch_mean", tf.reduce_mean(lengths))
 
   return images, input_seqs, target_seqs, mask
 

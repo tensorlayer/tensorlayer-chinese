@@ -12,8 +12,11 @@ from tensorflow.contrib.slim.python.slim.nets.inception_v3 import inception_v3_b
 import skimage
 import skimage.io
 import skimage.transform
-import time
-from data.imagenet_classes import *
+import time, os
+try:
+    from data.imagenet_classes import *
+except Exception as e:
+    raise Exception("{} / download the file from: https://github.com/zsdonghao/tensorlayer/tree/master/example/data".format(e))
 import numpy as np
 """
 You will learn:
@@ -21,7 +24,7 @@ You will learn:
 1. How to combine TensorLayer and TF-Slim ?
 
 Introduction of Slim    : https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim
-Slim Pre-trained Models : https://github.com/tensorflow/models/tree/master/slim
+Slim Pre-trained Models : https://github.com/tensorflow/models/tree/master/research/slim
 
 With the help of SlimNetsLayer, all Slim Model can be combined into TensorLayer.
 All models in the following link, end with `return net, end_points`` are available.
@@ -46,7 +49,7 @@ def load_image(path):
     yy = int((img.shape[0] - short_edge) / 2)
     xx = int((img.shape[1] - short_edge) / 2)
     crop_img = img[yy: yy + short_edge, xx: xx + short_edge]
-    # resize to 224, 224
+    # resize to 299, 299
     resized_img = skimage.transform.resize(crop_img, (299, 299))
     return resized_img
 
@@ -64,7 +67,7 @@ def print_prob(prob):
     return top1
 
 
-## Alexnet_v2 / All Slim nets can be merged into TensorLayer
+## Alexnet_v2 / All TF-Slim nets can be merged into TensorLayer
 # x = tf.placeholder(tf.float32, shape=[None, 299, 299, 3])
 # net_in = tl.layers.InputLayer(x, name='input_layer')
 # network = tl.layers.SlimNetsLayer(layer=net_in, slim_layer=alexnet_v2,
@@ -74,14 +77,16 @@ def print_prob(prob):
 #                                        'dropout_keep_prob' : 0.5,
 #                                        'spatial_squeeze' : True,
 #                                        'scope' : 'alexnet_v2'
-#                                         }
+#                                         },
+#                                     name='alexnet_v2'  # <-- the name should be the same with the ckpt model
 #                                     )
 # sess = tf.InteractiveSession()
-# sess.run(tf.initialize_all_variables())
+# # sess.run(tf.initialize_all_variables())
+# tl.layers.initialize_global_variables(sess)
 # network.print_params()
-# exit()
 
-# InceptionV3
+
+## InceptionV3 / All TF-Slim nets can be merged into TensorLayer
 x = tf.placeholder(tf.float32, shape=[None, 299, 299, 3])
 net_in = tl.layers.InputLayer(x, name='input_layer')
 with slim.arg_scope(inception_v3_arg_scope()):
@@ -92,7 +97,7 @@ with slim.arg_scope(inception_v3_arg_scope()):
                                     slim_args= {
                                              'num_classes' : 1001,
                                              'is_training' : False,
-                                            #  'dropout_keep_prob' : 0.8,   # for training
+                                            #  'dropout_keep_prob' : 0.8,       # for training
                                             #  'min_depth' : 16,
                                             #  'depth_multiplier' : 1.0,
                                             #  'prediction_fn' : slim.softmax,
@@ -100,23 +105,27 @@ with slim.arg_scope(inception_v3_arg_scope()):
                                             #  'reuse' : None,
                                             #  'scope' : 'InceptionV3'
                                             },
-                                        name=''
+                                        name='InceptionV3'  # <-- the name should be the same with the ckpt model
                                         )
-saver = tf.train.Saver()
 
 sess = tf.InteractiveSession()
-sess.run(tf.initialize_all_variables())
 
-# with tf.Session() as sess:
-saver.restore(sess, "inception_v3.ckpt")    # download from https://github.com/tensorflow/models/tree/master/slim#Install
-print("Model Restored")
 network.print_params(False)
 
+saver = tf.train.Saver()
+if not os.path.isfile("inception_v3.ckpt"):
+    print("Please download inception_v3 ckpt from : https://github.com/tensorflow/models/tree/master/research/slim")
+    exit()
+try:    # TF12+
+    saver.restore(sess, "./inception_v3.ckpt")
+except: # TF11
+    saver.restore(sess, "inception_v3.ckpt")
+print("Model Restored")
 
 from scipy.misc import imread, imresize
 y = network.outputs
 probs = tf.nn.softmax(y)
-img1 = load_image("data/puzzle.jpeg")
+img1 = load_image("data/puzzle.jpeg") # test data in github: https://github.com/zsdonghao/tensorlayer/tree/master/example/data
 img1 = img1.reshape((1, 299, 299, 3))
 
 start_time = time.time()

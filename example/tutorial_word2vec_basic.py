@@ -40,10 +40,7 @@ https://www.tensorflow.org/versions/r0.9/tutorials/word2vec/index.html#vector-re
 """
 
 
-import collections
-import math
-import os
-import random
+import collections, math, os, random, time
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
@@ -56,14 +53,17 @@ FLAGS = flags.FLAGS
 
 
 def main_word2vec_basic():
-
+    # sess = tf.InteractiveSession()
+    sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
     """ Step 1: Download the data, read the context into a list of strings.
     Set hyperparameters.
     """
 
     words = tl.files.load_matt_mahoney_text8_dataset()
     data_size = len(words)
-    print('Data size', data_size) # print(words)    # b'their', b'families', b'who', b'were', b'expelled', b'from', b'jerusalem',
+    print(data_size)    # 17005207
+    print(words[0:10])  # ['anarchism', 'originated', 'as', 'a', 'term', 'of', 'abuse', 'first', 'used', 'against']
+    # exit()
 
     resume = False  # load existing model, data and dictionaries
     _UNK = "_UNK"
@@ -122,7 +122,7 @@ def main_word2vec_basic():
 
     num_steps = int((data_size/batch_size) * n_epoch)   # total number of iteration
 
-    print('%d Steps a Epoch, total Epochs %d' % (int(data_size/batch_size), n_epoch))
+    print('%d Steps in a Epoch, total Epochs %d' % (int(data_size/batch_size), n_epoch))
     print('   learning_rate: %f' % learning_rate)
     print('   batch_size: %d' % batch_size)
 
@@ -150,11 +150,17 @@ def main_word2vec_basic():
     print()
     data_index = 0
     batch, labels, data_index = tl.nlp.generate_skip_gram_batch(data=data,
-                        batch_size=20, num_skips=4, skip_window=2, data_index=0)
-    for i in range(20):
+                        batch_size=8, num_skips=4, skip_window=2, data_index=0)
+    for i in range(8):
         print(batch[i], reverse_dictionary[batch[i]],
             '->', labels[i, 0], reverse_dictionary[labels[i, 0]])
 
+    batch, labels, data_index = tl.nlp.generate_skip_gram_batch(data=data,
+                        batch_size=8, num_skips=2, skip_window=1, data_index=0)
+    for i in range(8):
+        print(batch[i], reverse_dictionary[batch[i]],
+            '->', labels[i, 0], reverse_dictionary[labels[i, 0]])
+    # exit()
 
     """ Step 4: Build a Skip-Gram model.
     """
@@ -167,7 +173,6 @@ def main_word2vec_basic():
     valid_examples = np.random.choice(valid_window, valid_size, replace=False)
         # a list of 'valid_size' integers smaller than 'valid_window'
         # print(valid_examples)   # [90 85 20 33 35 62 37 63 88 38 82 58 83 59 48 64]
-    print_freq = 2000
         # n_epoch = int(num_steps / batch_size)
 
     # train_inputs is a row vector, a input is an integer id of single word.
@@ -193,6 +198,7 @@ def main_word2vec_basic():
             nce_b_init_args = {},
             name ='word2vec_layer',
         )
+
     # Construct the optimizer. Note: AdamOptimizer is very slow in this case
     cost = emb_net.nce_cost
     train_params = emb_net.all_params
@@ -210,28 +216,27 @@ def main_word2vec_basic():
         # multiply all valid word vector with all word vector.
         # transpose_b=True, normalized_embeddings is transposed before multiplication.
 
-    """ Step 5: Begin training.
+    """ Step 5: Start training.
     """
     print()
-    sess.run(tf.initialize_all_variables())
+    tl.layers.initialize_global_variables(sess)
     if resume:
         print("Load existing model" + "!"*10)
         # Load from ckpt or npz file
-        saver = tf.train.Saver()
-        saver.restore(sess, model_file_name+'.ckpt')
-        # load_params = tl.files.load_npz(name=model_file_name+'.npz')
-        # tl.files.assign_params(sess, load_params, emb_net)
+        # saver = tf.train.Saver()
+        # saver.restore(sess, model_file_name+'.ckpt')
+        load_params = tl.files.load_npz(name=model_file_name+'.npz')
+        tl.files.assign_params(sess, load_params, emb_net)
 
-    emb_net.print_params()
+    emb_net.print_params(False)
     emb_net.print_layers()
 
     # save vocabulary to txt
     tl.nlp.save_vocab(count, name='vocab_text8.txt')
 
     average_loss = 0
-
-    # for step in xrange(num_steps):
     step = 0
+    print_freq = 2000
     while (step < num_steps):
         start_time = time.time()
         batch_inputs, batch_labels, data_index = tl.nlp.generate_skip_gram_batch(
@@ -245,14 +250,14 @@ def main_word2vec_basic():
 
         if step % print_freq == 0:
             if step > 0:
-                average_loss /= 2000
+                average_loss /= print_freq
             print("Average loss at step %d/%d. loss:%f took:%fs" %
                         (step, num_steps, average_loss, time.time() - start_time))
             average_loss = 0
         # Prints out nearby words given a list of words.
         # Note that this is expensive (~20% slowdown if computed every 500 steps)
         if step % (print_freq * 5) == 0:
-            sim = similarity.eval()
+            sim = similarity.eval(session=sess)
             for i in xrange(valid_size):
                 valid_word = reverse_dictionary[valid_examples[i]]
                 top_k = 8 # number of nearest neighbors to print
@@ -266,26 +271,26 @@ def main_word2vec_basic():
         if (step % (print_freq * 20) == 0) and (step != 0):
             print("Save model, data and dictionaries" + "!"*10);
             # Save to ckpt or npz file
-            saver = tf.train.Saver()
-            save_path = saver.save(sess, model_file_name+'.ckpt')
-            # tl.files.save_npz(emb_net.all_params, name=model_file_name+'.npz')
+            # saver = tf.train.Saver()
+            # save_path = saver.save(sess, model_file_name+'.ckpt')
+            tl.files.save_npz(emb_net.all_params, name=model_file_name+'.npz')
             tl.files.save_any_to_npy(save_dict={'data': data, 'count': count,
                 'dictionary': dictionary, 'reverse_dictionary':
                 reverse_dictionary}, name=model_file_name+'.npy')
 
-        if step == num_steps-1:
-            keeptrain = input("Training %d finished enter 1 to keep training: " % num_steps)
-            if keeptrain == '1':
-                step = 0
-                learning_rate = float(input("Input new learning rate: "))
-                train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
+        # if step == num_steps-1:
+        #     keeptrain = input("Training %d finished enter 1 to keep training: " % num_steps)
+        #     if keeptrain == '1':
+        #         step = 0
+        #         learning_rate = float(input("Input new learning rate: "))
+        #         train_op = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
         step += 1
 
 
     """ Step 6: Visualize the normalized embedding matrix by t-SNE.
     """
     print()
-    final_embeddings = normalized_embeddings.eval()
+    final_embeddings = sess.run(normalized_embeddings)#.eval()
     tl.visualize.tsne_embedding(final_embeddings, reverse_dictionary,
                 plot_only=500, second=5, saveable=False, name='word2vec_basic')
 
@@ -360,7 +365,6 @@ def main_word2vec_basic():
 
 
 if __name__ == '__main__':
-    sess = tf.InteractiveSession()
     main_word2vec_basic()
 
 
