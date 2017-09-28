@@ -93,7 +93,7 @@ y_op = tf.argmax(tf.nn.softmax(y), 1)
 # 定义 optimizer
 train_params = network.all_params
 train_op = tf.train.AdamOptimizer(learning_rate=0.0001
-							).minimize(cost, var_list=train_params)
+			).minimize(cost, var_list=train_params)
 
 # 初始化 session 中的所有参数
 tl.layers.initialize_global_variables(sess)
