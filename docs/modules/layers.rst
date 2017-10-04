@@ -324,6 +324,7 @@ API - 神经网络层
    clear_layers_name
    initialize_rnn_state
    list_remove_repeat
+   merge_networks
 
 名称与参数复用
 ---------------------------------
@@ -763,3 +764,8 @@ Flatten tensor
 去除列表中重复内容
 ^^^^^^^^^^^^^^^^^^
 .. autofunction:: list_remove_repeat
+
+
+合并网络属性
+^^^^^^^^^^^^^^^^^^
+.. autofunction:: merge_networks
