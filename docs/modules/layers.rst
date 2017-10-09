@@ -238,6 +238,7 @@ API - 神经网络层
    OneHotInputLayer
    Word2vecEmbeddingInputlayer
    EmbeddingInputlayer
+   AverageEmbeddingInputlayer
 
    DenseLayer
    ReconLayer
@@ -373,13 +374,15 @@ One-hot 输入层
 
 训练Word2vec的层
 ^^^^^^^^^^^^^^^^^^^^
-
 .. autoclass:: Word2vecEmbeddingInputlayer
 
 嵌入层(输入)
 ^^^^^^^^^^^^^
-
 .. autoclass:: EmbeddingInputlayer
+
+平均化嵌入层(输入)
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: AverageEmbeddingInputlayer
 
 全连接层
 ----------------
