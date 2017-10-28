@@ -38,9 +38,15 @@
 	<img src="images/moyuanhan.jpeg" width="30%" height="30%"/>
 </div>
 
-### RL：待定 稍后公布
+### RL：董博士 zsdh123
+<div align="center">
+	<img src="images/donghao.jpeg" width="30%" height="30%"/>
+</div>
 
-### NLP：待定 稍后公布
+### NLP：董博士 zsdh123
+<div align="center">
+	<img src="images/donghao.jpeg" width="30%" height="30%"/>
+</div>
 
 
 ---
