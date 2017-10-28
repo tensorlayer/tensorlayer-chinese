@@ -1,8 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf8 -*-
 
-
-
 import tensorflow as tf
 
 def identity(x, name=None):
@@ -12,7 +10,6 @@ def identity(x, name=None):
     ----------
     x : a tensor input
         input(s)
-
 
     Returns
     --------
@@ -36,7 +33,6 @@ def ramp(x=None, v_min=0, v_max=1, name=None):
         if input(s) greater than v_max, change inputs to v_max
     name : a string or None
         An optional name to attach to this activation function.
-
 
     Returns
     --------
@@ -76,6 +72,14 @@ def leaky_relu(x=None, alpha=0.1, name="LeakyReLU"):
 
 #Shortcut
 lrelu = leaky_relu
+
+
+def swish(x, name='swish'):
+    """The Swish function, see `Swish: a Self-Gated Activation Function <https://arxiv.org/abs/1710.05941>`_.
+    """
+    with tf.name_scope(name) as scope:
+        x =  tf.nn.sigmoid(x) * x
+    return x
 
 def pixel_wise_softmax(output, name='pixel_wise_softmax'):
     """Return the softmax outputs of images, every pixels have multiple label, the sum of a pixel is 1.

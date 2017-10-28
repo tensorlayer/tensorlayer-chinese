@@ -1,8 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf8 -*-
 
-
-
 import tensorflow as tf
 import time
 from . import visualize
@@ -20,7 +18,6 @@ import inspect
 #     "Layer",
 #     "DenseLayer",
 # ]
-
 
 # set_keep = locals()
 set_keep = globals()
@@ -106,7 +103,7 @@ def set_name_reuse(enable=True):
     ...                     initializer = w_init,
     ...                     sequence_length = tl.layers.retrieve_seq_length_op2(input_seqs),
     ...                     return_last = True,
-    ...                     name = 'e_dynamicrnn',)
+    ...                     name = 'e_dynamicrnn')
     >>>    return network
     >>>
     >>> net_train = embed_seq(t_caption, is_train=True, reuse=False)
@@ -151,7 +148,7 @@ def print_all_variables(train_only=False):
         t_vars = tf.trainable_variables()
         print("  [*] printing trainable variables")
     else:
-        try: # TF1.0
+        try: # TF1.0+
             t_vars = tf.global_variables()
         except: # TF0.12
             t_vars = tf.all_variables()
@@ -171,7 +168,7 @@ def get_variables_with_name(name, train_only=True, printable=False):
     if train_only:
         t_vars = tf.trainable_variables()
     else:
-        try: # TF1.0
+        try: # TF1.0+
             t_vars = tf.global_variables()
         except: # TF0.12
             t_vars = tf.all_variables()
@@ -199,7 +196,6 @@ def get_layers_with_name(network=None, name="", printable=False):
         if name in layer.name:
             layers.append(layer)
             if printable:
-                # print(layer.name)
                 print("  got {:3}: {:15}   {}".format(i, layer.name, str(layer.get_shape())))
                 i = i + 1
     return layers
@@ -678,6 +674,9 @@ class AverageEmbeddingInputlayer(Layer):
     ):
         super().__init__(name=name)
 
+        # if embeddings_kwargs is None:
+        #     embeddings_kwargs = {}
+
         if inputs.get_shape().ndims != 2:
             raise ValueError(
                 'inputs must be of size batch_size * batch_sentence_length')
@@ -685,14 +684,14 @@ class AverageEmbeddingInputlayer(Layer):
         self.inputs = inputs
 
         print("  [TL] AverageEmbeddingInputlayer %s: (%d, %d)" % (name, vocabulary_size, embedding_size))
-
         with tf.variable_scope(name):
             self.embeddings = tf.get_variable(
                 name='embeddings',
                 shape=(vocabulary_size, embedding_size),
                 initializer=embeddings_initializer,
-                **(embeddings_kwargs or {}),
-            )
+                **(embeddings_kwargs or {})
+                # **embeddings_kwargs
+            ) # **(embeddings_kwargs or {}),
 
             word_embeddings = tf.nn.embedding_lookup(
                 self.embeddings, self.inputs,
@@ -5186,7 +5185,7 @@ class Seq2Seq(Layer):
                      name = name+'_decode')
             self.outputs = network_decode.outputs
 
-            rnn_variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
+            # rnn_variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
         # Initial state
         self.initial_state_encode = network_encode.initial_state
@@ -5197,12 +5196,16 @@ class Seq2Seq(Layer):
         self.final_state_decode = network_decode.final_state
 
         # self.sequence_length = sequence_length
-        self.all_layers = list(network_decode.all_layers)
-        self.all_params = list(network_decode.all_params)
-        self.all_drop = dict(network_decode.all_drop)
+        self.all_layers = list(network_encode.all_layers)
+        self.all_params = list(network_encode.all_params)
+        self.all_drop = dict(network_encode.all_drop)
+
+        self.all_layers.extend(list(network_decode.all_layers))
+        self.all_params.extend(list(network_decode.all_params))
+        self.all_drop.update(dict(network_decode.all_drop))
 
         self.all_layers.extend( [self.outputs] )
-        self.all_params.extend( rnn_variables )
+        # self.all_params.extend( rnn_variables )
 
         self.all_layers = list_remove_repeat(self.all_layers)
         self.all_params = list_remove_repeat(self.all_params)
@@ -5454,29 +5457,27 @@ class ConcatLayer(Layer):
         An optional name to attach to this layer.
 
     Examples
-    --------
+    ----------
     >>> sess = tf.InteractiveSession()
     >>> x = tf.placeholder(tf.float32, shape=[None, 784])
     >>> inputs = tl.layers.InputLayer(x, name='input_layer')
-    >>> net1 = tl.layers.DenseLayer(inputs, n_units=800, act = tf.nn.relu, name='relu1_1')
-    >>> net2 = tl.layers.DenseLayer(inputs, n_units=300, act = tf.nn.relu, name='relu2_1')
-    >>> net = tl.layers.ConcatLayer(layer = [net1, net2], name ='concat_layer')
+    >>> net1 = tl.layers.DenseLayer(inputs, 800, act=tf.nn.relu, name='relu1_1')
+    >>> net2 = tl.layers.DenseLayer(inputs, 300, act=tf.nn.relu, name='relu2_1')
+    >>> net = tl.layers.ConcatLayer([net1, net2], 1, name ='concat_layer')
     ...     [TL] InputLayer input_layer (?, 784)
-    ...     [TL] DenseLayer relu1_1: 800, <function relu at 0x1108e41e0>
-    ...     [TL] DenseLayer relu2_1: 300, <function relu at 0x1108e41e0>
+    ...     [TL] DenseLayer relu1_1: 800, relu
+    ...     [TL] DenseLayer relu2_1: 300, relu
     ...     [TL] ConcatLayer concat_layer, 1100
-    ...
     >>> tl.layers.initialize_global_variables(sess)
     >>> net.print_params()
     ...     param 0: (784, 800) (mean: 0.000021, median: -0.000020 std: 0.035525)
-    ...     param 1: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
+    ...     param 1: (800,)     (mean: 0.000000, median: 0.000000  std: 0.000000)
     ...     param 2: (784, 300) (mean: 0.000000, median: -0.000048 std: 0.042947)
-    ...     param 3: (300,) (mean: 0.000000, median: 0.000000 std: 0.000000)
+    ...     param 3: (300,)     (mean: 0.000000, median: 0.000000  std: 0.000000)
     ...     num of params: 863500
     >>> net.print_layers()
-    ...     layer 0: Tensor("Relu:0", shape=(?, 800), dtype=float32)
+    ...     layer 0: ("Relu:0", shape=(?, 800), dtype=float32)
     ...     layer 1: Tensor("Relu_1:0", shape=(?, 300), dtype=float32)
-    ...
     """
     def __init__(
         self,
@@ -5723,8 +5724,9 @@ def UnStackLayer(
 class SlimNetsLayer(Layer):
     """
     The :class:`SlimNetsLayer` class can be used to merge all TF-Slim nets into
-    TensorLayer. Model can be found in `slim-model <https://github.com/tensorflow/models/tree/master/slim#pre-trained-models>`_ , more about slim
-    see `slim-git <https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim>`_ .
+    TensorLayer. Models can be found in `slim-model <https://github.com/tensorflow/models/tree/master/research/slim#pre-trained-models>`_,
+    see Inception V3 example on `Github <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_inceptionV3_tfslim.py>`_.
+
 
     Parameters
     ----------
@@ -5736,10 +5738,6 @@ class SlimNetsLayer(Layer):
         The arguments for the slim model.
     name : a string or None
         An optional name to attach to this layer.
-
-    Examples
-    --------
-    - see Inception V3 example on `Github <https://github.com/zsdonghao/tensorlayer>`_
 
     Notes
     -----
@@ -5788,7 +5786,8 @@ class SlimNetsLayer(Layer):
 class KerasLayer(Layer):
     """
     The :class:`KerasLayer` class can be used to merge all Keras layers into
-    TensorLayer. Example can be found here `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_
+    TensorLayer. Example can be found here `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_.
+    This layer will be deprecated soon as :class:`LambdaLayer` can do the same thing.
 
     Parameters
     ----------
@@ -5826,7 +5825,8 @@ class KerasLayer(Layer):
 class EstimatorLayer(Layer):
     """
     The :class:`EstimatorLayer` class accepts ``model_fn`` that described the model.
-    It is similar with :class:`KerasLayer`, see `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_
+    It is similar with :class:`KerasLayer`, see `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_.
+    This layer will be deprecated soon as :class:`LambdaLayer` can do the same thing.
 
     Parameters
     ----------

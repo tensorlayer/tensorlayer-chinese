@@ -19,8 +19,6 @@ TensorFlow官方的函数，比如
 
   def double_activation(x):
       return x * 2
-      
-      
 
 .. automodule:: tensorlayer.activation
 
@@ -29,6 +27,7 @@ TensorFlow官方的函数，比如
    identity
    ramp
    leaky_relu
+   swish
    pixel_wise_softmax
 
 Identity
@@ -43,6 +42,9 @@ Leaky Relu
 -----------
 .. autofunction:: leaky_relu
 
+Swish
+-----------
+.. autofunction:: swish
 
 Pixel-wise Softmax
 ----------------------
