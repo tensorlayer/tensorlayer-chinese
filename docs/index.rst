@@ -7,11 +7,11 @@ TensorLayer 中文文档
   :align: center
   :target: https://github.com/zsdonghao/tensorlayer
 
+好消息！ 我们赢得了`ACM Multimedia <http://www.acmmm.org/2017/mm-2017-awardees/>`_年度最佳开源软件奖，上一次获得该奖的深度学习软件是`Caffe <https://github.com/BVLC/caffe>`_。
 
 TensorLayer 是为研究人员和工程师设计的一款基于Google TensorFlow开发的深度学习与强化学习库。
 它提供高级别的（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度，也能够减少工程师在实际开发当中的重复工作。 TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。
 此外，TensorLayer 提供了大量示例和教程来帮助初学者理解深度学习，并提供大量的官方例子程序方便开发者快速找到适合自己项目的例子。
-
 
 这篇文档不仅仅是为了描述如何使用这个库也是一个遍历不同类型的神经网络，
 深度强化学习和自然语言处理等内容的教程。
