@@ -35,6 +35,8 @@ API - 数据预处理
    brightness
    brightness_multi
 
+   illumination
+
    imresize
 
    samplewise_norm
@@ -65,9 +67,6 @@ API - 数据预处理
    sequences_add_end_id
    sequences_add_end_id_after_pad
    sequences_get_mask
-
-   distorted_images
-   crop_central_whiten_images
 
 
 并行 Threading
@@ -128,6 +127,10 @@ API - 数据预处理
 ^^^^^^^^^^^^
 .. autofunction:: brightness
 .. autofunction:: brightness_multi
+
+照度
+^^^^^^^^^^^^^^
+.. autofunction:: illumination
 
 调整大小
 ^^^^^^^^^^^^
