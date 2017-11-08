@@ -19,10 +19,8 @@
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
 # 新闻
-* 新例子 [Improved CycleGAN](https://github.com/luoxier/CycleGAN_Tensorlayer) with resize-convolution.
+* 恭喜TensorLayer团队获得[ACM Multimedia](http://www.acmmm.org/2017/mm-2017-awardees/)年度最佳开源软件奖
 * 新例子 [Chatbot in 200 lines of code](https://github.com/zsdonghao/seq2seq-chatbot) for [Seq2Seq](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#simple-seq2seq).
-* 发布 [ROI layer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#roi-layer) 用于物体识别.
-* 发布 [SpatialTransformer2dAffineLayer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#spatial-transformer) 用于 [Spatial Transformer Networks](https://github.com/zsdonghao/Spatial-Transformer-Nets) 请见 [例子代码](https://github.com/zsdonghao/Spatial-Transformer-Nets).
 * 欢迎加入 [Slack](https://github.com/zsdonghao/tensorlayer) 讨论组.
 * 发布 [Sub-pixel Convolution](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#super-resolution-layer) 用于超分辨率复原.
 * 你现在可以把 [TF-Slim](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-tf-slim) 和 [Keras](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-keras) 导入到TensorLayer中了！
