@@ -24,6 +24,8 @@ API - 数据预处理
 
    shear
    shear_multi
+   shear2
+   shear_multi2
    swirl
    swirl_multi
    elastic_transform
@@ -106,6 +108,11 @@ API - 数据预处理
 ^^^^^^^^^
 .. autofunction:: shear
 .. autofunction:: shear_multi
+
+切变 V2
+^^^^^^^^^
+.. autofunction:: shear2
+.. autofunction:: shear_multi2
 
 漩涡
 ^^^^^^^^^
