@@ -257,7 +257,6 @@ API - 神经网络层
    DownSampling2dLayer
    AtrousConv1dLayer
    AtrousConv2dLayer
-   SeparableConv2dLayer
 
    Conv1d
    Conv2d
@@ -269,6 +268,8 @@ API - 神经网络层
    MeanPool2d
    MaxPool3d
    MeanPool3d
+
+   DepthwiseConv2d
 
    SubpixelConv1d
    SubpixelConv2d
@@ -463,10 +464,6 @@ Dropconnect + 全链接层
 
 .. autoclass:: AtrousConv2dLayer
 
-2D Separable卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: SeparableConv2dLayer
 
 卷积层(Simplified)
 -----------------------------------
@@ -509,6 +506,10 @@ Dropconnect + 全链接层
 3D Mean池化层
 ^^^^^^^^^^^^^^
 .. autofunction:: MeanPool3d
+
+2D Depthwise/Separable卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DepthwiseConv2d
 
 Super-Resolution 层
 -----------------------

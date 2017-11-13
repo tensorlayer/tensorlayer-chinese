@@ -223,9 +223,9 @@ def crop(x, wrg, hrg, is_random=False, row_index=0, col_index=1, channel_index=2
     ----------
     x : numpy array
         An image with dimension of [row, col, channel] (default).
-    wrg : float
-        Size of weight.
-    hrg : float
+    wrg : int
+        Size of width.
+    hrg : int
         Size of height.
     is_random : boolean, default False
         If True, randomly crop, else central crop.
@@ -802,6 +802,51 @@ def brightness_multi(x, gamma=1, gain=1, is_random=False):
         results.append( exposure.adjust_gamma(data, gamma, gain) )
     return np.asarray(results)
 
+# illumination
+def illumination(x, gamma=1, contrast=1, saturation=1, is_random=False):
+    """Perform illumination augmentation for a single image, randomly or non-randomly.
+
+    Parameters
+    -----------
+    x : numpy array
+        an image with dimension of [row, col, channel] (default).
+    gamma : change brightness
+    contrast : change contrast
+    saturation : change saturation
+    is_random : whether the parameters are randomly set
+    """
+    from PIL import Image, ImageEnhance
+
+    if is_random:
+        ## random change brightness  # small --> brighter
+        illum_settings = np.random.randint(0,3) # 0-brighter, 1-darker, 2 keep normal
+
+        if illum_settings == 0: # brighter
+            gamma = np.random.uniform(.5, 1.0)
+        elif illum_settings == 1: # darker
+            gamma = np.random.uniform(1.0, 5.0)
+        else:
+            gamma = 1
+        im_ = brightness(x, gamma=gamma, gain=1, is_random=False)
+
+        # print("using contrast and saturation")
+        image = Image.fromarray(im_) # array -> PIL
+        contrast_adjust = ImageEnhance.Contrast(image)
+        image = contrast_adjust.enhance(np.random.uniform(0.3,0.9))
+
+        saturation_adjust = ImageEnhance.Color(image)
+        image = saturation_adjust.enhance(np.random.uniform(0.7,1.0))
+        im_ = np.array(image) # PIL -> array
+    else:
+        im_ = brightness(x, gamma=gamma, gain=1, is_random=False)
+        image = Image.fromarray(im_) # array -> PIL
+        contrast_adjust = ImageEnhance.Contrast(image)
+        image = contrast_adjust.enhance(contrast)
+
+        saturation_adjust = ImageEnhance.Color(image)
+        image = saturation_adjust.enhance(saturation)
+        im_ = np.array(image) # PIL -> array
+    return np.asarray(im_)
 
 # contrast
 def constant(x, cutoff=0.5, gain=10, inv=False, is_random=False):
@@ -1051,56 +1096,6 @@ def drop(x, keep=0.5):
     else:
         raise Exception("Unsupported shape {}".format(x.shape))
     return x
-
-
-
-def illumination(x, gamma = 1, contrast=1, saturation=1, is_random=False):
-    """perform illumination augmentation for a single image, randomly or non-randomly.
-
-    Parameters
-    -----------
-    x : numpy array
-        an image with dimension of [row, col, channel] (default).
-    gamma : change brightness
-    contrast : change contrast
-    saturation : change saturation
-    is_random : whether the parameters are randomly set
-    """
-    from PIL import Image, ImageEnhance
-
-    if is_random:
-        ## random change brightness  # small --> brighter
-        illum_settings = np.random.randint(0,3) # 0-brighter, 1-darker, 2 keep normal
-
-        if illum_settings == 0: # brighter
-            gamma = np.random.uniform(.5, 1.0)
-        elif illum_settings == 1: # darker
-            gamma = np.random.uniform(1.0, 5.0)
-        else:
-            gamma = 1
-        im_ = brightness(x, gamma=gamma, gain=1, is_random=False)
-
-        # print("using contrast and saturation")
-        image = Image.fromarray(im_) # array -> PIL
-        contrast_adjust = ImageEnhance.Contrast(image)
-        image = contrast_adjust.enhance(np.random.uniform(0.3,0.9))
-
-        saturation_adjust = ImageEnhance.Color(image)
-        image = saturation_adjust.enhance(np.random.uniform(0.7,1.0))
-        im_ = np.array(image) # PIL -> array
-    else:
-        im_ = brightness(im_, gamma=gamma, gain=1, is_random=False)
-        image = Image.fromarray(im_) # array -> PIL
-        contrast_adjust = ImageEnhance.Contrast(image)
-        image = contrast_adjust.enhance(contrast)
-
-        saturation_adjust = ImageEnhance.Color(image)
-        image = saturation_adjust.enhance(saturation)
-        im_ = np.array(image) # PIL -> array
-    return np.asarray(im_)
-
-
-
 
 # x = np.asarray([[1,2,3,4,5,6,7,8,9,10],[1,2,3,4,5,6,7,8,9,10]])
 # x = np.asarray([x,x,x,x,x,x])
