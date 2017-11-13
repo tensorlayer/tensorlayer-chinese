@@ -157,10 +157,16 @@ API - 数据预处理
 ^^^^^^^^^^^^^^
 .. autofunction:: drop
 
-手动变换
-^^^^^^^^^^^^^^^^^
+矩阵圆心转换到图中央
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: transform_matrix_offset_center
+
+基于矩阵的仿射变换
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: apply_transform
+
+基于坐标点的的投影变换
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: projective_transform_by_points
 
 
