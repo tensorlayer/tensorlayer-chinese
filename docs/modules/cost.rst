@@ -99,10 +99,6 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
   layer 4: Tensor("dropout_2/mul_1:0", shape=(?, 800), dtype=float32)
   layer 5: Tensor("add_2:0", shape=(?, 10), dtype=float32)
 
-
-
-
-
 .. automodule:: tensorlayer.cost
 
 .. autosummary::
@@ -112,6 +108,7 @@ TensorLayer提供一个简单的方法来创建您自己的损失函数。
    binary_cross_entropy
    mean_squared_error
    normalized_mean_square_error
+   absolute_difference_error
    dice_coe
    dice_hard_coe
    iou_coe
@@ -136,13 +133,17 @@ Binary cross entropy
 -------------------------
 .. autofunction:: binary_cross_entropy
 
-Mean squared error
+Mean squared error (L2)
 -----------------------
 .. autofunction:: mean_squared_error
 
 Normalized mean square error
 ---------------------------------
 .. autofunction:: normalized_mean_square_error
+
+Absolute difference error (L1)
+---------------------------------
+.. autofunction:: absolute_difference_error
 
 Dice coefficient
 -------------------
