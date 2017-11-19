@@ -99,8 +99,47 @@ API - 神经网络层
 更多细节，请看 MNIST 例子。
 
 
-了解Dense层
-----------------
+自定义层
+----------
+
+一个简单的层
+^^^^^^^^^^^^^^^
+
+实现一个自定义层，你需要写一个新的Python类，然后实现 ``outputs`` 表达式。
+
+下面的例子实现了把输入乘以2，然后输出。
+
+.. code-block:: python
+
+  class DoubleLayer(Layer):
+      def __init__(
+          self,
+          layer = None,
+          name ='double_layer',
+      ):
+          # 校验名字是否已被使用（不变）
+          Layer.__init__(self, name=name)
+
+          # 本层输入是上层的输出（不变）
+          self.inputs = layer.outputs
+
+          # 输出信息（自定义部分）
+          print("  I am DoubleLayer")
+
+          # 本层的功能实现（自定义部分）
+          self.outputs = self.inputs * 2
+
+          # 获取之前层的参数（不变）
+          self.all_layers = list(layer.all_layers)
+          self.all_params = list(layer.all_params)
+          self.all_drop = dict(layer.all_drop)
+
+          # 更新层的参数（自定义部分）
+          self.all_layers.extend( [self.outputs] )
+
+
+你的Dense层
+^^^^^^^^^^^^^^^
 
 在创造自定义层之前，我们来看看全连接（Dense）层是如何实现的。
 若不存在Weights矩阵和Biases向量时，它新建之，然后通过给定的激活函数计算出 ``outputs`` 。
@@ -144,48 +183,8 @@ API - 神经网络层
         self.all_layers.extend( [self.outputs] )
         self.all_params.extend( [W, b] )
 
-自定义层
-----------
-
-一个简单的层
-^^^^^^^^^^^^^^^
-
-实现一个自定义层，你需要写一个新的Python类，然后实现 ``outputs`` 表达式。
-
-下面的例子实现了把输入乘以2，然后输出。
-
-.. code-block:: python
-
-  class DoubleLayer(Layer):
-      def __init__(
-          self,
-          layer = None,
-          name ='double_layer',
-      ):
-          # 校验名字是否已被使用（不变）
-          Layer.__init__(self, name=name)
-
-          # 本层输入是上层的输出（不变）
-          self.inputs = layer.outputs
-
-          # 输出信息（自定义部分）
-          print("  I am DoubleLayer")
-
-          # 本层的功能实现（自定义部分）
-          self.outputs = self.inputs * 2
-
-          # 获取之前层的参数（不变）
-          self.all_layers = list(layer.all_layers)
-          self.all_params = list(layer.all_params)
-          self.all_drop = dict(layer.all_drop)
-
-          # 更新层的参数（自定义部分）
-          self.all_layers.extend( [self.outputs] )
-
-
-
 修改预训练行为
------------------------
+^^^^^^^^^^^^^^^
 
 逐层贪婪预训练方法(Greedy layer-wise pretrain)是深度神经网络的初始化非常重要的一种方法，
 不过对不同的网络结构和应用，往往有不同的预训练的方法。
