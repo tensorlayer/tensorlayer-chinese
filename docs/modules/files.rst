@@ -43,6 +43,8 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_flickr25k_dataset
    load_flickr1M_dataset
    load_cyclegan_dataset
+   load_celebA_dataset
+   download_file_from_google_drive
 
    save_npz
    load_npz
@@ -114,6 +116,13 @@ CycleGAN
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_cyclegan_dataset
 
+CelebA
+^^^^^^^^^
+.. autofunction:: load_celebA_dataset
+
+Google Drive
+^^^^^^^^^^^^^^^^
+.. autofunction:: download_file_from_google_drive
 
 保存与加载模型
 ----------------------
