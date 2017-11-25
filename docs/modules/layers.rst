@@ -254,6 +254,7 @@ API - 神经网络层
    PadLayer
    UpSampling2dLayer
    DownSampling2dLayer
+   DeformableConv2dLayer
    AtrousConv1dLayer
    AtrousConv2dLayer
 
@@ -288,6 +289,11 @@ API - 神经网络层
 
    RNNLayer
    BiRNNLayer
+
+   ConvRNNCell
+   BasicConvLSTMCell
+   ConvLSTMLayer
+
    advanced_indexing_op
    retrieve_seq_length_op
    retrieve_seq_length_op2
@@ -453,6 +459,10 @@ Dropconnect + 全链接层
 
 .. autoclass:: DownSampling2dLayer
 
+2D 可变形卷积
+^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DeformableConv2dLayer
+
 1D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -600,6 +610,27 @@ TimeDistributed 包装器
 双向递归层
 ^^^^^^^^^^^^^
 .. autoclass:: BiRNNLayer
+
+
+
+
+卷积递归层
+-------------------------------
+
+Conv RNN Cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: ConvRNNCell
+
+Basic Conv LSTM Cell
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BasicConvLSTMCell
+
+Conv LSTM layer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: ConvLSTMLayer
+
+
+
 
 动态递归的高级 Ops 函数
 -----------------------
