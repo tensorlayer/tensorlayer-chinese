@@ -19,6 +19,10 @@
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
 # 新闻
+* [Nov] 发布大量关于目标检测的数据增强APIs, 见[tl.prepro](http://tensorlayer.readthedocs.io/en/latest/modules/prepro.html#object-detection).
+* [Nov] 支持[Convolutional LSTM](https://arxiv.org/abs/1506.04214), 见[ConvLSTMLayer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#conv-lstm-layer).
+* [Nov] 支持[Deformable Convolution](https://arxiv.org/abs/1703.06211), 见[DeformableConv2dLayer](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#d-deformable-conv).
+* [Nov] 一行代码下载[VOC数据集](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/), 见[load\_voc_dataset](http://tensorlayer.readthedocs.io/en/latest/modules/files.html#voc-2007-2012).
 * 恭喜TensorLayer团队获得[ACM Multimedia](http://www.acmmm.org/2017/mm-2017-awardees/)年度最佳开源软件奖
 * 新例子 [Chatbot in 200 lines of code](https://github.com/zsdonghao/seq2seq-chatbot) for [Seq2Seq](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#simple-seq2seq).
 * 欢迎加入 [Slack](https://github.com/zsdonghao/tensorlayer) 讨论组.
