@@ -12,6 +12,7 @@ API - 实用函数
    class_balancing_oversample
    get_random_int
    dict_to_one
+   list_string_to_dict
    flatten_list
 
 
@@ -44,12 +45,16 @@ API - 实用函数
 ----------------------------
 .. autofunction:: get_random_int
 
-辅助函数
+字典相关
 --------------------
 
 设字典内容全为一
 ^^^^^^^^^^^^^^^^
 .. autofunction:: dict_to_one
+
+一列字符转字典
+^^^^^^^^^^^^^^^^
+.. autofunction:: list_string_to_dict
 
 拉平列表
 ^^^^^^^^^^
