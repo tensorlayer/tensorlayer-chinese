@@ -12,6 +12,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
    read_images
    save_image
    save_images
+   draw_boxes_and_labels_to_image
    W
    CNN2d
    frame
@@ -36,6 +37,13 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 保存多个图片
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_images
+
+保存目标检测图片
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: draw_boxes_and_labels_to_image
+
+
+
 
 可视化模型参数
 --------------------
