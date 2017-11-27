@@ -264,7 +264,7 @@ Numpy 与 PIL
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: obj_box_coord_rescale
 
-坐标-比例单位到像素单位 （多个坐标）
+坐标-像素单位到比例单位 （多个坐标）
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: obj_box_coords_rescale
 
