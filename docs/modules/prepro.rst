@@ -225,44 +225,61 @@ Numpy 与 PIL
 教程-图像增强
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-您好，这是基于VOC数据集的一个图像增强例子。
+您好，这是基于VOC数据集的一个图像增强例子，请阅读这篇 `知乎文章 <https://zhuanlan.zhihu.com/p/31466173>`_ 。
 
 .. code-block:: python
 
   import tensorlayer as tl
 
-  ## download the VOC dataset
-  imgs_file_list, imgs_semseg_file_list, imgs_insseg_file_list, imgs_ann_file_list, \
-      classes, classes_in_person, classes_dict,\
-      n_objs_list, objs_info_list, objs_info_dicts = tl.files.load_voc_dataset(dataset="2012", contain_classes_in_person=False)
+  ## 下载 VOC 2012 数据集
+  imgs_file_list, _, _, _, classes, _, _,\
+      _, objs_info_list, _ = tl.files.load_voc_dataset(dataset="2012")
 
-  ## parse the annotation into list format
+  ## 图片标记预处理为列表形式
   ann_list = []
   for info in objs_info_list:
       ann = tl.prepro.parse_darknet_ann_str_to_list(info)
       c, b = tl.prepro.parse_darknet_ann_list_to_cls_box(ann)
       ann_list.append([c, b])
 
-  ## different types of image augmentation
-  idx = 2
+  # 读取一张图片，并保存
+  idx = 2  # 可自行选择图片
   image = tl.vis.read_image(imgs_file_list[idx])
-  tl.vis.draw_boxes_and_labels_to_image(image, ann_list[idx][0], ann_list[idx][1], [], classes, True, save_name='_im_original.png')
+  tl.vis.draw_boxes_and_labels_to_image(image, ann_list[idx][0],
+       ann_list[idx][1], [], classes, True, save_name='_im_original.png')
 
-  im_flip, coords = tl.prepro.obj_box_left_right_flip(image, coords=ann_list[idx][1], is_rescale=True, is_center=True, is_random=False)
-  tl.vis.draw_boxes_and_labels_to_image(im_flip, ann_list[idx][0], coords, [], classes, True, save_name='_im_flip.png')
+  # 左右翻转
+  im_flip, coords = tl.prepro.obj_box_left_right_flip(image,
+          ann_list[idx][1], is_rescale=True, is_center=True, is_random=False)
+  tl.vis.draw_boxes_and_labels_to_image(im_flip, ann_list[idx][0],
+          coords, [], classes, True, save_name='_im_flip.png')
 
-  im_resize, coords = tl.prepro.obj_box_imresize(image, coords=ann_list[idx][1], size=[300, 200], is_rescale=True)
-  tl.vis.draw_boxes_and_labels_to_image(im_resize, ann_list[idx][0], coords, [], classes, True, save_name='_im_resize.png')
+  # 调整图片大小
+  im_resize, coords = tl.prepro.obj_box_imresize(image,
+          coords=ann_list[idx][1], size=[300, 200], is_rescale=True)
+  tl.vis.draw_boxes_and_labels_to_image(im_resize, ann_list[idx][0],
+          coords, [], classes, True, save_name='_im_resize.png')
 
-  im_crop, clas, coords = tl.prepro.obj_box_crop(image, classes=ann_list[idx][0], coords=ann_list[idx][1], wrg=200, hrg=200, is_rescale=True, is_center=True, is_random=False)
-  tl.vis.draw_boxes_and_labels_to_image(im_crop, clas, coords, [], classes, True, save_name='_im_crop.png')
+  # 裁剪
+  im_crop, clas, coords = tl.prepro.obj_box_crop(image, ann_list[idx][0],
+           ann_list[idx][1], wrg=200, hrg=200,
+           is_rescale=True, is_center=True, is_random=False)
+  tl.vis.draw_boxes_and_labels_to_image(im_crop, clas, coords, [],
+           classes, True, save_name='_im_crop.png')
 
-  im_shfit, clas, coords = tl.prepro.obj_box_shift(image, classes=ann_list[idx][0], coords=ann_list[idx][1], wrg=0.1, hrg=0.1, is_rescale=True, is_center=True, is_random=False)
-  tl.vis.draw_boxes_and_labels_to_image(im_shfit, clas, coords, [], classes, True, save_name='_im_shift.png')
+  # 位移
+  im_shfit, clas, coords = tl.prepro.obj_box_shift(image, ann_list[idx][0],
+          ann_list[idx][1], wrg=0.1, hrg=0.1,
+          is_rescale=True, is_center=True, is_random=False)
+  tl.vis.draw_boxes_and_labels_to_image(im_shfit, clas, coords, [],
+          classes, True, save_name='_im_shift.png')
 
-  im_zoom, clas, coords = tl.prepro.obj_box_zoom(image, classes=ann_list[idx][0], coords=ann_list[idx][1], zoom_range=(1.3, 0.7), is_rescale=True, is_center=True, is_random=False)
-  tl.vis.draw_boxes_and_labels_to_image(im_zoom, clas, coords, [], classes, True, save_name='_im_zoom.png')
-
+  # 高宽缩放
+  im_zoom, clas, coords = tl.prepro.obj_box_zoom(image, ann_list[idx][0],
+          ann_list[idx][1], zoom_range=(1.3, 0.7),
+          is_rescale=True, is_center=True, is_random=False)
+  tl.vis.draw_boxes_and_labels_to_image(im_zoom, clas, coords, [],
+          classes, True, save_name='_im_zoom.png')
 
 实际中，你可能希望如下使用多线程方式来处理一个batch的数据。
 
@@ -278,33 +295,45 @@ Numpy 与 PIL
   def _data_pre_aug_fn(data):
       im, ann = data
       clas, coords = ann
-      ###### image only
-      im = tl.prepro.illumination(im, gamma=(0.5, 1.5), contrast=(0.5, 1.5), saturation=(0.5, 1.5), is_random=True)
-      ###### image and coordinates
-      ## random flip
-      im, coords = tl.prepro.obj_box_left_right_flip(im, coords=coords, is_rescale=True, is_center=True, is_random=True)
-      ## random resize
+      ## 随机改变图片亮度、对比度和饱和度
+      im = tl.prepro.illumination(im, gamma=(0.5, 1.5),
+               contrast=(0.5, 1.5), saturation=(0.5, 1.5), is_random=True)
+      ## 随机左右翻转
+      im, coords = tl.prepro.obj_box_left_right_flip(im, coords,
+               is_rescale=True, is_center=True, is_random=True)
+      ## 随机调整大小并裁剪出指定大小的图片，这同时达到了随机缩放的效果
       tmp0 = random.randint(1, int(im_size[0]*jitter))
       tmp1 = random.randint(1, int(im_size[1]*jitter))
-      im, coords = tl.prepro.obj_box_imresize(im, coords=coords, size=[im_size[0]+tmp0, im_size[1]+tmp1], is_rescale=True, interp='bicubic')
-      im, clas, coords = tl.prepro.obj_box_crop(im, classes=clas, coords=coords, wrg=im_size[1], hrg=im_size[0], is_rescale=True, is_center=True, is_random=True)
-      ###### rescale pixel value from [0, 255] to [-1, 1] (optional)
+      im, coords = tl.prepro.obj_box_imresize(im, coords,
+              [im_size[0]+tmp0, im_size[1]+tmp1], is_rescale=True,
+               interp='bicubic')
+      im, clas, coords = tl.prepro.obj_box_crop(im, clas, coords,
+               wrg=im_size[1], hrg=im_size[0], is_rescale=True,
+               is_center=True, is_random=True)
+      ## 把数值范围从 [0, 255] 转到 [-1, 1] (可选)
       im = im / 127.5 - 1
       return im, [clas, coords]
 
+  # 随机读取一个batch的图片及其标记
   idexs = tl.utils.get_random_int(min=0, max=n_data-1, number=batch_size)
   b_im_path = [imgs_file_list[i] for i in idexs]
   b_images = tl.prepro.threading_data(b_im_path, fn=tl.vis.read_image)
-
   b_ann = [ann_list[i] for i in idexs]
 
-  data = tl.prepro.threading_data([_ for _ in zip(b_images, b_ann)], _data_pre_aug_fn)
+  # 多线程处理
+  data = tl.prepro.threading_data([_ for _ in zip(b_images, b_ann)],
+                _data_pre_aug_fn)
   b_images2 = [d[0] for d in data]
   b_ann = [d[1] for d in data]
 
+  # 保存每一组图片以供体会
   for i in range(len(b_images)):
-      tl.vis.draw_boxes_and_labels_to_image(b_images[i], ann_list[idexs[i]][0], ann_list[idexs[i]][1], [], classes, True, save_name='_bbox_vis_%d_original.png' % i)
-      tl.vis.draw_boxes_and_labels_to_image((b_images2[i]+1)*127.5, b_ann[i][0], b_ann[i][1], [], classes, True, save_name='_bbox_vis_%d.png' % i)
+      tl.vis.draw_boxes_and_labels_to_image(b_images[i],
+               ann_list[idexs[i]][0], ann_list[idexs[i]][1], [],
+               classes, True, save_name='_bbox_vis_%d_original.png' % i)
+      tl.vis.draw_boxes_and_labels_to_image((b_images2[i]+1)*127.5,
+               b_ann[i][0], b_ann[i][1], [], classes, True,
+               save_name='_bbox_vis_%d.png' % i)
 
 
 坐标-像素单位到比例单位
