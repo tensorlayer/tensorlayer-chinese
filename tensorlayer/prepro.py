@@ -1542,7 +1542,7 @@ def obj_box_coord_scale_to_pixelunit(coord, shape=(100, 100, 3)):
 # exit()
 
 def obj_box_coord_centroid_to_upleft_butright(coord, to_int=False):
-    """ Convert one coordinate [x_center, y_center, w, h] to [x, y, x2, y2] in up-left and botton-right format.
+    """ Convert one coordinate [x_center, y_center, w, h] to [x1, y1, x2, y2] in up-left and botton-right format.
 
     Examples
     ---------
@@ -1551,8 +1551,8 @@ def obj_box_coord_centroid_to_upleft_butright(coord, to_int=False):
     """
     assert len(coord) == 4,  "coordinate should be 4 values : [x, y, w, h]"
     x_center, y_center, w, h = coord
-    x  = x_center - w / 2
-    y  = y_center - h / 2
+    x  = x_center - w / 2.
+    y  = y_center - h / 2.
     x2 = x + w
     y2 = y + h
     if to_int:
@@ -1564,14 +1564,27 @@ def obj_box_coord_centroid_to_upleft_butright(coord, to_int=False):
 # print(coord)    [20, 30, 40, 50]
 # exit()
 
+def obj_box_coord_upleft_butright_to_centroid(coord):
+    """ Convert one coordinate [x1, y1, x2, y2] to [x_center, y_center, w, h].
+    It is the reverse process of ``obj_box_coord_centroid_to_upleft_butright``.
+    """
+    assert len(coord) == 4,  "coordinate should be 4 values : [x1, y1, x2, y2]"
+    x1, y1, x2, y2 = coord
+    w = x2 - x1
+    h = y2 - y1
+    x_c = x1 + w / 2.
+    y_c = y1 + h / 2.
+    return [x_c, y_c, w, h]
+
+
 def obj_box_coord_centroid_to_upleft(coord):
     """ Convert one coordinate [x_center, y_center, w, h] to [x, y, w, h].
     It is the reverse process of ``obj_box_coord_upleft_to_centroid``.
     """
     assert len(coord) == 4,  "coordinate should be 4 values : [x, y, w, h]"
     x_center, y_center, w, h = coord
-    x  = x_center - w / 2
-    y  = y_center - h / 2
+    x  = x_center - w / 2.
+    y  = y_center - h / 2.
     return [x, y, w, h]
 
 def obj_box_coord_upleft_to_centroid(coord):
@@ -1580,8 +1593,8 @@ def obj_box_coord_upleft_to_centroid(coord):
     """
     assert len(coord) == 4,  "coordinate should be 4 values : [x, y, w, h]"
     x, y, w, h = coord
-    x_center = x + w / 2
-    y_center = y + h / 2
+    x_center = x + w / 2.
+    y_center = y + h / 2.
     return [x_center, y_center, w, h]
 
 ##
@@ -1621,7 +1634,7 @@ def obj_box_left_right_flip(im, coords=[], is_rescale=False, is_center=False, is
         An image with dimension of [row, col, channel] (default).
     coords : list of list for coordinates [[x, y, w, h], [x, y, w, h], ...]
     is_rescale : boolean, default False
-        Set to True, if the coordinates are rescaled to [0, 1].
+        Set to True, if the input coordinates are rescaled to [0, 1].
     is_center : boolean, default False
         Set to True, if the x and y of coordinates are the centroid. (i.e. darknet format)
     is_random : boolean, default False
@@ -1700,7 +1713,7 @@ def obj_box_imresize(im, coords=[], size=[100, 100], interp='bicubic', mode=None
     coords : list of list for coordinates [[x, y, w, h], [x, y, w, h], ...]
     size, interp, mode : see ``tl.prepro.imresize`` for details.
     is_rescale : boolean, default False
-        Set to True, if the coordinates are rescaled to [0, 1], then return the original coordinates.
+        Set to True, if the input coordinates are rescaled to [0, 1], then return the original coordinates.
 
     Examples
     --------
@@ -1758,7 +1771,7 @@ def obj_box_imresize(im, coords=[], size=[100, 100], interp='bicubic', mode=None
 
 def obj_box_crop(im, classes=[], coords=[], wrg=100, hrg=100,
     is_rescale=False, is_center=False, is_random=False,
-    thresh_wh=0.01, thresh_wh2=15.):
+    thresh_wh=0.02, thresh_wh2=12.):
     """Randomly or centrally crop an image, and compute the new bounding box coordinates.
     Objects outside the cropped image will be removed.
 
@@ -1770,7 +1783,7 @@ def obj_box_crop(im, classes=[], coords=[], wrg=100, hrg=100,
     coords : list of list for coordinates [[x, y, w, h], [x, y, w, h], ...]
     wrg, hrg, is_random : see ``tl.prepro.crop`` for details.
     is_rescale : boolean, default False
-        Set to True, if the coordinates are rescaled to [0, 1].
+        Set to True, if the input coordinates are rescaled to [0, 1].
     is_center : boolean, default False
         Set to True, if the x and y of coordinates are the centroid. (i.e. darknet format)
     thresh_wh : float
@@ -1885,7 +1898,7 @@ def obj_box_shift(im, classes=[], coords=[], wrg=0.1, hrg=0.1,
     row_index=0, col_index=1, channel_index=2,
     fill_mode='nearest', cval=0., order=1,
     is_rescale=False, is_center=False, is_random=False,
-    thresh_wh=0.01, thresh_wh2=15.):
+    thresh_wh=0.02, thresh_wh2=12.):
     """ Shift an image randomly or non-randomly, and compute the new bounding box coordinates.
     Objects outside the cropped image will be removed.
 
@@ -1897,7 +1910,7 @@ def obj_box_shift(im, classes=[], coords=[], wrg=0.1, hrg=0.1,
     coords : list of list for coordinates [[x, y, w, h], [x, y, w, h], ...]
     wrg, hrg, row_index, col_index, channel_index, is_random, fill_mode, cval, order : see ``tl.prepro.shift``.
     is_rescale : boolean, default False
-        Set to True, if the coordinates are rescaled to [0, 1].
+        Set to True, if the input coordinates are rescaled to [0, 1].
     is_center : boolean, default False
         Set to True, if the x and y of coordinates are the centroid. (i.e. darknet format)
     thresh_wh : float
@@ -1995,7 +2008,7 @@ def obj_box_shift(im, classes=[], coords=[], wrg=0.1, hrg=0.1,
 def obj_box_zoom(im, classes=[], coords=[], zoom_range=(0.9, 1.1),
     row_index=0, col_index=1, channel_index=2, fill_mode='nearest', cval=0., order=1,
     is_rescale=False, is_center=False, is_random=False,
-    thresh_wh=0.01, thresh_wh2=15.):
+    thresh_wh=0.02, thresh_wh2=12.):
     """Zoom in and out of a single image, randomly or non-randomly, and compute the new bounding box coordinates.
     Objects outside the cropped image will be removed.
 
@@ -2007,7 +2020,7 @@ def obj_box_zoom(im, classes=[], coords=[], zoom_range=(0.9, 1.1),
     coords : list of list for coordinates [[x, y, w, h], [x, y, w, h], ...]
     zoom_range, row_index, col_index, channel_index, is_random, fill_mode, cval, order : see ``tl.prepro.zoom``.
     is_rescale : boolean, default False
-        Set to True, if the coordinates are rescaled to [0, 1].
+        Set to True, if the input coordinates are rescaled to [0, 1].
     is_center : boolean, default False
         Set to True, if the x and y of coordinates are the centroid. (i.e. darknet format)
     thresh_wh : float

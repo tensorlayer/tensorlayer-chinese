@@ -90,20 +90,24 @@ def save_images(images, size, image_path=''):
 # for object detection
 def draw_boxes_and_labels_to_image(image, classes=[], coords=[],
                 scores=[], classes_list=[],
-                bbox_center_to_rectangle=True, save_name=None):
+                box_centroid_to_upleft_butright=True, is_rescale=True, save_name=None):
     """ Draw bboxes and class labels on image. Return or save the image with bboxes, example in the docs of ``tl.prepro``.
 
     Parameters
     -----------
     image : RGB image in numpy.array, [height, width, channel].
-    classes : list of class ID (int).
-    coords : list of list for coordinates.
-        - [x, y, x2, y2] (up-left and botton-right)
-        - or [x_center, y_center, w, h] (set bbox_center_to_rectangle to True).
-    scores : list of score (int). (Optional)
-    classes_list : list of string, for converting ID to string.
-    bbox_center_to_rectangle : boolean, defalt is False.
-        If True, convert [x_center, y_center, w, h] to [x, y, x2, y2] (up-left and botton-right).
+    classes : a list of class ID (int).
+    coords : a list of list for coordinates.
+        - Should be [x, y, x2, y2] (up-left and botton-right format)
+        - If [x_center, y_center, w, h] (set box_centroid_to_upleft_butright to True).
+    scores : a list of score (float). (Optional)
+    classes_list : list of string, for converting ID to string on image.
+    box_centroid_to_upleft_butright : boolean, defalt is True.
+        If coords is [x_center, y_center, w, h], set it to True for converting [x_center, y_center, w, h] to [x, y, x2, y2] (up-left and botton-right).
+        If coords is [x1, x2, y1, y2], set it to False.
+    is_rescale : boolean, defalt is True.
+        If True, the input coordinates are the portion of width and high, this API will scale the coordinates to pixel unit internally.
+        If False, feed the coordinates with pixel unit format.
     save_name : None or string
         The name of image file (i.e. image.png), if None, not to save image.
 
@@ -125,22 +129,23 @@ def draw_boxes_and_labels_to_image(image, classes=[], coords=[],
     thick = int((imh + imw) // 430)
 
     for i in range(len(coords)):
-        if bbox_center_to_rectangle:
+        if box_centroid_to_upleft_butright:
             x, y, x2, y2 = prepro.obj_box_coord_centroid_to_upleft_butright(coords[i])
         else:
             x, y, x2, y2 = coords[i]
 
-        x, y, x2, y2 = prepro.obj_box_coord_scale_to_pixelunit([x, y, x2, y2], (imh, imw))
+        if is_rescale: # scale back to pixel unit if the coords are the portion of width and high
+            x, y, x2, y2 = prepro.obj_box_coord_scale_to_pixelunit([x, y, x2, y2], (imh, imw))
 
         cv2.rectangle(image,
-            (x, y), (x2, y2),   # up-left and botton-right
+            (int(x), int(y)), (int(x2), int(y2)),   # up-left and botton-right
             [0,255,0],
             thick)
 
         cv2.putText(
             image,
-            classes_list[classes[i]] + ((" " + str(scores[i])) if (len(scores) != 0) else " "),
-            (x, y),             # button left
+            classes_list[classes[i]] + ((" %.2f" % (scores[i])) if (len(scores) != 0) else " "),
+            (int(x), int(y)),   # button left
             0,
             1.5e-3 * imh,       # bigger = larger font
             [0,0,256],          # self.meta['colors'][max_indx],

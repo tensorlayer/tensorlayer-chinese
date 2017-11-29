@@ -67,6 +67,7 @@ API - 数据预处理
    obj_box_coords_rescale
    obj_box_coord_scale_to_pixelunit
    obj_box_coord_centroid_to_upleft_butright
+   obj_box_coord_upleft_butright_to_centroid
    obj_box_coord_centroid_to_upleft
    obj_box_coord_upleft_to_centroid
 
@@ -351,6 +352,10 @@ Numpy 与 PIL
 坐标-[x_center, x_center, w, h]到左上-右下单位
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: obj_box_coord_centroid_to_upleft_butright
+
+坐标-左上-右下单位到[x_center, x_center, w, h]
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: obj_box_coord_upleft_butright_to_centroid
 
 坐标-[x_center, x_center, w, h]到左上-高宽单位
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
