@@ -854,7 +854,7 @@ class ReconLayer(DenseLayer):
     You may need to modify this part to define your own cost function.
     By default, the cost is implemented as follow:
     - For sigmoid layer, the implementation can be `UFLDL <http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial>`_
-    - For rectifying layer, the implementation can be `Glorot (2011). Deep Sparse Rectifier Neural Networks <http://proceedings.mlr.press/v15/glorot11a/glorot11a.pdf>`_
+    - For rectifying layer, the implementation can be `Glorot (2011). Deep Sparse Rectifier Neural Networks <http://doi.org/10.1.1.208.6449>`_
     """
     def __init__(
         self,
@@ -1843,7 +1843,7 @@ def tf_batch_map_offsets(inputs, offsets, grid_offset):
 
 class DeformableConv2dLayer(Layer):
     """The :class:`DeformableConv2dLayer` class is a
-    `Deformable Convolutional Layer <https://arxiv.org/abs/1703.06211>`_ .
+    `Deformable Convolutional Networks <https://arxiv.org/abs/1703.06211>`_ .
 
     Parameters
     -----------
@@ -1852,7 +1852,7 @@ class DeformableConv2dLayer(Layer):
         e.g. if apply a 3*3 kernel, the number of the last dimension should be 18 (2*3*3)
     channel_multiplier : int, The number of channels to expand to.
     filter_size : tuple (height, width) for filter size.
-    strides : tuple (height, width) for strides.
+    strides : tuple (height, width) for strides. Current implementation fix to (1, 1, 1, 1)
     act : None or activation function.
     shape : list of shape
         shape of the filters, [filter_height, filter_width, in_channels, out_channels].
@@ -1867,35 +1867,48 @@ class DeformableConv2dLayer(Layer):
     name : a string or None
         An optional name to attach to this layer.
 
+    Examples
+    --------
+    >>> network = tl.layers.InputLayer(x, name='input_layer')
+    >>> offset_1 = tl.layers.Conv2dLayer(layer=network, act=act, shape=[3, 3, 3, 18], strides=[1, 1, 1, 1],padding='SAME', name='offset_layer1')
+    >>> network = tl.layers.DeformableConv2dLayer(layer=network, act=act, offset_layer=offset_1,  shape=[3, 3, 3, 32],  name='deformable_conv_2d_layer1')
+    >>> offset_2 = tl.layers.Conv2dLayer(layer=network, act=act, shape=[3, 3, 32, 18], strides=[1, 1, 1, 1], padding='SAME', name='offset_layer2')
+    >>> network = tl.layers.DeformableConv2dLayer(layer=network, act = act, offset_layer=offset_2, shape=[3, 3, 32, 64], name='deformable_conv_2d_layer2')
+
+    References
+    -----------
+    - The deformation operation was adapted from the implementation in `<https://github.com/felixlaumon/deform-conv>`_
+
     Notes
     -----------
-    - The stride is fixed as (1, 1, 1, 1)
-    - `The padding is fixed as 'same'
-    - The current implementation is memory-inefficient, please use carefully
+    - The stride is fixed as (1, 1, 1, 1).
+    - The padding is fixed as 'SAME'.
+    - The current implementation is memory-inefficient, please use carefully.
     """
     def __init__(
             self,
             layer=None,
-            offset_layer=None,
             act=tf.identity,
-            shape=[3, 3, 10, 10],
+            offset_layer=None,
+            shape=[3, 3, 1, 100],
+            name='deformable_conv_2d_layer',
             W_init=tf.truncated_normal_initializer(stddev=0.02),
             b_init=tf.constant_initializer(value=0.0),
             W_init_args={},
-            b_init_args={},
-            name='deformable_conv_2d_layer',
+            b_init_args={}
     ):
+        if tf.__version__ < "1.4":
+            raise Exception("Deformable CNN layer requires tensrflow 1.4 or higher version")
+
         Layer.__init__(self, name=name)
         self.inputs = layer.outputs
         self.offset_layer = offset_layer
-
-        if tf.__version__ < "1.4":
-            raise Exception("Deformable CNN layer requires tensrflow 1.4 or higher version")
 
         print("  [TL] DeformableConv2dLayer %s: shape:%s, act:%s" %
               (self.name, str(shape), act.__name__))
 
         with tf.variable_scope(name) as vs:
+
             offset = self.offset_layer.outputs
             assert offset.get_shape()[-1] == 2 * shape[0] * shape[1]
 
@@ -1912,8 +1925,9 @@ class DeformableConv2dLayer(Layer):
             initial_offsets = tf.tile(initial_offsets, [input_h, input_w, 1, 1])  # initial_offsets --> (h, w, n, 2)
             initial_offsets = tf.cast(initial_offsets, 'float32')
             grid = tf.meshgrid(
-                tf.range(input_h), tf.range(input_w), indexing='ij'
-            )
+                tf.range(- int((shape[0] - 1)/2.0), int(input_h - int((shape[0] - 1)/2.0)), 1),
+                tf.range(- int((shape[1] - 1)/2.0), int(input_w - int((shape[1] - 1)/2.0)), 1), indexing='ij')
+
             grid = tf.stack(grid, axis=-1)
             grid = tf.cast(grid, 'float32')  # grid --> (h, w, 2)
             grid = tf.expand_dims(grid, 2)  # grid --> (h, w, 1, 2)
@@ -1923,7 +1937,7 @@ class DeformableConv2dLayer(Layer):
             input_deform = tf_batch_map_offsets(self.inputs, offset, grid_offset)
 
             W = tf.get_variable(name='W_conv2d', shape=[1, 1, shape[0] * shape[1], shape[-2], shape[-1]],
-                                initializer=W_init, **W_init_args)
+                              initializer=W_init, **W_init_args)
             b = tf.get_variable(name='b_conv2d', shape=(shape[-1]), initializer=b_init, **b_init_args)
 
             self.outputs = tf.reshape(act(
@@ -1936,8 +1950,11 @@ class DeformableConv2dLayer(Layer):
         self.all_drop = dict(layer.all_drop)
 
         ## offset_layer
-        self.all_layers.extend(offset_layer.all_layers)
-        self.all_params.extend(offset_layer.all_params)
+        offset_params = [osparam for osparam in offset_layer.all_params if osparam not in layer.all_params]
+        offset_layers = [oslayer for oslayer in offset_layer.all_layers if oslayer not in layer.all_layers]
+
+        self.all_params.extend(offset_params)
+        self.all_layers.extend(offset_layers)
         self.all_drop.update(offset_layer.all_drop)
 
         ## this layer
@@ -3081,6 +3098,7 @@ class BatchNormLayer(Layer):
         The initializer for initializing beta
     gamma_init : gamma initializer
         The initializer for initializing gamma
+    dtype : tf.float32 (default) or tf.float16
     name : a string or None
         An optional name to attach to this layer.
 
@@ -3098,6 +3116,7 @@ class BatchNormLayer(Layer):
         is_train = False,
         beta_init = tf.zeros_initializer,
         gamma_init = tf.random_normal_initializer(mean=1.0, stddev=0.002), # tf.ones_initializer,
+        dtype = tf.float32,
         name ='batchnorm_layer',
     ):
         Layer.__init__(self, name=name)
@@ -3118,10 +3137,13 @@ class BatchNormLayer(Layer):
                 beta_init = beta_init()
             beta = tf.get_variable('beta', shape=params_shape,
                                initializer=beta_init,
+                               dtype=dtype,
                                trainable=is_train)#, restore=restore)
 
             gamma = tf.get_variable('gamma', shape=params_shape,
-                                initializer=gamma_init, trainable=is_train,
+                                initializer=gamma_init,
+                                dtype=dtype,
+                                trainable=is_train,
                                 )#restore=restore)
 
             ## 2.
@@ -3132,10 +3154,12 @@ class BatchNormLayer(Layer):
             moving_mean = tf.get_variable('moving_mean',
                                       params_shape,
                                       initializer=moving_mean_init,
-                                      trainable=False,)#   restore=restore)
+                                      dtype=dtype,
+                                      trainable=False)#   restore=restore)
             moving_variance = tf.get_variable('moving_variance',
                                           params_shape,
                                           initializer=tf.constant_initializer(1.),
+                                          dtype=dtype,
                                           trainable=False,)#   restore=restore)
 
             ## 3.
