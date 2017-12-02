@@ -61,13 +61,13 @@ def main_test_layers(model='relu'):
         network = tl.layers.InputLayer(x, name='input')
         network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
         network = tl.layers.DenseLayer(network, n_units=800,
-                                        act = tf.nn.relu, name='relu1')
+                                        act=tf.nn.relu, name='relu1')
         network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
         network = tl.layers.DenseLayer(network, n_units=800,
-                                        act = tf.nn.relu, name='relu2')
+                                        act=tf.nn.relu, name='relu2')
         network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
         network = tl.layers.DenseLayer(network, n_units=10,
-                                        act = tf.identity,
+                                        act=tf.identity,
                                         name='output')
     elif model == 'dropconnect':
         network = tl.layers.InputLayer(x, name='input')
@@ -79,7 +79,7 @@ def main_test_layers(model='relu'):
                                                 name='dropconnect_relu2')
         network = tl.layers.DropconnectDenseLayer(network, keep = 0.5,
                                                 n_units=10,
-                                                act = tf.identity,
+                                                act=tf.identity,
                                                 name='output')
 
     # To print all attributes of a Layer.
@@ -151,14 +151,13 @@ def main_test_layers(model='relu'):
             print("   val acc: %f" % (val_acc/ n_batch))
             try:
                 # You can visualize the weight of 1st hidden layer as follow.
-                tl.visualize.W(network.all_params[0].eval(), second=10,
+                tl.vis.W(network.all_params[0].eval(), second=10,
                                         saveable=True, shape=[28, 28],
                                         name='w1_'+str(epoch+1), fig_idx=2012)
                 # You can also save the weight of 1st hidden layer to .npz file.
                 # tl.files.save_npz([network.all_params[0]] , name='w1'+str(epoch+1)+'.npz')
             except:
-                raise Exception("You should change visualize_W(), if you want \
-                            to save the feature images for different dataset")
+                print("You should change vis.W(), if you want to save the feature images for different dataset")
 
     print('Evaluation')
     test_loss, test_acc, n_batch = 0, 0, 0
@@ -296,20 +295,18 @@ def main_test_stacked_denoise_AE(model='relu'):
     network = tl.layers.DropoutLayer(network, keep=0.5, name='denoising1')
     # 1st layer
     network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
-    network = tl.layers.DenseLayer(network, n_units=800, act = act, name=model+'1')
+    network = tl.layers.DenseLayer(network, n_units=800, act=act, name=model+'1')
     x_recon1 = network.outputs
     recon_layer1 = tl.layers.ReconLayer(network, x_recon=x, n_units=784,
-                                        act = act_recon, name='recon_layer1')
+                                        act=act_recon, name='recon_layer1')
     # 2nd layer
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
     network = tl.layers.DenseLayer(network, n_units=800, act = act, name=model+'2')
     recon_layer2 = tl.layers.ReconLayer(network, x_recon=x_recon1, n_units=800,
-                                        act = act_recon, name='recon_layer2')
+                                        act=act_recon, name='recon_layer2')
     # 3rd layer
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
-    network = tl.layers.DenseLayer(network, n_units=10,
-                                            act = tf.identity,
-                                            name='output')
+    network = tl.layers.DenseLayer(network, 10, act=tf.identity, name='output')
 
     # Define fine-tune process
     y = network.outputs
@@ -390,11 +387,11 @@ def main_test_stacked_denoise_AE(model='relu'):
             print("   val acc: %f" % (val_acc/ n_batch))
             try:
                 # visualize the 1st hidden layer during fine-tune
-                tl.visualize.W(network.all_params[0].eval(), second=10,
+                tl.vis.W(network.all_params[0].eval(), second=10,
                             saveable=True, shape=[28, 28],
                             name='w1_'+str(epoch+1), fig_idx=2012)
             except:
-                raise Exception("# You should change visualize_W(), if you want to save the feature images for different dataset")
+                print("You should change vis.W(), if you want to save the feature images for different dataset")
 
     print('Evaluation')
     test_loss, test_acc, n_batch = 0, 0, 0
@@ -486,23 +483,20 @@ def main_test_cnn_layer():
     #                     pool = tf.nn.max_pool,
     #                     name ='pool2',)   # output: (?, 7, 7, 64)
     ## Simplified conv API for beginner (the same with the above layers)
-    network = tl.layers.Conv2d(network, n_filter=32, filter_size=(5, 5), strides=(1, 1),
+    network = tl.layers.Conv2d(network, 32, (5, 5), (1, 1),
             act=tf.nn.relu, padding='SAME', name='cnn1')
-    network = tl.layers.MaxPool2d(network, filter_size=(2, 2), strides=(2, 2),
+    network = tl.layers.MaxPool2d(network, (2, 2), (2, 2),
             padding='SAME', name='pool1')
-    network = tl.layers.Conv2d(network, n_filter=64, filter_size=(5, 5), strides=(1, 1),
+    network = tl.layers.Conv2d(network, 64, (5, 5), (1, 1),
             act=tf.nn.relu, padding='SAME', name='cnn2')
-    network = tl.layers.MaxPool2d(network, filter_size=(2, 2), strides=(2, 2),
+    network = tl.layers.MaxPool2d(network, (2, 2), (2, 2),
             padding='SAME', name='pool2')
     ## end of conv
     network = tl.layers.FlattenLayer(network, name='flatten')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop1')
-    network = tl.layers.DenseLayer(network, n_units=256,
-                                    act = tf.nn.relu, name='relu1')
+    network = tl.layers.DenseLayer(network, 256, act=tf.nn.relu, name='relu1')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
-    network = tl.layers.DenseLayer(network, n_units=10,
-                                    act = tf.identity,
-                                    name='output')
+    network = tl.layers.DenseLayer(network, 10, act=tf.identity, name='output')
 
     y = network.outputs
 
@@ -558,11 +552,11 @@ def main_test_cnn_layer():
             print("   val loss: %f" % (val_loss/ n_batch))
             print("   val acc: %f" % (val_acc/ n_batch))
             try:
-                tl.visualize.CNN2d(network.all_params[0].eval(),
+                tl.vis.CNN2d(network.all_params[0].eval(),
                                     second=10, saveable=True,
                                     name='cnn1_'+str(epoch+1), fig_idx=2012)
             except:
-                raise Exception("# You should change visualize.CNN(), if you want to save the feature images for different dataset")
+                print("You should change vis.CNN(), if you want to save the feature images for different dataset")
 
     print('Evaluation')
     test_loss, test_acc, n_batch = 0, 0, 0
