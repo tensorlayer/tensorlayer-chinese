@@ -7,7 +7,7 @@ A3C > DDPG (for continuous action space) > AC
 
 Advantage
 ----------
-Training faster and more stable than AC.
+Train faster and more stable than AC.
 
 Disadvantage
 -------------
@@ -121,7 +121,7 @@ class ACNet(object):
 
     def _build_net(self):
         w_init = tf.contrib.layers.xavier_initializer()
-        with tf.variable_scope('actor'):
+        with tf.variable_scope('actor'):        # Policy network
             nn = InputLayer(self.s, name='in')
             nn = DenseLayer(nn, n_units=500, act=tf.nn.relu6, W_init=w_init, name='la')
             nn = DenseLayer(nn, n_units=300, act=tf.nn.relu6, W_init=w_init, name='la2')
@@ -130,7 +130,7 @@ class ACNet(object):
             self.mu = mu.outputs
             self.sigma = sigma.outputs
 
-        with tf.variable_scope('critic'):
+        with tf.variable_scope('critic'):       # we use Value-function here, but not Q-function.
             nn = InputLayer(self.s, name='in')
             nn = DenseLayer(nn, n_units=500, act=tf.nn.relu6, W_init=w_init, name='lc')
             nn = DenseLayer(nn, n_units=200, act=tf.nn.relu6, W_init=w_init, name='lc2')
@@ -149,6 +149,7 @@ class ACNet(object):
         return sess.run(self.A, {self.s: s})[0]
 
     def save_ckpt(self):
+        tl.files.exists_or_mkdir(self.scope)
         tl.files.save_ckpt(sess=sess, mode_name='model.ckpt', var_list=self.a_params+self.c_params, save_dir=self.scope, printable=True)
 
     def load_ckpt(self):
@@ -169,8 +170,8 @@ class Worker(object):
             s = self.env.reset()
             ep_r = 0
             while True:
-                ## visualize Workder_0 during training
-                if self.name == 'Workder_0' and total_step % 30 == 0:
+                ## visualize Worker_0 during training
+                if self.name == 'Worker_0' and total_step % 30 == 0:
                     self.env.render()
                 a = self.AC.choose_action(s)
                 s_, r, done, info = self.env.step(a)
@@ -255,18 +256,18 @@ if __name__ == "__main__":
     GLOBAL_AC.save_ckpt()
 
     ###============================= EVALUATION =============================###
-    env = gym.make(GAME)
-    GLOBAL_AC = ACNet(GLOBAL_NET_SCOPE)
-    tl.layers.initialize_global_variables(sess)
-    GLOBAL_AC.load_ckpt()
-    while True:
-        s = env.reset()
-        rall = 0
-        while True:
-            env.render()
-            a = GLOBAL_AC.choose_action(s)
-            s, r, d, _ = env.step(a)
-            rall += r
-            if d:
-                print("reward", rall)
-                break
+    # env = gym.make(GAME)
+    # GLOBAL_AC = ACNet(GLOBAL_NET_SCOPE)
+    # tl.layers.initialize_global_variables(sess)
+    # GLOBAL_AC.load_ckpt()
+    # while True:
+    #     s = env.reset()
+    #     rall = 0
+    #     while True:
+    #         env.render()
+    #         a = GLOBAL_AC.choose_action(s)
+    #         s, r, d, _ = env.step(a)
+    #         rall += r
+    #         if d:
+    #             print("reward", rall)
+    #             break
