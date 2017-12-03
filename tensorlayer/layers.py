@@ -3926,8 +3926,8 @@ class InstanceNormLayer(Layer):
         with tf.variable_scope(name) as vs:
             mean, var = tf.nn.moments(self.inputs, [1, 2], keep_dims=True)
             scale = tf.get_variable('scale',[self.inputs.get_shape()[-1]],
-                initializer=scale_init)
-            offset = tf.get_variable('offset',[self.inputs.get_shape()[-1]],initializer=offset_init)
+                initializer=tf.truncated_normal_initializer(mean=1.0, stddev=0.02))
+            offset = tf.get_variable('offset',[self.inputs.get_shape()[-1]],initializer=tf.constant_initializer(0.0))
             self.outputs = scale * tf.div(self.inputs-mean, tf.sqrt(var+epsilon)) + offset
             self.outputs = act(self.outputs)
             variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
