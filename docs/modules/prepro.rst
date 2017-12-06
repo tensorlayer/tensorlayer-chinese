@@ -39,7 +39,13 @@ API - 数据预处理
 
    illumination
 
+   rgb_to_hsv
+   hsv_to_rgb
+   adjust_hue
+
    imresize
+
+   pixel_value_scale
 
    samplewise_norm
    featurewise_norm
@@ -155,13 +161,31 @@ API - 数据预处理
 .. autofunction:: brightness
 .. autofunction:: brightness_multi
 
-照度
-^^^^^^^^^^^^^^
+亮度, 饱和度, 对比度
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: illumination
+
+
+RGB 转 HSV
+^^^^^^^^^^^^^^
+.. autofunction:: rgb_to_hsv
+
+HSV 转 RGB
+^^^^^^^^^^^^^^
+.. autofunction:: hsv_to_rgb
+
+调整 HSV
+^^^^^^^^^^^^^^
+.. autofunction:: adjust_hue
+
 
 调整大小
 ^^^^^^^^^^^^
 .. autofunction:: imresize
+
+像素值缩放
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: pixel_value_scale
 
 正规化
 ^^^^^^^^^^^^^^^

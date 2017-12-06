@@ -115,13 +115,15 @@ def set_name_reuse(enable=True):
     """
     set_keep['name_reuse'] = enable
 
-def initialize_rnn_state(state):
-    """Return the initialized RNN state.
-    The input is LSTMStateTuple or State of RNNCells.
+def initialize_rnn_state(state, feed_dict=None):
+    """Returns the initialized RNN state.
+    The inputs are LSTMStateTuple or State of RNNCells and an optional feed_dict.
 
     Parameters
     -----------
     state : a RNN state.
+    feed_dict : None or a dictionary for initializing the state values (optional).
+        If None, returns the zero state.
     """
     try: # TF1.0
         LSTMStateTuple = tf.contrib.rnn.LSTMStateTuple
@@ -129,11 +131,11 @@ def initialize_rnn_state(state):
         LSTMStateTuple = tf.nn.rnn_cell.LSTMStateTuple
 
     if isinstance(state, LSTMStateTuple):
-        c = state.c.eval()
-        h = state.h.eval()
+        c = state.c.eval(feed_dict=feed_dict)
+        h = state.h.eval(feed_dict=feed_dict)
         return (c, h)
     else:
-        new_state = state.eval()
+        new_state = state.eval(feed_dict=feed_dict)
         return new_state
 
 def print_all_variables(train_only=False):
