@@ -1,7 +1,7 @@
 API - 分布式
 ======================
 
-分布式训练的帮助sessions和方法。
+分布式训练的帮助sessions和方法，请参考 `mnist例子 <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_mnist_distributed.py>`_。
 
 .. automodule:: tensorlayer.distributed
 
