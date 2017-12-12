@@ -141,7 +141,7 @@ Continuous evaluation
 Session Hooks
 ----------------------
 
-TensorFlow提供了一些`Session Hooks <https://www.tensorflow.org/api_guides/python/train#Training_Hooks>`
+TensorFlow提供了一些 `Session Hooks <https://www.tensorflow.org/api_guides/python/train#Training_Hooks>`_
 来对sessions做操作，我们在这里加更多的helper来实现更多的常规操作。
 
 Stop after maximum time
