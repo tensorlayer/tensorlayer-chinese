@@ -34,7 +34,7 @@ Data sharding
 ^^^^^^^^^^^^^^^^^^^^^^
 
 我们希望把数据分开很多块，放到每一个训练服务器上，而不是把整个数据放到所有的服务器上。
-TensorFlow >= 1.4 提供了一些帮助类（helper classes）来支持数据分区功能（data sharding）: `Datasets <https://www.tensorflow.org/programmers_guide/datasets>`
+TensorFlow >= 1.4 提供了一些帮助类（helper classes）来支持数据分区功能（data sharding）: `Datasets <https://www.tensorflow.org/programmers_guide/datasets>`_
 
 值得注意的是，在数据切分时，数据打乱非常重要，这些操作在建立shards的时候自动完成：
 
