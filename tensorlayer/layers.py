@@ -250,6 +250,9 @@ def merge_networks(layers=[]):
     layer.all_layers = list(all_layers)
     layer.all_drop = dict(all_drop)
 
+    layer.all_layers = list_remove_repeat(layer.all_layers)
+    layer.all_params = list_remove_repeat(layer.all_params)
+
     return layer
 
 def initialize_global_variables(sess=None):
@@ -300,13 +303,13 @@ class Layer(object):
             if name not in ['', None, False]:
                 set_keep['_layers_name_list'].append(name)
 
-    def print_params(self, details=True):
+    def print_params(self, details=True, session=None):
         ''' Print all info of parameters in the network'''
         for i, p in enumerate(self.all_params):
             if details:
                 try:
                     # print("  param {:3}: {:15} (mean: {:<18}, median: {:<18}, std: {:<18})   {}".format(i, str(p.eval().shape), p.eval().mean(), np.median(p.eval()), p.eval().std(), p.name))
-                    val = p.eval()
+                    val = p.eval(session=session)
                     print("  param {:3}: {:20} {:15}    {} (mean: {:<18}, median: {:<18}, std: {:<18})   ".format(i, p.name, str(val.shape), p.dtype.name, val.mean(), np.median(val), val.std()))
                 except Exception as e:
                     print(str(e))
@@ -5080,7 +5083,7 @@ def retrieve_seq_length_op(data):
     >>> data = [[[1,2],[2,2],[1,2],[1,2],[0,0]],
     ...         [[2,3],[2,4],[3,2],[0,0],[0,0]],
     ...         [[3,3],[2,2],[5,3],[1,2],[0,0]]]
-    >>> sl
+    >>> print(sl)
     ... [4 3 4]
 
     References

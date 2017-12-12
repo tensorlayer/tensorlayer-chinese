@@ -59,6 +59,7 @@ API目录
   modules/visualize
   modules/ops
   modules/activation
+  modules/distributed
   modules/db
 
 
