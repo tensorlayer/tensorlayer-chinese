@@ -26,6 +26,9 @@
 
 本文档的中文深度学习教程需要更多贡献者参与，有意者请联系 tensorlayer@gmail.com 。
 
+.. image:: my_figs/book_description.jpeg
+  :scale: 90 %
+  :align: center
 
 在我们开始之前
 ==================
