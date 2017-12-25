@@ -20,7 +20,7 @@
 《深度学习：一起玩转TensorLayer》
 ================================
 
-好消息！中文社区推出了 `《深度学习：一起玩转TensorLayer》 <https://search.jd.com/Search?keyword=tensorlayer&enc=utf-8&wq=tensorlayer&pvid=cde8de66a6814c8ca7262adfd995deb1>`_ 。
+好消息！中文社区推出了 `《深度学习：一起玩转TensorLayer》 <https://search.jd.com/Search?keyword=tensorlayer&enc=utf-8&wq=tensorlayer&pvid=cde8de66a6814c8ca7262adfd995deb1>`_ 一书。
 
 .. image:: my_figs/book_cover.jpeg
   :scale: 100 %
