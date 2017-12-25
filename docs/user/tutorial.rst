@@ -20,6 +20,10 @@
 
 好消息！中文社区推出了 `《深度学习：一起玩转TensorLayer》 <https://search.jd.com/Search?keyword=tensorlayer&enc=utf-8&wq=tensorlayer&pvid=cde8de66a6814c8ca7262adfd995deb1>`_ 。
 
+.. image:: my_figs/book_cover.jpeg
+  :scale: 100 %
+  :align: center
+
 本文档的中文深度学习教程需要更多贡献者参与，有意者请联系 tensorlayer@gmail.com 。
 
 
