@@ -25,10 +25,12 @@
 .. image:: my_figs/book_cover.jpeg
   :scale: 100 %
   :align: center
+  :target: https://search.jd.com/Search?keyword=tensorlayer
 
 .. image:: my_figs/book_description.jpeg
   :scale: 90 %
   :align: center
+  :target: https://search.jd.com/Search?keyword=tensorlayer
 
 在我们开始之前
 ==================
