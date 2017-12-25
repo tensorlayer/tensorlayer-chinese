@@ -14,6 +14,8 @@
 .. note::
     若你已经对TensorFlow非常熟悉，阅读 ``InputLayer`` 和 ``DenseLayer`` 的源代码可让您很好地理解 TensorLayer 是如何工作的。
 
+本文档的中文深度学习教程需要更多贡献者参与，有意者请联系 tensorlayer@gmail.com 。
+
 
 《深度学习：一起玩转TensorLayer》
 ================================
@@ -23,8 +25,6 @@
 .. image:: my_figs/book_cover.jpeg
   :scale: 100 %
   :align: center
-
-本文档的中文深度学习教程需要更多贡献者参与，有意者请联系 tensorlayer@gmail.com 。
 
 .. image:: my_figs/book_description.jpeg
   :scale: 90 %
