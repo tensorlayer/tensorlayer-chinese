@@ -2,10 +2,10 @@ TensorLayer 中文文档
 ==============================
 
 
-.. image:: user/my_figs/img_tensorlayer.png
+.. image:: user/my_figs/tl_transparent_logo.png
   :scale: 25 %
   :align: center
-  :target: https://github.com/zsdonghao/tensorlayer
+  :target: https://github.com/tensorlayer/tensorlayer
 
 **好消息** 我们获得了 `ACM Multimedia (MM) <http://www.acmmm.org/2017/mm-2017-awardees/>`_ **年度最佳开源软件奖**。
 

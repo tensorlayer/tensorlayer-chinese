@@ -9,7 +9,7 @@
 -->
 <a href="http://github.com/zsdonghao/tensorlayer">
 <div align="center">
-	<img src="img/img_tensorlayer.png" width="30%" height="30%"/>
+	<img src="img/tl_transparent_logo.png" width="50%" height="40%"/>
 </div>
 </a>
 
