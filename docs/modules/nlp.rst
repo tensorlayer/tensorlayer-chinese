@@ -112,7 +112,7 @@ Read file
 ^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_vocab
 
-文本转ID，ID转本文
+文本转ID，ID转文本
 --------------------------------------------------------
 These functions can be done by ``Vocabulary`` class.
 
@@ -127,7 +127,7 @@ ID到单词
 机器翻译相关函数
 ---------------------------
 
-本文ID化
+文本ID化
 ^^^^^^^^^^^^^^^^
 .. autofunction:: basic_tokenizer
 
@@ -136,7 +136,7 @@ ID到单词
 .. autofunction:: create_vocabulary
 .. autofunction:: initialize_vocabulary
 
-文本转ID，ID转本文
+文本转ID，ID转文本
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: sentence_to_token_ids
 .. autofunction:: data_to_token_ids
