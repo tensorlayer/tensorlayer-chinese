@@ -151,13 +151,13 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
   y_test.shape (10000,)
   X float32   y int64
 
-  [TL] Instantiate InputLayer input_layer (?, 784)
-  [TL] Instantiate DropoutLayer drop1: keep: 0.800000
-  [TL] Instantiate DenseLayer relu1: 800, relu
-  [TL] Instantiate DropoutLayer drop2: keep: 0.500000
-  [TL] Instantiate DenseLayer relu2: 800, relu
-  [TL] Instantiate DropoutLayer drop3: keep: 0.500000
-  [TL] Instantiate DenseLayer output_layer: 10, identity
+  [TL] InputLayer input_layer (?, 784)
+  [TL] DropoutLayer drop1: keep: 0.800000
+  [TL] DenseLayer relu1: 800, relu
+  [TL] DropoutLayer drop2: keep: 0.500000
+  [TL] DenseLayer relu2: 800, relu
+  [TL] DropoutLayer drop3: keep: 0.500000
+  [TL] DenseLayer output_layer: 10, identity
 
   param 0: (784, 800) (mean: -0.000053, median: -0.000043 std: 0.035558)
   param 1: (800,)     (mean: 0.000000,  median: 0.000000  std: 0.000000)
@@ -486,10 +486,9 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
 下一步？
 ^^^^^^^^^^^^^^
 
-在 ``tutorial_cifar10_tfrecord.py`` 中我们还有更高级的图像分类的例子。
-请阅读代码及注释，用以明白如何来生成更多的训练数据以及什么是局部响应正则化。
-在这之后，您可以尝试着去实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_。
-*小提示：您可能会用到Layer.outputs。*
+在 `tutorial_cifar10_tfrecord.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_cifar10_tfrecord.py>`_ 中我们还有更复杂的图像分类的例子。
+请阅读代码及注释，以明白如数据增强（Data Augmentation）的重要性，以及什么是局部响应正则化。
+此外，您可以尝试着去实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_。
 
 
 运行乒乓球例子
@@ -501,19 +500,19 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
 
   python tutorial_atari_pong.py
 
-在运行教程代码之前 您需要安装 `OpenAI gym environment <https://gym.openai.com/docs>`_ ,它是强化学习的一个标杆。
-如果一切设置正确，您将得到一个类似以下的输出：
+在运行教程代码之前 您需要安装 `OpenAI gym environment <https://gym.openai.com/docs>`_ ，它提供了大量强化学习常用的游戏环境。
+如果一切运行正常，您将得到以下的输出：
 
 .. code-block:: text
 
   [2016-07-12 09:31:59,760] Making new env: Pong-v0
-    [TL] Instantiate InputLayer input_layer (?, 6400)
-    [TL] Instantiate DenseLayer relu1: 200, relu
-    [TL] Instantiate DenseLayer output_layer: 3, identity
-    param 0: (6400, 200) (mean: -0.000009, median: -0.000018 std: 0.017393)
-    param 1: (200,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-    param 2: (200, 3) (mean: 0.002239, median: 0.003122 std: 0.096611)
-    param 3: (3,) (mean: 0.000000, median: 0.000000 std: 0.000000)
+    [TL] InputLayer input_layer (?, 6400)
+    [TL] DenseLayer relu1: 200, relu
+    [TL] DenseLayer output_layer: 3, identity
+    param 0: (6400, 200) (mean: -0.000009  median: -0.000018 std: 0.017393)
+    param 1: (200,)      (mean: 0.000000   median: 0.000000  std: 0.000000)
+    param 2: (200, 3)    (mean: 0.002239   median: 0.003122  std: 0.096611)
+    param 3: (3,)        (mean: 0.000000   median: 0.000000  std: 0.000000)
     num of params: 1280803
     layer 0: Tensor("Relu:0", shape=(?, 200), dtype=float32)
     layer 1: Tensor("add_1:0", shape=(?, 3), dtype=float32)
@@ -547,11 +546,11 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
   episode 1: game 5 took 0.17348s, reward: -1.000000
   episode 1: game 6 took 0.09415s, reward: -1.000000
 
-这个例子让电脑从屏幕输入来学习如何像人类一样打乒乓球。
-在经过15000个序列的训练之后，计算机就可以赢得20%的比赛。
-在20000个序列的训练之后，计算机可以赢得35%的比赛，
+这个例子让神经网络通过游戏画面来学习如何像人类一样打乒乓球。神经网络将于伪AI电脑对战不断地对战，最后学会战胜它。
+在经过15000个序列的训练之后，神经网络就可以赢得20%的比赛。
+在20000个序列的训练之后，神经网络可以赢得35%的比赛，
 我们可以看到计算机学的越来越快，这是因为它有更多的胜利的数据来进行训练。
-如果您用30000个序列来训练它，那么它会一直赢。
+训练了30000个序列后，神经网络再也不会输了。
 
 .. code-block:: python
 
@@ -559,7 +558,7 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
   resume = False
 
 如果您想显示游戏过程，那就设置 `render` 为 `True` 。
-当您再次运行该代码，您可以设置 `resume` 为 `True`,那么代码将加载现有的模型并且会基于它进行训练。
+当您再次运行该代码，您可以设置 `resume` 为 `True`，那么代码将加载现有的模型并且会基于它继续训练。
 
 .. _fig_0601:
 
@@ -573,10 +572,9 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
 乒乓球
 -------------
 
-要理解强化学习，我们要让电脑学习如何从原始的屏幕输入(像素输入)打乒乓球。
+要理解强化学习，我们要让电脑学习如何从原始的屏幕输入（像素输入）打乒乓球。
 在我们开始之前，我们强烈建议您去浏览一个著名的博客叫做 `Deep Reinforcement Learning:pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ ,
-这是使用python numpy库和OpenAI gym environment=来实现的一个深度强化学习的最简实现。
-
+这是使用python numpy库和OpenAI gym environment来实现的一个深度强化学习的例子。
 
 .. code-block:: bash
 
@@ -585,10 +583,10 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
 策略网络(Policy Network)
 ---------------------------
 
-在深度强化学习中，Policy Network 等同于 深度神经网络。
-它是我们的选手(或者说“代理人(agent)”），它的输出告诉我们应该做什么(向上移动或向下移动)：
-在Karpathy的代码中，他只定义了2个动作，向上移动和向下移动，并且仅使用单个simgoid输出：
-为了使我们的教程更具有普遍性，我们使用3个SOFTMAX输出来定义向上移动，向下移动和停止(什么都不做)3个动作。
+在深度强化学习中，Policy Network 等同于深度神经网络。
+它是我们的选手（或者说“代理人（Agent）“），它的输出告诉我们应该做什么（如：向上移动或向下移动）：
+在Karpathy的代码中，他只定义了2个动作，向上移动和向下移动，并且仅使用单个Simgoid输出：
+为了使我们的教程更具有普遍性，我们使用3个Softmax输出来定义向上移动，向下移动和停止（什么都不做）3个动作。
 
 .. code-block:: python
 
@@ -603,9 +601,8 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
     probs = network.outputs
     sampling_prob = tf.nn.softmax(probs)
 
-然后我们的代理人就一直打乒乓球。它计算不同动作的概率，
-并且之后会从这个均匀的分布中选取样本(动作)。
-因为动作被1,2和3代表，但是softmax输出应该从0开始，所以我们从-1计算这个标签的价值。
+然后我们的代理人就一直与伪AI对战。它计算不同动作的概率，并且之后会从这个均匀的分布中选取样本（动作）。
+因为动作被1,2和3代表，但是Softmax输出应该从0开始，所以我们会把动作索引减去1来作为网络输出。
 
 .. code-block:: python
 
@@ -626,11 +623,11 @@ MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，�
 策略函数的参数(例如，在乒乓球例子终使用的策略网络的参数)在预期奖励的近似值的引导下能够被训练和学习。
 换句话说，我们可以通过过更新它的参数来逐步调整策略函数，这样它能从给定的状态做出一系列行为来获得更高的奖励。
 
-策略迭代的一个替代算法就是深度Q-learning(DQN)。
+策略迭代的一个替代算法就是深度Q-learning（DQN）。
 他是基于Q-learning,学习一个映射状态和动作到一些值的价值函数的算法(叫Q函数)。
 DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
-训练是通过最小化时序差分(temporal-difference)误差来实现。
-一个名为“再体验(experience replay)”的神经生物学的启发式机制通常和DQN一起被使用来帮助提高非线性函数的逼近的稳定性
+训练是通过最小化时序差分（Temporal-Difference）误差来实现。
+一个名为“再体验（Experience Replay）“的神经生物学的启发式机制通常和DQN一起被使用来帮助提高非线性函数的逼近的稳定性。
 
 您可以阅读以下文档，来得到对强化学习更好的理解：
 
@@ -674,7 +671,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
         }
     )
 
-一batch的损失和一个batch内的策略网络的所有输出，所有的我们做出的动作和相应的被打折的奖励有关
+一个batch的损失和一个batch内的策略网络的所有输出，所有的我们做出的动作和相应的被打折的奖励有关
 我们首先通过累加被打折的奖励和实际输出和真实动作的交叉熵计算每一个动作的损失。
 最后的损失是所有动作的损失的和。
 
@@ -689,7 +686,7 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 
 另外这个模型默认参数没有调整，您可以更改学习率，衰退率，或者用不同的方式来初始化您的模型的权重。
 
-最后，您可以尝试不同任务(游戏)的模型。
+最后，您可以尝试不同任务，以及学习其他增强学习算法，请见`Example <http://tensorlayer.readthedocs.io/en/latest/user/example.html>`_ 。
 
 
 
@@ -698,8 +695,8 @@ DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
 ====================
 
 在教程的这一部分，我们训练一个词嵌套矩阵，每个词可以通过矩阵中唯一的行向量来表示。
-在训练结束时，意思类似的单词会有相识的词向量。
-在代码的最后，我们通过把单词放到一个平面上来可视化，我们可以看到相似的单词会被聚集在一起。
+在训练结束时，含义类似的单词会有相识的词向量输出。
+在代码的最后，我们通过把单词放到一个2D平面上来可视化，我们可以看到相似的单词会被聚集在一起。
 
 
 .. code-block:: bash
