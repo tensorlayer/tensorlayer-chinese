@@ -65,6 +65,17 @@ API目录
   modules/db
 
 
+命令行界面
+----------------------
+
+TensorLayer提供简单易容的命令行工具 `tl` 来执行一些常用的任务。
+
+.. toctree::
+  :maxdepth: 2
+
+  modules/cli
+
+
 索引与附录
 ==================
 
