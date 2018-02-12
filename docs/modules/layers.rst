@@ -261,6 +261,7 @@ API - 神经网络层
    Conv1d
    Conv2d
    DeConv2d
+   DeConv3d
 
    MaxPool1d
    MeanPool1d
@@ -483,7 +484,6 @@ Dropconnect + 全链接层
 ^^^^^^^^^
 .. autofunction:: Conv1d
 
-
 2D卷积层
 ^^^^^^^^^
 .. autofunction:: Conv2d
@@ -491,6 +491,10 @@ Dropconnect + 全链接层
 2D反卷积层
 ^^^^^^^^^^^
 .. autofunction:: DeConv2d
+
+3D反卷积层
+^^^^^^^^^^^
+.. autoclass:: DeConv3d
 
 1D Max池化层
 ^^^^^^^^^^^^^
