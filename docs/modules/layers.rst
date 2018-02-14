@@ -324,8 +324,6 @@ API - 神经网络层
 
    MultiplexerLayer
 
-   EmbeddingAttentionSeq2seqWrapper
-
    flatten_reshape
    clear_layers_name
    initialize_rnn_state
@@ -772,14 +770,15 @@ Unstack 层
 
 .. autoclass:: MultiplexerLayer
 
-包装器(Wrapper)
-----------------
+..
+  包装器(Wrapper)
+  ----------------
 
-嵌入+注意机制+Seq2seq
-^^^^^^^^^^^^^^^^^^^^^^^
+  嵌入+注意机制+Seq2seq
+  ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autoclass:: EmbeddingAttentionSeq2seqWrapper
-  :members:
+  .. autoclass:: EmbeddingAttentionSeq2seqWrapper
+    :members:
 
 
 辅助函数
