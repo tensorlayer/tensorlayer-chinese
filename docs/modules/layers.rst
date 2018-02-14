@@ -318,9 +318,7 @@ API - 神经网络层
    StackLayer
    UnStackLayer
 
-   EstimatorLayer
    SlimNetsLayer
-   KerasLayer
 
    PReluLayer
 
@@ -741,10 +739,10 @@ Unstack 层
 
 
 
-
-Estimator 层
-------------------
-.. autoclass:: EstimatorLayer
+..
+  Estimator 层
+  ------------------
+  .. autoclass:: EstimatorLayer
 
 连接 TF-Slim
 ---------------
@@ -754,12 +752,13 @@ Estimator 层
 
 .. autoclass:: SlimNetsLayer
 
-连接 Keras
-------------------
+..
+  连接 Keras
+  ------------------
 
-没错！Keras 可以和 TensorLayer 无缝对接！ 参见 `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_ .
+  没错！Keras 可以和 TensorLayer 无缝对接！ 参见 `tutorial_keras.py <https://github.com/zsdonghao/tensorlayer/blob/master/example/tutorial_keras.py>`_ .
 
-.. autoclass:: KerasLayer
+  .. autoclass:: KerasLayer
 
 
 

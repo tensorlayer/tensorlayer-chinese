@@ -28,7 +28,7 @@ TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的�
 * 新例子 [Chatbot in 200 lines of code](https://github.com/zsdonghao/seq2seq-chatbot) for [Seq2Seq](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#simple-seq2seq).
 * 欢迎加入 [Slack](https://github.com/zsdonghao/tensorlayer) 讨论组.
 * 发布 [Sub-pixel Convolution](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#super-resolution-layer) 用于超分辨率复原.
-* 你现在可以把 [TF-Slim](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-tf-slim) 和 [Keras](http://tensorlayer.readthedocs.io/en/latest/modules/layers.html#connect-keras) 导入到TensorLayer中了！
+* 你现在可以把 [TF-Slim](https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_inceptionV3_tfslim.py) 和 [Keras](https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_keras.py) 导入到TensorLayer中了！
 
 TensorLayer grow out from a need to combine the power of TensorFlow with the right building modules for deep neural networks. According to our years of research and practical experiences of tackling real-world machine learning problems, we come up with three design goals for TensorLayer:
 
