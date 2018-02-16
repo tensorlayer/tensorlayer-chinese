@@ -530,11 +530,13 @@ Super-Resolution 层
 池化层 (Pro)
 ^^^^^^^^^^^^
 该池化层可以实现各种纬度（1D，2D，3D）以及各种池化方法（Mean，Max）。
+
 .. autoclass:: PoolLayer
 
 填充层 (Pro)
 ^^^^^^^^^^^^^^
 该填充层可以实现任意模式的填充。
+
 .. autoclass:: PadLayer
 
 1D Max池化层
