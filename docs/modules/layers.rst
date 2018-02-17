@@ -298,6 +298,8 @@ API - 神经网络层
    advanced_indexing_op
    retrieve_seq_length_op
    retrieve_seq_length_op2
+   retrieve_seq_length_op3
+   target_mask_op
    DynamicRNNLayer
 
    Seq2Seq
@@ -651,6 +653,14 @@ Conv LSTM layer
 计算 Sequence length 方法2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: retrieve_seq_length_op2
+
+计算 Sequence length 方法3
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: retrieve_seq_length_op3
+
+计算 Mask 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: target_mask_op
 
 动态递归层
 ------------
