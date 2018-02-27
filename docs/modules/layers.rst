@@ -254,7 +254,6 @@ API - 神经网络层
    PadLayer
    UpSampling2dLayer
    DownSampling2dLayer
-   DeformableConv2dLayer
    AtrousConv1dLayer
    AtrousConv2dLayer
 
@@ -271,6 +270,7 @@ API - 神经网络层
    MeanPool3d
 
    DepthwiseConv2d
+   DeformableConv2d
 
    SubpixelConv1d
    SubpixelConv2d
@@ -303,8 +303,6 @@ API - 神经网络层
    DynamicRNNLayer
 
    Seq2Seq
-   PeekySeq2Seq
-   AttentionSeq2Seq
 
    FlattenLayer
    ReshapeLayer
@@ -458,9 +456,6 @@ Dropconnect + 全链接层
 
 .. autoclass:: DownSampling2dLayer
 
-2D 可变形卷积
-^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DeformableConv2dLayer
 
 1D多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -497,6 +492,10 @@ Dropconnect + 全链接层
 2D Depthwise/Separable卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DepthwiseConv2d
+
+2D 可变形卷积
+^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DeformableConv2d
 
 Super-Resolution 层
 -----------------------
@@ -658,7 +657,7 @@ Conv LSTM layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: retrieve_seq_length_op3
 
-计算 Mask 
+计算 Mask
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: target_mask_op
 
@@ -682,13 +681,14 @@ Simple Seq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Seq2Seq
 
-PeekySeq2Seq
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: PeekySeq2Seq
+..
+  PeekySeq2Seq
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .. autoclass:: PeekySeq2Seq
 
-AttentionSeq2Seq
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: AttentionSeq2Seq
+  AttentionSeq2Seq
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .. autoclass:: AttentionSeq2Seq
 
 
 形状修改层
