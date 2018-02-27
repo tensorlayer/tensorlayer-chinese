@@ -14,7 +14,10 @@ API - 实用函数
    dict_to_one
    list_string_to_dict
    flatten_list
-
+   exit_tensorflow
+   open_tensorboard
+   clear_all_placeholder_variables
+   set_gpu_fraction
 
 训练、测试及预测
 -----------------------
@@ -59,3 +62,19 @@ API - 实用函数
 拉平列表
 ^^^^^^^^^^
 .. autofunction:: flatten_list
+
+退出 TF session 和相关进程
+----------------------------
+.. autofunction:: exit_tensorflow
+
+打开 TensorBoard
+----------------
+.. autofunction:: open_tensorboard
+
+清空 TensorFlow placeholder
+----------------------------
+.. autofunction:: clear_all_placeholder_variables
+
+设置 GPU 使用比例
+-----------------
+.. autofunction:: set_gpu_fraction
