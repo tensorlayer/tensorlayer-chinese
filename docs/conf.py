@@ -435,7 +435,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.inheritance_diagram',
               'sphinx.ext.autosummary',
-              'numpydoc.numpydoc']
+              'sphinx.ext.napoleon']
 pygments_style = 'sphinx'
 html_theme = "sphinx_rtd_theme"
 html_theme_path = ["_themes", ]
