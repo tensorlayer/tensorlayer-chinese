@@ -1781,8 +1781,6 @@ cost expressions and regularizers (:mod:`tensorlayer.cost`),
 
 load and save files (:mod:`tensorlayer.files`),
 
-operating system (:mod:`tensorlayer.ops`),
-
 helper functions (:mod:`tensorlayer.utils`),
 
 visualization (:mod:`tensorlayer.visualize`),
@@ -1790,6 +1788,8 @@ visualization (:mod:`tensorlayer.visualize`),
 iteration functions (:mod:`tensorlayer.iterate`),
 
 preprocessing functions (:mod:`tensorlayer.prepro`),
+
+command line interface (:mod:`tensorlayer.cli`),
 
 
 .. _Deeplearning Tutorial: http://deeplearning.stanford.edu/tutorial/

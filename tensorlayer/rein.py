@@ -6,19 +6,25 @@ import tensorflow as tf
 from six.moves import xrange
 
 
-def discount_episode_rewards(rewards=[], gamma=0.99, mode=0):
-    """ Take 1D float array of rewards and compute discounted rewards for an
+def discount_episode_rewards(rewards=None, gamma=0.99, mode=0):
+    """Take 1D float array of rewards and compute discounted rewards for an
     episode. When encount a non-zero value, consider as the end a of an episode.
 
     Parameters
     ----------
-    rewards : numpy list
-        a list of rewards
+    rewards : list
+        List of rewards
     gamma : float
-        discounted factor
+        Discounted factor
     mode : int
-        if mode == 0, reset the discount process when encount a non-zero reward (Ping-pong game).
-        if mode == 1, would not reset the discount process.
+        Mode for computing the discount rewards.
+            - If mode == 0, reset the discount process when encount a non-zero reward (Ping-pong game).
+            - If mode == 1, would not reset the discount process.
+
+    Returns
+    --------
+    list of float
+        The discounted rewards.
 
     Examples
     ----------
@@ -32,7 +38,10 @@ def discount_episode_rewards(rewards=[], gamma=0.99, mode=0):
     >>> print(discount_rewards)
     ... [ 1.52110755  1.69011939  1.87791049  2.08656716  1.20729685  1.34144104
     ... 1.49048996  1.65610003  0.72899997  0.81        0.89999998  1.        ]
+
     """
+    if rewards is None:
+        raise Exception("rewards should be a list")
     discounted_r = np.zeros_like(rewards, dtype=np.float32)
     running_add = 0
     for t in reversed(xrange(0, rewards.size)):
@@ -45,17 +54,21 @@ def discount_episode_rewards(rewards=[], gamma=0.99, mode=0):
 
 
 def cross_entropy_reward_loss(logits, actions, rewards, name=None):
-    """ Calculate the loss for Policy Gradient Network.
+    """Calculate the loss for Policy Gradient Network.
 
     Parameters
     ----------
     logits : tensor
-        The network outputs without softmax. This function implements softmax
-        inside.
-    actions : tensor/ placeholder
+        The network outputs without softmax. This function implements softmax inside.
+    actions : tensor or placeholder
         The agent actions.
-    rewards : tensor/ placeholder
+    rewards : tensor or placeholder
         The rewards.
+
+    Returns
+    --------
+    Tensor
+        The TensorFlow loss function.
 
     Examples
     ----------
@@ -69,17 +82,17 @@ def cross_entropy_reward_loss(logits, actions, rewards, name=None):
     >>> discount_rewards_batch_pl = tf.placeholder(tf.float32, shape=[None])
     >>> loss = tl.rein.cross_entropy_reward_loss(probs, actions_batch_pl, discount_rewards_batch_pl)
     >>> train_op = tf.train.RMSPropOptimizer(learning_rate, decay_rate).minimize(loss)
-    """
 
+    """
     try:  # TF 1.0+
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=actions, logits=logits, name=name)
-    except:
+    except Exception:
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, targets=actions)
         # cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, actions)
 
     try:  ## TF1.0+
         loss = tf.reduce_sum(tf.multiply(cross_entropy, rewards))
-    except:  ## TF0.12
+    except Exception:  ## TF0.12
         loss = tf.reduce_sum(tf.mul(cross_entropy, rewards))  # element-wise mul
     return loss
 
@@ -92,21 +105,33 @@ def log_weight(probs, weights, name='log_weight'):
     probs : tensor
         If it is a network output, usually we should scale it to [0, 1] via softmax.
     weights : tensor
+        The weights.
+
+    Returns
+    --------
+    Tensor
+        The Tensor after appling the log weighted expression.
+
     """
     with tf.variable_scope(name):
         exp_v = tf.reduce_mean(tf.log(probs) * weights)
         return exp_v
 
 
-def choice_action_by_probs(probs=[0.5, 0.5], action_list=None):
+def choice_action_by_probs(probs=(0.5, 0.5), action_list=None):
     """Choice and return an an action by given the action probability distribution.
 
     Parameters
     ------------
-    probs : a list of float.
+    probs : list of float.
         The probability distribution of all actions.
-    action_list : None or a list of action in integer, string or others.
-        If None, returns an integer range between 0 and len(probs)-1.
+    action_list : None or a list of int or others
+        A list of action in integer, string or others. If None, returns an integer range between 0 and len(probs)-1.
+
+    Returns
+    --------
+    float int or str
+        The chosen action.
 
     Examples
     ----------
@@ -124,10 +149,12 @@ def choice_action_by_probs(probs=[0.5, 0.5], action_list=None):
     ... a
     ... b
     ... b
+
     """
     if action_list is None:
         n_action = len(probs)
         action_list = np.arange(n_action)
     else:
-        assert len(action_list) == len(probs), "Number of actions should equal to number of probabilities."
+        if len(action_list) != len(probs):
+            raise Exception("number of actions should equal to number of probabilities.")
     return np.random.choice(action_list, p=probs)

@@ -13,11 +13,12 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
    save_image
    save_images
    draw_boxes_and_labels_to_image
-   W
+   draw_weights
    CNN2d
    frame
    images2d
    tsne_embedding
+
 
 读取与保存图片
 --------------
@@ -50,7 +51,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 可视化Weight Matrix
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: W
+.. autofunction:: draw_weights
 
 可视化CNN 2d filter
 ^^^^^^^^^^^^^^^^^^^^^
