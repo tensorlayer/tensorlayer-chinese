@@ -262,6 +262,9 @@ API - 神经网络层
    Conv2d
    DeConv2d
    DeConv3d
+   DepthwiseConv2d
+   DeformableConv2d
+   GroupConv2d
 
    MaxPool1d
    MeanPool1d
@@ -269,8 +272,6 @@ API - 神经网络层
    MeanPool2d
    MaxPool3d
    MeanPool3d
-
-   DepthwiseConv2d
 
    SubpixelConv1d
    SubpixelConv2d
@@ -421,39 +422,39 @@ Dropconnect + 全链接层
 卷积层 (Pro)
 --------------------
 
-1D卷积层
+1D 卷积层
 ^^^^^^^^^^
 
 .. autoclass:: Conv1dLayer
 
 
-2D卷积层
+2D 卷积层
 ^^^^^^^^^^
 
 .. autoclass:: Conv2dLayer
 
-2D反卷积层
+2D 反卷积层
 ^^^^^^^^^^
 
 .. autoclass:: DeConv2dLayer
 
-3D卷积层
+3D 卷积层
 ^^^^^^^^^^
 
 .. autoclass:: Conv3dLayer
 
-3D反卷积层
+3D 反卷积层
 ^^^^^^^^^^
 
 .. autoclass:: DeConv3dLayer
 
 
-2D上采样层
+2D 上采样层
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: UpSampling2dLayer
 
-2D下采样层
+2D 下采样层
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: DownSampling2dLayer
@@ -462,7 +463,7 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DeformableConv2dLayer
 
-1D多孔卷积层
+1D 多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: AtrousConv1dLayer
@@ -478,25 +479,29 @@ Dropconnect + 全链接层
 
 对于不擅长 TensorFlow 的用户，下面的简化的函数使用起来更简单。接下来我们将添加更多简化函数。
 
-1D卷积层
+1D 卷积层
 ^^^^^^^^^
 .. autofunction:: Conv1d
 
-2D卷积层
+2D 卷积层
 ^^^^^^^^^
 .. autofunction:: Conv2d
 
-2D反卷积层
+2D 反卷积层
 ^^^^^^^^^^^
 .. autofunction:: DeConv2d
 
-3D反卷积层
+3D 反卷积层
 ^^^^^^^^^^^
 .. autoclass:: DeConv3d
 
 2D Depthwise/Separable卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DepthwiseConv2d
+
+2D 分组卷积层
+^^^^^^^^^^^^^
+.. autoclass:: GroupConv2d
 
 Super-Resolution 层
 -----------------------
@@ -658,7 +663,7 @@ Conv LSTM layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: retrieve_seq_length_op3
 
-计算 Mask 
+计算 Mask
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: target_mask_op
 
