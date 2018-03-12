@@ -34,6 +34,7 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 .. autosummary::
 
    load_mnist_dataset
+   load_fashion_mnist_dataset
    load_cifar10_dataset
    load_ptb_dataset
    load_matt_mahoney_text8_dataset
@@ -79,6 +80,10 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 MNIST
 ^^^^^^^
 .. autofunction:: load_mnist_dataset
+
+Fashion-MNIST
+^^^^^^^^^^^^^^^^
+.. autofunction:: load_fashion_mnist_dataset
 
 CIFAR-10
 ^^^^^^^^^^^^

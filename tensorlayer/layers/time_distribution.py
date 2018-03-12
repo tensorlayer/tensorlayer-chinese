@@ -41,7 +41,7 @@ class TimeDistributedLayer(Layer):
 
     def __init__(
             self,
-            layer,
+            prev_layer,
             layer_class=None,
             args=None,
             name='time_distributed',
@@ -51,8 +51,8 @@ class TimeDistributedLayer(Layer):
         if not isinstance(args, dict):
             raise TypeError("'args' must be a dict.")
 
-        Layer.__init__(self, name=name)
-        self.inputs = layer.outputs
+        Layer.__init__(self, prev_layer=prev_layer, name=name)
+        self.inputs = prev_layer.outputs
         logging.info("TimeDistributedLayer %s: layer_class:%s args:%s" % (self.name, layer_class.__name__, args))
 
         if not isinstance(self.inputs, tf.Tensor):
@@ -63,17 +63,17 @@ class TimeDistributedLayer(Layer):
         timestep = input_shape[1]
         x = tf.unstack(self.inputs, axis=1)
 
+        is_name_reuse = tf.get_variable_scope().reuse
         for i in range(0, timestep):
-            with tf.variable_scope(name, reuse=(LayersConfig._name_reuse if i == 0 else True)) as vs:
-                set_name_reuse((LayersConfig._name_reuse if i == 0 else True))
+            with tf.variable_scope(name, reuse=(is_name_reuse if i == 0 else True)) as vs:
                 net = layer_class(InputLayer(x[i], name=args['name'] + str(i)), **args)
                 x[i] = net.outputs
                 variables = tf.get_collection(TF_GRAPHKEYS_VARIABLES, scope=vs.name)
 
         self.outputs = tf.stack(x, axis=1, name=name)
 
-        self.all_layers = list(layer.all_layers)
-        self.all_params = list(layer.all_params)
-        self.all_drop = dict(layer.all_drop)
-        self.all_layers.extend([self.outputs])
+        # self.all_layers = list(layer.all_layers)
+        # self.all_params = list(layer.all_params)
+        # self.all_drop = dict(layer.all_drop)
+        self.all_layers.append(self.outputs)
         self.all_params.extend(variables)
