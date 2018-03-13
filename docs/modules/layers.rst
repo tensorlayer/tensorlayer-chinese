@@ -263,6 +263,7 @@ API - 神经网络层
    DeConv2d
    DeConv3d
    DepthwiseConv2d
+   SeparableConv2d
    DeformableConv2d
    GroupConv2d
 
@@ -499,9 +500,13 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^
 .. autoclass:: DeConv3d
 
-2D Depthwise/Separable卷积层
+2D Depthwise 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DepthwiseConv2d
+
+2D Depthwise Separable 卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: SeparableConv2d
 
 2D 分组卷积层
 ^^^^^^^^^^^^^
