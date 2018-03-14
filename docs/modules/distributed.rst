@@ -10,7 +10,8 @@ API - 分布式
    TaskSpecDef
    TaskSpec
    DistributedSession
-
+   StopAtTimeHook
+   LoadCheckpoint
 
 分布式训练
 ----------------------
