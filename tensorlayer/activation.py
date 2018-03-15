@@ -2,8 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
+from tensorflow.python.util.deprecation import deprecated
+
+__all__ = [
+    'identity',
+    'ramp',
+    'leaky_relu',
+    'swish',
+    'sign',
+    'pixel_wise_softmax',
+    'linear',
+    'lrelu',
+]
 
 
+@deprecated("2018-06-30", "This API will be deprecated soon as tf.identity can do the same thing.")
 def identity(x):
     """The identity activation function.
     Shortcut is ``linear``.
@@ -104,6 +117,56 @@ def swish(x, name='swish'):
     return x
 
 
+@tf.RegisterGradient("QuantizeGrad")
+def _sign_grad(grad):
+    return tf.clip_by_value(tf.identity(grad), -1, 1)
+
+
+def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36
+    """Differentiable sign function using ramp [-1, 1] as the derivation function, usually be used for quantizing value in binary network, see `tf.sign <https://www.tensorflow.org/api_docs/python/tf/sign>`__
+
+    Parameters
+    ----------
+    x : Tensor
+        input.
+
+    Returns
+    -------
+    Tensor
+        A ``Tensor`` in the same type as ``x``.
+
+    References
+    -----------
+    - `AngusG/tensorflow-xnor-bnn <https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36>`__
+
+    """
+    with tf.get_default_graph().gradient_override_map({"sign": "QuantizeGrad"}):
+        return tf.sign(x)
+
+
+# if tf.__version__ > "1.7":
+#     @tf.custom_gradient
+#     def sign(x):  # https://www.tensorflow.org/versions/master/api_docs/python/tf/custom_gradient?hl=ES#top_of_page
+#         """Differentiable sign function using sigmoid as the derivation function, see `tf.sign <https://www.tensorflow.org/api_docs/python/tf/sign>`__ and `tf.custom_gradient <https://www.tensorflow.org/versions/master/api_docs/python/tf/custom_gradient?hl=ES#top_of_page>`__.
+#
+#         Parameters
+#         ----------
+#         x : Tensor
+#             input.
+#
+#         Returns
+#         -------
+#         Tensor
+#             A ``Tensor`` in the same type as ``x``.
+#
+#         """
+#         tao = tf.nn.sigmoid(x)
+#         def grad():
+#             return tao * (1 - tao)
+#         return tf.sign(x), grad
+
+
+@deprecated("2018-06-30", "This API will be deprecated soon as tf.nn.softmax can do the same thing.")
 def pixel_wise_softmax(x, name='pixel_wise_softmax'):
     """Return the softmax outputs of images, every pixels have multiple label, the sum of a pixel is 1.
     Usually be used for image segmentation.
