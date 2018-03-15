@@ -28,7 +28,7 @@ TensorFlow官方的函数，比如
    ramp
    leaky_relu
    swish
-   sign
+   hard_tanh
    pixel_wise_softmax
 
 Identity
@@ -49,7 +49,7 @@ Swish
 
 可求导 Sign
 -----------
-.. autofunction:: sign
+.. autofunction:: hard_tanh
 
 Pixel-wise Softmax
 ----------------------
