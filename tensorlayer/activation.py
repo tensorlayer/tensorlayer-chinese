@@ -9,7 +9,7 @@ __all__ = [
     'ramp',
     'leaky_relu',
     'swish',
-    'hard_tanh',
+    'sign',
     'pixel_wise_softmax',
     'linear',
     'lrelu',
@@ -122,8 +122,8 @@ def _sign_grad(unused_op, grad):
     return tf.clip_by_value(tf.identity(grad), -1, 1)
 
 
-def hard_tanh(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36
-    """Differentiable hard tanh function by clipping linear gradient into [-1, 1], usually be used for quantizing value in binary network, see `Binarized Neural Networks <https://arxiv.org/abs/1602.02830>`__.
+def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36
+    """Differentiable sign function by clipping linear gradient into [-1, 1], usually be used for quantizing value in binary network, see `Binarized Neural Networks <https://arxiv.org/abs/1602.02830>`__.
 
     Parameters
     ----------
@@ -141,7 +141,7 @@ def hard_tanh(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/m
 
     """
     with tf.get_default_graph().gradient_override_map({"sign": "QuantizeGrad"}):
-        return tf.sign(x, name='tl_sign')
+        return tf.sign(x, name='sign')
 
 
 # if tf.__version__ > "1.7":
