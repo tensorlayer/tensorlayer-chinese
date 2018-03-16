@@ -157,7 +157,7 @@ API - 神经网络层
         name ='simple_dense',
     ):
         # 校验名字是否已被使用（不变）
-        Layer.__init__(self, name=name)
+        Layer.__init__(self, layer=layer, name=name)
 
         # 本层输入是上层的输出（不变）
         self.inputs = layer.outputs
@@ -173,11 +173,6 @@ API - 神经网络层
             b = tf.get_variable(name='b', shape=(n_units))
             # tensor操作
             self.outputs = act(tf.matmul(self.inputs, W) + b)
-
-        # 获取之前层的参数（不变）
-        self.all_layers = list(layer.all_layers)
-        self.all_params = list(layer.all_params)
-        self.all_drop = dict(layer.all_drop)
 
         # 更新层的参数（自定义部分）
         self.all_layers.extend( [self.outputs] )
@@ -327,6 +322,11 @@ API - 神经网络层
    UnStackLayer
 
    SlimNetsLayer
+
+   BinaryDenseLayer
+   BinaryConv2d
+   SignLayer
+   ScaleLayer
 
    PReluLayer
 
@@ -800,6 +800,37 @@ Unstack 层
 
   .. autoclass:: KerasLayer
 
+
+二值化网络
+------------------
+
+先阅读这里
+^^^^^^^^^^^^^^
+
+这是一套搭建二值化网络的试验版本API。
+目前，我们依然用矩阵乘法而不是加减或bitcount运算来加速。
+因此，这套API并不能加速，关于产品部署，目前您可以用TensorLayer训练模型，然后用自定义的C/C++实现的二值化计算（我们有可能会提供一套额外的专门运行二值化网络的框架，并支持可以从TensorLayer那读取模型）。
+
+注意，作为试验版本，这套API有可能会被修改。
+
+二值化全连接层
+^^^^^^^^^^^^^^^^^
+.. autoclass:: BinaryDenseLayer
+
+
+二值化 2D 卷积层
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: BinaryConv2d
+
+
+Sign 层
+^^^^^^^^^^^^^^
+.. autoclass:: SignLayer
+
+
+Scale 层
+^^^^^^^^^^^^^^
+.. autoclass:: ScaleLayer
 
 
 带参数的激活函数

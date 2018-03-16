@@ -213,7 +213,7 @@ class BinaryConv2d(Layer):
 
 
 class SignLayer(Layer):
-    """The :class:`SignLayer` class is for quantizing the layer outputs to -1 or 1 while inferencing.
+    """The :class:`SignLayer` class is for quantizing the layer outputs to -1 or 1, and use the straight through estimator (STE) for the gradient.
 
     Parameters
     ----------
