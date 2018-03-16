@@ -324,7 +324,8 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), path='data', plotable=False):
 def load_cropped_svhn(path='data', include_extra=True):
     """Load Cropped SVHN.
 
-    The Cropped Street View House Numbers (SVHN) Dataset contains 32x32x3 RGB images, with label of 0~9, see `ufldl website <http://ufldl.stanford.edu/housenumbers/>`__.
+    The Cropped Street View House Numbers (SVHN) Dataset contains 32x32x3 RGB images.
+    Digit '1' has label 1, '9' has label 9 and '0' has label 0 (the original dataset uses 10 to represent '0'), see `ufldl website <http://ufldl.stanford.edu/housenumbers/>`__.
 
     Parameters
     ----------
@@ -358,9 +359,10 @@ def load_cropped_svhn(path='data', include_extra=True):
         filename = "train_32x32.mat"
         filepath = maybe_download_and_extract(filename, path, url)
         mat = scipy.io.loadmat(filepath)
-        X_train = mat['X'] / 255.  # to [0, 1]
+        X_train = mat['X'] / 255.0  # to [0, 1]
         X_train = np.transpose(X_train, (3, 0, 1, 2))
-        y_train = np.squeeze(mat['y'], axis=1) / 255.
+        y_train = np.squeeze(mat['y'], axis=1)
+        y_train[y_train == 10] = 0  # replace 10 to 0
         np.savez(np_file, X=X_train, y=y_train)
         del_file(filepath)
     else:
@@ -374,9 +376,10 @@ def load_cropped_svhn(path='data', include_extra=True):
         filename = "test_32x32.mat"
         filepath = maybe_download_and_extract(filename, path, url)
         mat = scipy.io.loadmat(filepath)
-        X_test = mat['X'] / 255.
+        X_test = mat['X'] / 255.0
         X_test = np.transpose(X_test, (3, 0, 1, 2))
-        y_test = np.squeeze(mat['y'], axis=1) / 255.
+        y_test = np.squeeze(mat['y'], axis=1)
+        y_test[y_test == 10] = 0
         np.savez(np_file, X=X_test, y=y_test)
         del_file(filepath)
     else:
@@ -386,16 +389,17 @@ def load_cropped_svhn(path='data', include_extra=True):
     logging.info("  n_test: {}".format(len(y_test)))
 
     if include_extra:
-        logging.info("  adding extra 531131 images to training set, please wait ...")
+        logging.info("  getting extra 531131 images, please wait ...")
         np_file = os.path.join(path, "extra_32x32.npz")
         if file_exists(np_file) is False:
-            logging.info("  the first time to load extra images will take time to convert the file format ...")
+            logging.info("  the first time to load extra images will take long time to convert the file format ...")
             filename = "extra_32x32.mat"
             filepath = maybe_download_and_extract(filename, path, url)
             mat = scipy.io.loadmat(filepath)
-            X_extra = mat['X'] / 255.
+            X_extra = mat['X'] / 255.0
             X_extra = np.transpose(X_extra, (3, 0, 1, 2))
-            y_extra = np.squeeze(mat['y'], axis=1) / 255.
+            y_extra = np.squeeze(mat['y'], axis=1)
+            y_extra[y_extra == 10] = 0
             np.savez(np_file, X=X_extra, y=y_extra)
             del_file(filepath)
         else:
@@ -403,16 +407,17 @@ def load_cropped_svhn(path='data', include_extra=True):
             X_extra = v['X']
             y_extra = v['y']
         # print(X_train.shape, X_extra.shape)
-        logging.info("  adding n_extra {} to n_train --> {}".format(len(y_extra), len(y_train)))
+        logging.info("  adding n_extra {} to n_train {}".format(len(y_extra), len(y_train)))
+        t = time.time()
         X_train = np.concatenate((X_train, X_extra), 0)
         y_train = np.concatenate((y_train, y_extra), 0)
         # X_train = np.append(X_train, X_extra, axis=0)
         # y_train = np.append(y_train, y_extra, axis=0)
-        logging.info("  added n_extra {} to n_train --> {}".format(len(y_extra), len(y_train)))
+        logging.info("  added n_extra {} to n_train {} took {}s".format(len(y_extra), len(y_train), time.time() - t))
     else:
         logging.info("  no extra images are included")
     logging.info("  image size:%s n_train:%d n_test:%d" % (str(X_train.shape[1:4]), len(y_train), len(y_test)))
-    logging.info("  took: {:d}s".format(time.time() - start_time))
+    logging.info("  took: {}s".format(int(time.time() - start_time)))
     return X_train, y_train, X_test, y_test
 
 
@@ -752,19 +757,19 @@ def load_flickr25k_dataset(tag='sky', path="data", n_threads=50, printable=False
     url = 'http://press.liacs.nl/mirflickr/mirflickr25k/'
 
     # download dataset
-    if folder_exists(path + "/mirflickr") is False:
+    if folder_exists(os.path.join(path, "mirflickr")) is False:
         logging.info("[*] Flickr25k is nonexistent in {}".format(path))
         maybe_download_and_extract(filename, path, url, extract=True)
-        del_file(path + '/' + filename)
+        del_file(os.path.join(path, filename))
 
     # return images by the given tag.
     # 1. image path list
-    folder_imgs = path + "/mirflickr"
+    folder_imgs = os.path.join(path, "mirflickr")
     path_imgs = load_file_list(path=folder_imgs, regx='\\.jpg', printable=False)
     path_imgs.sort(key=natural_keys)
 
     # 2. tag path list
-    folder_tags = path + "/mirflickr/meta/tags"
+    folder_tags = os.path.join(path, "mirflickr", "meta", "tags")
     path_tags = load_file_list(path=folder_tags, regx='\\.txt', printable=False)
     path_tags.sort(key=natural_keys)
 
@@ -775,7 +780,7 @@ def load_flickr25k_dataset(tag='sky', path="data", n_threads=50, printable=False
         logging.info("[Flickr25k] reading images with tag: {}".format(tag))
     images_list = []
     for idx, _v in enumerate(path_tags):
-        tags = read_file(folder_tags + '/' + path_tags[idx]).split('\n')
+        tags = read_file(os.path.join(folder_tags, path_tags[idx])).split('\n')
         # logging.info(idx+1, tags)
         if tag is None or tag in tags:
             images_list.append(path_imgs[idx])
@@ -818,6 +823,8 @@ def load_flickr1M_dataset(tag='sky', size=10, path="data", n_threads=50, printab
     >>> images = tl.files.load_flickr1M_dataset(tag='zebra')
 
     """
+    import shutil
+
     path = os.path.join(path, 'flickr1M')
     logging.info("[Flickr1M] using {}% of images = {}".format(size * 10, size * 100000))
     images_zip = [
@@ -830,20 +837,21 @@ def load_flickr1M_dataset(tag='sky', size=10, path="data", n_threads=50, printab
     for image_zip in images_zip[0:size]:
         image_folder = image_zip.split(".")[0]
         # logging.info(path+"/"+image_folder)
-        if folder_exists(path + "/" + image_folder) is False:
+        if folder_exists(os.path.join(path, image_folder)) is False:
             # logging.info(image_zip)
             logging.info("[Flickr1M] {} is missing in {}".format(image_folder, path))
             maybe_download_and_extract(image_zip, path, url, extract=True)
-            del_file(path + '/' + image_zip)
-            os.system("mv {} {}".format(path + '/images', path + '/' + image_folder))
+            del_file(os.path.join(path, image_zip))
+            # os.system("mv {} {}".format(os.path.join(path, 'images'), os.path.join(path, image_folder)))
+            shutil.move(os.path.join(path, 'images'), os.path.join(path, image_folder))
         else:
             logging.info("[Flickr1M] {} exists in {}".format(image_folder, path))
 
     # download tag
-    if folder_exists(path + "/tags") is False:
+    if folder_exists(os.path.join(path, "tags")) is False:
         logging.info("[Flickr1M] tag files is nonexistent in {}".format(path))
         maybe_download_and_extract(tag_zip, path, url, extract=True)
-        del_file(path + '/' + tag_zip)
+        del_file(os.path.join(path, tag_zip))
     else:
         logging.info("[Flickr1M] tags exists in {}".format(path))
 
@@ -857,17 +865,19 @@ def load_flickr1M_dataset(tag='sky', size=10, path="data", n_threads=50, printab
     for folder in images_folder_list[0:size * 10]:
         tmp = load_file_list(path=folder, regx='\\.jpg', printable=False)
         tmp.sort(key=lambda s: int(s.split('.')[-2]))  # ddd.jpg
-        images_list.extend([folder + '/' + x for x in tmp])
+        images_list.extend([os.path.join(folder, x) for x in tmp])
 
     # 2. tag path list
     tag_list = []
-    tag_folder_list = load_folder_list(path + "/tags")
-    tag_folder_list.sort(key=lambda s: int(s.split('/')[-1]))  # folder/images/ddd
+    tag_folder_list = load_folder_list(os.path.join(path, "tags"))
+
+    # tag_folder_list.sort(key=lambda s: int(s.split("/")[-1]))  # folder/images/ddd
+    tag_folder_list.sort(key=lambda s: int(os.path.basename(s)))
 
     for folder in tag_folder_list[0:size * 10]:
         tmp = load_file_list(path=folder, regx='\\.txt', printable=False)
         tmp.sort(key=lambda s: int(s.split('.')[-2]))  # ddd.txt
-        tmp = [folder + '/' + s for s in tmp]
+        tmp = [os.path.join(folder, s) for s in tmp]
         tag_list += tmp
 
     # 3. select images

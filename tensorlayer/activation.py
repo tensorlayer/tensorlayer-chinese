@@ -123,7 +123,9 @@ def _sign_grad(unused_op, grad):
 
 
 def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36
-    """Differentiable sign function by clipping linear gradient into [-1, 1], usually be used for quantizing value in binary network, see `tf.sign <https://www.tensorflow.org/api_docs/python/tf/sign>`__.
+    """Sign function.
+
+    Clip and binarize tensor using the straight through estimator (STE) for the gradient, usually be used for quantizing values in `Binarized Neural Networks <https://arxiv.org/abs/1602.02830>`__.
 
     Parameters
     ----------
@@ -141,7 +143,7 @@ def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models
 
     """
     with tf.get_default_graph().gradient_override_map({"sign": "QuantizeGrad"}):
-        return tf.sign(x, name='tl_sign')
+        return tf.sign(x, name='sign')
 
 
 # if tf.__version__ > "1.7":
@@ -164,6 +166,28 @@ def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models
 #         def grad():
 #             return tao * (1 - tao)
 #         return tf.sign(x), grad
+
+
+def hard_tanh(x, name='htanh'):
+    """Hard tanh activation function.
+
+    Which is a ramp function with low bound of -1 and upper bound of 1, shortcut is ``htanh`.
+
+    Parameters
+    ----------
+    x : Tensor
+        input.
+    name : str
+        The function name (optional).
+
+    Returns
+    -------
+    Tensor
+        A ``Tensor`` in the same type as ``x``.
+
+    """
+    # with tf.variable_scope("hard_tanh"):
+    return tf.clip_by_value(x, -1, 1, name=name)
 
 
 @deprecated("2018-06-30", "This API will be deprecated soon as tf.nn.softmax can do the same thing.")
@@ -202,3 +226,4 @@ def pixel_wise_softmax(x, name='pixel_wise_softmax'):
 # Alias
 linear = identity
 lrelu = leaky_relu
+htanh = hard_tanh
