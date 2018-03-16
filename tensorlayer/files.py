@@ -367,7 +367,7 @@ def load_cropped_svhn(path='data', include_extra=True):
         v = np.load(np_file)
         X_train = v['X']
         y_train = v['y']
-    logging.info("  train: {}".format(len(y_train)))
+    logging.info("  n_train: {}".format(len(y_train)))
 
     np_file = os.path.join(path, "test_32x32.npz")
     if file_exists(np_file) is False:
@@ -383,13 +383,13 @@ def load_cropped_svhn(path='data', include_extra=True):
         v = np.load(np_file)
         X_test = v['X']
         y_test = v['y']
-    logging.info("  test: {}".format(len(y_test)))
+    logging.info("  n_test: {}".format(len(y_test)))
 
     if include_extra:
         logging.info("  adding extra 531131 images to training set, please wait ...")
         np_file = os.path.join(path, "extra_32x32.npz")
         if file_exists(np_file) is False:
-            logging.info("  the first time to load this dataset will take time to convert the file format ...")
+            logging.info("  the first time to load extra images will take time to convert the file format ...")
             filename = "extra_32x32.mat"
             filepath = maybe_download_and_extract(filename, path, url)
             mat = scipy.io.loadmat(filepath)
@@ -403,11 +403,12 @@ def load_cropped_svhn(path='data', include_extra=True):
             X_extra = v['X']
             y_extra = v['y']
         # print(X_train.shape, X_extra.shape)
+        logging.info("  adding n_extra {} to n_train --> {}".format(len(y_extra), len(y_train)))
         X_train = np.concatenate((X_train, X_extra), 0)
         y_train = np.concatenate((y_train, y_extra), 0)
         # X_train = np.append(X_train, X_extra, axis=0)
         # y_train = np.append(y_train, y_extra, axis=0)
-        logging.info("  add extra {} to train --> {}".format(len(y_extra), len(y_train)))
+        logging.info("  added n_extra {} to n_train --> {}".format(len(y_extra), len(y_train)))
     else:
         logging.info("  no extra images are included")
     logging.info("  image size:%s n_train:%d n_test:%d" % (str(X_train.shape[1:4]), len(y_train), len(y_test)))
