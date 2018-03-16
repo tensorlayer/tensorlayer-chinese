@@ -123,7 +123,7 @@ def _sign_grad(unused_op, grad):
 
 
 def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models/binary_net.py#L36
-    """Differentiable sign function by clipping linear gradient into [-1, 1], usually be used for quantizing value in binary network, see `Binarized Neural Networks <https://arxiv.org/abs/1602.02830>`__.
+    """Differentiable sign function by clipping linear gradient into [-1, 1], usually be used for quantizing value in binary network, see `tf.sign <https://www.tensorflow.org/api_docs/python/tf/sign>`__.
 
     Parameters
     ----------
@@ -141,7 +141,7 @@ def sign(x):  # https://github.com/AngusG/tensorflow-xnor-bnn/blob/master/models
 
     """
     with tf.get_default_graph().gradient_override_map({"sign": "QuantizeGrad"}):
-        return tf.sign(x, name='sign')
+        return tf.sign(x, name='tl_sign')
 
 
 # if tf.__version__ > "1.7":

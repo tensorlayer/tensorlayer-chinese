@@ -39,6 +39,7 @@ import re
 import sys
 import tarfile
 import zipfile
+import time
 
 import numpy as np
 import tensorflow as tf
@@ -317,6 +318,100 @@ def load_cifar10_dataset(shape=(-1, 32, 32, 3), path='data', plotable=False):
     y_train = np.asarray(y_train, dtype=np.int32)
     y_test = np.asarray(y_test, dtype=np.int32)
 
+    return X_train, y_train, X_test, y_test
+
+
+def load_cropped_svhn(path='data', include_extra=True):
+    """Load Cropped SVHN.
+
+    The Cropped Street View House Numbers (SVHN) Dataset contains 32x32x3 RGB images, with label of 0~9, see `ufldl website <http://ufldl.stanford.edu/housenumbers/>`__.
+
+    Parameters
+    ----------
+    path : str
+        The path that the data is downloaded to.
+    include_extra : boolean
+        If True (default), add extra images to the training set.
+
+    Returns
+    -------
+    X_train, y_train, X_test, y_test: tuple
+        Return splitted training/test set respectively.
+
+    Examples
+    ---------
+    >>> X_train, y_train, X_test, y_test = tl.files.load_cropped_svhn(include_extra=False)
+    >>> tl.vis.save_images(X_train[0:100], [10, 10], 'svhn.png')
+
+    """
+
+    import scipy.io
+
+    start_time = time.time()
+
+    path = os.path.join(path, 'cropped_svhn')
+    logging.info("Load or Download Cropped SVHN > {} | include extra images: {}".format(path, include_extra))
+    url = "http://ufldl.stanford.edu/housenumbers/"
+
+    np_file = os.path.join(path, "train_32x32.npz")
+    if file_exists(np_file) is False:
+        filename = "train_32x32.mat"
+        filepath = maybe_download_and_extract(filename, path, url)
+        mat = scipy.io.loadmat(filepath)
+        X_train = mat['X'] / 255.  # to [0, 1]
+        X_train = np.transpose(X_train, (3, 0, 1, 2))
+        y_train = np.squeeze(mat['y'], axis=1) / 255.
+        np.savez(np_file, X=X_train, y=y_train)
+        del_file(filepath)
+    else:
+        v = np.load(np_file)
+        X_train = v['X']
+        y_train = v['y']
+    logging.info("  train: {}".format(len(y_train)))
+
+    np_file = os.path.join(path, "test_32x32.npz")
+    if file_exists(np_file) is False:
+        filename = "test_32x32.mat"
+        filepath = maybe_download_and_extract(filename, path, url)
+        mat = scipy.io.loadmat(filepath)
+        X_test = mat['X'] / 255.
+        X_test = np.transpose(X_test, (3, 0, 1, 2))
+        y_test = np.squeeze(mat['y'], axis=1) / 255.
+        np.savez(np_file, X=X_test, y=y_test)
+        del_file(filepath)
+    else:
+        v = np.load(np_file)
+        X_test = v['X']
+        y_test = v['y']
+    logging.info("  test: {}".format(len(y_test)))
+
+    if include_extra:
+        logging.info("  adding extra 531131 images to training set, please wait ...")
+        np_file = os.path.join(path, "extra_32x32.npz")
+        if file_exists(np_file) is False:
+            logging.info("  the first time to load this dataset will take time to convert the file format ...")
+            filename = "extra_32x32.mat"
+            filepath = maybe_download_and_extract(filename, path, url)
+            mat = scipy.io.loadmat(filepath)
+            X_extra = mat['X'] / 255.
+            X_extra = np.transpose(X_extra, (3, 0, 1, 2))
+            y_extra = np.squeeze(mat['y'], axis=1) / 255.
+            np.savez(np_file, X=X_extra, y=y_extra)
+            del_file(filepath)
+        else:
+            v = np.load(np_file)
+            X_extra = v['X']
+            y_extra = v['y']
+        # print(X_train.shape, X_extra.shape)
+        X_train = np.concatenate((X_train, X_extra), 0)
+        y_train = np.concatenate((y_train, y_extra), 0)
+        # X_train = np.append(X_train, X_extra, axis=0)
+        # y_train = np.append(y_train, y_extra, axis=0)
+        logging.info("  add extra {} to train --> {}".format(len(y_extra), len(y_train)))
+    else:
+        logging.info("  no extra images are included")
+    logging.info("  image size:%s n_train:%d n_test:%d" % (str(X_train.shape[1:4]), len(y_train), len(y_test)))
+    logging.info("  took: {:d}s".format(time.time() - start_time))
     return X_train, y_train, X_test, y_test
 
 
