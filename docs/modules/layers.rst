@@ -245,8 +245,6 @@ API - 神经网络层
    DeConv2dLayer
    Conv3dLayer
    DeConv3dLayer
-   PoolLayer
-   PadLayer
    UpSampling2dLayer
    DownSampling2dLayer
    DeformableConv2dLayer
@@ -262,6 +260,11 @@ API - 神经网络层
    DeformableConv2d
    GroupConv2d
 
+   PadLayer
+   PoolLayer
+   ZeroPad1d
+   ZeroPad2d
+   ZeroPad3d
    MaxPool1d
    MeanPool1d
    MaxPool2d
@@ -543,17 +546,29 @@ Super-Resolution 层
 池化和填充层
 --------------------
 
+填充层 (Pro)
+^^^^^^^^^^^^^^
+该填充层可以实现任意模式的填充。
+
+.. autoclass:: PadLayer
+
 池化层 (Pro)
 ^^^^^^^^^^^^
 该池化层可以实现各种纬度（1D，2D，3D）以及各种池化方法（Mean，Max）。
 
 .. autoclass:: PoolLayer
 
-填充层 (Pro)
-^^^^^^^^^^^^^^
-该填充层可以实现任意模式的填充。
+1D 补零填充层
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: ZeroPad1d
 
-.. autoclass:: PadLayer
+2D 补零填充层
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: ZeroPad2d
+
+3D 补零填充层
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: ZeroPad3d
 
 1D Max池化层
 ^^^^^^^^^^^^^
