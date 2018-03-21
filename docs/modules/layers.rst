@@ -118,7 +118,7 @@ API - 神经网络层
           name ='double_layer',
       ):
           # 校验名字是否已被使用（不变）
-          Layer.__init__(self, name=name)
+          Layer.__init__(self, layer=layer, name=name)
 
           # 本层输入是上层的输出（不变）
           self.inputs = layer.outputs
@@ -129,13 +129,8 @@ API - 神经网络层
           # 本层的功能实现（自定义部分）
           self.outputs = self.inputs * 2
 
-          # 获取之前层的参数（不变）
-          self.all_layers = list(layer.all_layers)
-          self.all_params = list(layer.all_params)
-          self.all_drop = dict(layer.all_drop)
-
           # 更新层的参数（自定义部分）
-          self.all_layers.extend( [self.outputs] )
+          self.all_layers.append(self.outputs)
 
 
 你的Dense层
@@ -175,8 +170,8 @@ API - 神经网络层
             self.outputs = act(tf.matmul(self.inputs, W) + b)
 
         # 更新层的参数（自定义部分）
-        self.all_layers.extend( [self.outputs] )
-        self.all_params.extend( [W, b] )
+        self.all_layers.append(self.outputs)
+        self.all_params.extend([W, b])
 
 修改预训练行为
 ^^^^^^^^^^^^^^^
