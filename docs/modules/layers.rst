@@ -270,6 +270,8 @@ API - 神经网络层
    GlobalMeanPool1d
    GlobalMaxPool2d
    GlobalMeanPool2d
+   GlobalMaxPool3d
+   GlobalMeanPool3d
 
    SubpixelConv1d
    SubpixelConv2d
@@ -604,6 +606,14 @@ Super-Resolution 层
 2D 全局Mean池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMeanPool2d
+
+3D 全局Max池化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: GlobalMaxPool3d
+
+3D 全局Mean池化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: GlobalMeanPool3d
 
 
 规范化层
