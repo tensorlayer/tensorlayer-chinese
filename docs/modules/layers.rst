@@ -325,6 +325,10 @@ API - 神经网络层
 
    BinaryDenseLayer
    BinaryConv2d
+   TenaryDenseLayer
+   TenaryConv2d
+   DorefaDenseLayer
+   DorefaConv2d
    SignLayer
    ScaleLayer
 
@@ -837,16 +841,29 @@ Unstack 层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: BinaryDenseLayer
 
-
 二值化 2D 卷积层
 ^^^^^^^^^^^^^^^^^^
 .. autoclass:: BinaryConv2d
 
+Tenary 全连接层
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: TenaryDenseLayer
+
+Tenary 2D 卷积层
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: TenaryConv2d
+
+Dorefa 全连接层
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: DorefaDenseLayer
+
+Dorefa 2D 卷积层
+^^^^^^^^^^^^^^^^^^
+.. autoclass:: DorefaConv2d
 
 Sign 层
 ^^^^^^^^^^^^^^
 .. autoclass:: SignLayer
-
 
 Scale 层
 ^^^^^^^^^^^^^^
