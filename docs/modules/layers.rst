@@ -825,7 +825,7 @@ Unstack 层
   .. autoclass:: KerasLayer
 
 
-二值化网络
+量化网络
 ------------------
 
 先阅读这里
