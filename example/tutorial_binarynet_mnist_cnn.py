@@ -1,46 +1,54 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import tensorlayer as tl
-from tensorlayer.layers import *
+import time
 
-LayersConfig.tf_dtype = tf.float16  # tf.float32  tf.float16
+import tensorflow as tf
+
+import tensorlayer as tl
 
 X_train, y_train, X_val, y_val, X_test, y_test = \
                 tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
+# X_train, y_train, X_test, y_test = tl.files.load_cropped_svhn(include_extra=False)
 
 sess = tf.InteractiveSession()
 
 batch_size = 128
 
-x = tf.placeholder(LayersConfig.tf_dtype, shape=[batch_size, 28, 28, 1])
+x = tf.placeholder(tf.float32, shape=[batch_size, 28, 28, 1])
 y_ = tf.placeholder(tf.int64, shape=[batch_size])
 
 
 def model(x, is_train=True, reuse=False):
-    with tf.variable_scope("model", reuse=reuse):
-        n = InputLayer(x, name='input')
-        # cnn
-        n = Conv2d(n, 32, (5, 5), (1, 1), padding='SAME', name='cnn1')
-        n = BatchNormLayer(n, act=tf.nn.relu, is_train=is_train, name='bn1')
-        n = MaxPool2d(n, (2, 2), (2, 2), padding='SAME', name='pool1')
-        n = Conv2d(n, 64, (5, 5), (1, 1), padding='SAME', name='cnn2')
-        n = BatchNormLayer(n, act=tf.nn.relu, is_train=is_train, name='bn2')
-        n = MaxPool2d(n, (2, 2), (2, 2), padding='SAME', name='pool2')
-        # mlp
-        n = FlattenLayer(n, name='flatten')
-        n = DropoutLayer(n, 0.5, True, is_train, name='drop1')
-        n = DenseLayer(n, 256, act=tf.nn.relu, name='relu1')
-        n = DropoutLayer(n, 0.5, True, is_train, name='drop2')
-        n = DenseLayer(n, 10, act=tf.identity, name='output')
-    return n
+    # In BNN, all the layers inputs are binary, with the exception of the first layer.
+    # ref: https://github.com/itayhubara/BinaryNet.tf/blob/master/models/BNN_cifar10.py
+    with tf.variable_scope("binarynet", reuse=reuse):
+        net = tl.layers.InputLayer(x, name='input')
+        net = tl.layers.BinaryConv2d(net, 32, (5, 5), (1, 1), padding='SAME', b_init=None, name='bcnn1')
+        net = tl.layers.MaxPool2d(net, (2, 2), (2, 2), padding='SAME', name='pool1')
+        net = tl.layers.BatchNormLayer(net, act=tl.act.htanh, is_train=is_train, name='bn1')
+
+        net = tl.layers.SignLayer(net)
+        net = tl.layers.BinaryConv2d(net, 64, (5, 5), (1, 1), padding='SAME', b_init=None, name='bcnn2')
+        net = tl.layers.MaxPool2d(net, (2, 2), (2, 2), padding='SAME', name='pool2')
+        net = tl.layers.BatchNormLayer(net, act=tl.act.htanh, is_train=is_train, name='bn2')
+
+        net = tl.layers.FlattenLayer(net)
+        # net = tl.layers.DropoutLayer(net, 0.8, True, is_train, name='drop1')
+        net = tl.layers.SignLayer(net)
+        net = tl.layers.BinaryDenseLayer(net, 256, b_init=None, name='dense')
+        net = tl.layers.BatchNormLayer(net, act=tl.act.htanh, is_train=is_train, name='bn3')
+
+        # net = tl.layers.DropoutLayer(net, 0.8, True, is_train, name='drop2')
+        net = tl.layers.SignLayer(net)
+        net = tl.layers.BinaryDenseLayer(net, 10, b_init=None, name='bout')
+        net = tl.layers.BatchNormLayer(net, is_train=is_train, name='bno')
+    return net
 
 
 # define inferences
 net_train = model(x, is_train=True, reuse=False)
 net_test = model(x, is_train=False, reuse=True)
-
-net_train.print_params(False)
 
 # cost for training
 y = net_train.outputs
@@ -50,25 +58,22 @@ cost = tl.cost.cross_entropy(y, y_, name='xentropy')
 y2 = net_test.outputs
 cost_test = tl.cost.cross_entropy(y2, y_, name='xentropy2')
 correct_prediction = tf.equal(tf.argmax(y2, 1), y_)
-acc = tf.reduce_mean(tf.cast(correct_prediction, LayersConfig.tf_dtype))
+acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 # define the optimizer
-train_params = tl.layers.get_variables_with_name('model', train_only=True, printable=False)
-train_op = tf.train.AdamOptimizer(
-    learning_rate=0.0001,
-    beta1=0.9,
-    beta2=0.999,
-    # epsilon=1e-08,    # for float32 as default
-    epsilon=1e-4,  # for float16, see https://stackoverflow.com/questions/42064941/tensorflow-float16-support-is-broken
-    use_locking=False).minimize(
-        cost, var_list=train_params)
+train_params = tl.layers.get_variables_with_name('binarynet', True, True)
+train_op = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(cost, var_list=train_params)
 
 # initialize all variables in the session
 tl.layers.initialize_global_variables(sess)
 
-# train the network
-n_epoch = 500
-print_freq = 1
+net_train.print_params()
+net_train.print_layers()
+
+n_epoch = 200
+print_freq = 5
+
+# print(sess.run(net_test.all_params)) # print real values of parameters
 
 for epoch in range(n_epoch):
     start_time = time.time()
