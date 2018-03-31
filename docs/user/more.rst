@@ -72,32 +72,6 @@ and other ways to
 
 
 
-企鹅创新（北京）科技有限公司－算法工程师（30~60万人民币）
----------------------------------------------------------------
-
-公司简介：我们是设计为主导，技术为基石的商业公司；致力于创造人工智能和万物互联时代最卓越的产品。          
-团队成员相继服务于Google、MUJI无印良品、Dyson戴森、PWC普华永道、D&AD、Oakley、DIAGEO及国内顶级科研院所。       
-
-岗位职责 
- - 使用深度学习解决机器视觉问题；
- - 把深度学习算法部署到嵌入式系统。
-
-岗位要求
- - 具备2年以上深度学习、机器视觉、图像处理等相关背景； 
- - 精通C/C++ 和 Python； 
- - 熟悉TensorLayer和TensorFlow优先；
- - 熟悉基于CUDA的算法设计与优化和并行优化经验者优先； 
- - 熟悉基本的数字图像与视频处理算法原理，熟练掌握OpenCV／OpenGL ES，了解图像拼接图像处理算法； 
- - 良好的团队合作意识； 
- - 能够长期稳定的供职。
-
-地点：北京望京SOHO
-
-年薪：30~60万人民币
-
-联系方式：info@penguinsinnovate.com
-
-
 
 .. _GitHub: https://github.com/zsdonghao/tensorlayer
 .. _Deeplearning Tutorial: http://deeplearning.stanford.edu/tutorial/
