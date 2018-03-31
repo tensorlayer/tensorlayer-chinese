@@ -4,7 +4,7 @@
 更多 More
 ============
 
-FQA
+FAQ
 ========
 
 请见 `英文网站 <http://tensorlayer.readthedocs.io/en/latest/user/more.html>`_ .
