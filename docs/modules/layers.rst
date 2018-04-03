@@ -494,7 +494,7 @@ Dropconnect + 全链接层
 
 2D 卷积层
 ^^^^^^^^^
-.. autofunction:: Conv2d
+.. autoclass:: Conv2d
 
 2D 反卷积层
 ^^^^^^^^^^^
