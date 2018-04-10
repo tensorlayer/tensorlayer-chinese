@@ -19,6 +19,7 @@
 TensorLayer 是基于 [Google TensorFlow](https://www.tensorflow.org) 开发的深度学习与增强学习库。它提供主流的深度学习与增强学习模块，可以非常容易地自定义模型以解决人工智能问题。
 
 # 新闻
+* [Apr] 一行代码下载及可视化MPII数据集
 * [Apr] 发布[models APIs](http://tensorlayer.readthedocs.io/en/latest/modules/models.html#)提供预训练模型
 * [Mar] 发布试验版本API以搭建量化网络
 * [Jan] 出版[《深度学习：一起玩转TensorLayer》](http://www.broadview.com.cn/book/5059) 
