@@ -490,7 +490,7 @@ Dropconnect + 全链接层
 
 1D 卷积层
 ^^^^^^^^^
-.. autofunction:: Conv1d
+.. autoclass:: Conv1d
 
 2D 卷积层
 ^^^^^^^^^
@@ -498,7 +498,7 @@ Dropconnect + 全链接层
 
 2D 反卷积层
 ^^^^^^^^^^^
-.. autofunction:: DeConv2d
+.. autoclass:: DeConv2d
 
 3D 反卷积层
 ^^^^^^^^^^^
@@ -573,19 +573,19 @@ Super-Resolution 层
 
 1D Max池化层
 ^^^^^^^^^^^^^
-.. autofunction:: MaxPool1d
+.. autoclass:: MaxPool1d
 
 1D Mean池化层
 ^^^^^^^^^^^^^^
-.. autofunction:: MeanPool1d
+.. autoclass:: MeanPool1d
 
 2D Max池化层
 ^^^^^^^^^^^^^
-.. autofunction:: MaxPool2d
+.. autoclass:: MaxPool2d
 
 2D Mean池化层
 ^^^^^^^^^^^^^^
-.. autofunction:: MeanPool2d
+.. autoclass:: MeanPool2d
 
 3D Max池化层
 ^^^^^^^^^^^^^

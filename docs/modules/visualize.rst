@@ -13,7 +13,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
    save_image
    save_images
    draw_boxes_and_labels_to_image
-   draw_mpii_people_to_image
+   draw_mpii_pose_to_image
    W
    CNN2d
    frame
@@ -45,7 +45,7 @@ TensorFlow 提供了可视化模型和激活输出等的工具 `TensorBoard <htt
 
 保存姿态估计图片（MPII）
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: draw_mpii_people_to_image
+.. autofunction:: draw_mpii_pose_to_image
 
 可视化模型参数
 --------------------

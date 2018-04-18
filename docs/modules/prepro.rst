@@ -80,7 +80,7 @@ API - 数据预处理
    parse_darknet_ann_str_to_list
    parse_darknet_ann_list_to_cls_box
 
-   obj_box_left_right_flip
+   obj_box_horizontal_flip
    obj_box_imresize
    obj_box_crop
    obj_box_shift
@@ -274,7 +274,7 @@ Numpy 与 PIL
        ann_list[idx][1], [], classes, True, save_name='_im_original.png')
 
   # 左右翻转
-  im_flip, coords = tl.prepro.obj_box_left_right_flip(image,
+  im_flip, coords = tl.prepro.obj_box_horizontal_flip(image,
           ann_list[idx][1], is_rescale=True, is_center=True, is_random=False)
   tl.vis.draw_boxes_and_labels_to_image(im_flip, ann_list[idx][0],
           coords, [], classes, True, save_name='_im_flip.png')
@@ -324,7 +324,7 @@ Numpy 与 PIL
       im = tl.prepro.illumination(im, gamma=(0.5, 1.5),
                contrast=(0.5, 1.5), saturation=(0.5, 1.5), is_random=True)
       ## 随机左右翻转
-      im, coords = tl.prepro.obj_box_left_right_flip(im, coords,
+      im, coords = tl.prepro.obj_box_horizontal_flip(im, coords,
                is_rescale=True, is_center=True, is_random=True)
       ## 随机调整大小并裁剪出指定大小的图片，这同时达到了随机缩放的效果
       tmp0 = random.randint(1, int(im_size[0]*jitter))
@@ -399,7 +399,7 @@ Darknet格式-分开列表的类别和坐标
 
 图像-翻转
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: obj_box_left_right_flip
+.. autofunction:: obj_box_horizontal_flip
 
 图像-调整大小
 ^^^^^^^^^^^^^^^^^^^^^^^^^

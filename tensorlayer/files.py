@@ -1,36 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-A collections of helper functions to work with dataset.
-
-Load benchmark dataset, save and restore model, save and load variables.
-TensorFlow provides ``.ckpt`` file format to save and restore the models, while
-we suggest to use standard python file format ``.npz`` to save models for the
-sake of cross-platform.
-
-.. code-block:: python
-
-  ## save model as .ckpt
-  saver = tf.train.Saver()
-  save_path = saver.save(sess, "model.ckpt")
-  # restore model from .ckpt
-  saver = tf.train.Saver()
-  saver.restore(sess, "model.ckpt")
-
-  ## save model as .npz
-  tl.files.save_npz(network.all_params , name='model.npz')
-  # restore model from .npz (method 1)
-  load_params = tl.files.load_npz(name='model.npz')
-  tl.files.assign_params(sess, load_params, network)
-  # restore model from .npz (method 2)
-  tl.files.load_and_assign_npz(sess=sess, name='model.npz', network=network)
-
-  ## you can assign the pre-trained parameters as follow
-  # 1st parameter
-  tl.files.assign_params(sess, [load_params[0]], network)
-  # the first three parameters
-  tl.files.assign_params(sess, load_params[:3], network)
-
-"""
 
 import gzip
 import math
@@ -41,6 +9,7 @@ import sys
 import tarfile
 import time
 import zipfile
+import progressbar
 
 import numpy as np
 import tensorflow as tf
@@ -1318,7 +1287,6 @@ def load_voc_dataset(path='data', dataset='2012', contain_classes_in_person=Fals
         n_objs_list, objs_info_list, objs_info_dicts
 
 
-
 def load_mpii_pose_dataset(path='data', is_16_pos_only=False):
     """Load MPII Human Pose Dataset.
 
@@ -1346,7 +1314,7 @@ def load_mpii_pose_dataset(path='data', is_16_pos_only=False):
     >>> import tensorlayer as tl
     >>> img_train_list, ann_train_list, img_test_list, ann_test_list = tl.files.load_mpii_pose_dataset()
     >>> image = tl.vis.read_image(img_train_list[0])
-    >>> tl.vis.draw_mpii_people_to_image(image, ann_train_list[0], 'image.png')
+    >>> tl.vis.draw_mpii_pose_to_image(image, ann_train_list[0], 'image.png')
     >>> pprint.pprint(ann_train_list[0])
 
     References
@@ -1402,7 +1370,7 @@ def load_mpii_pose_dataset(path='data', is_16_pos_only=False):
         # fp = open(joint_data_fn, 'w')
         mat = sio.loadmat(os.path.join(path, extracted_filename, "mpii_human_pose_v1_u12_1.mat"))
 
-        for i, (anno, train_flag) in enumerate(  # all images
+        for _, (anno, train_flag) in enumerate(  # all images
                 zip(mat['RELEASE']['annolist'][0, 0][0], mat['RELEASE']['img_train'][0, 0][0])):
 
             img_fn = anno['image']['name'][0, 0][0]
@@ -1441,8 +1409,7 @@ def load_mpii_pose_dataset(path='data', is_16_pos_only=False):
                         y = [y[0, 0] for y in annopoint['y'][0]]
                         joint_pos = {}
                         for _j_id, (_x, _y) in zip(j_id, zip(x, y)):
-                            joint_pos[int
-                            (_j_id)] = [float(_x), float(_y)]
+                            joint_pos[int(_j_id)] = [float(_x), float(_y)]
                         # joint_pos = fix_wrong_joints(joint_pos)
 
                         # visiblity list
@@ -1539,10 +1506,10 @@ def load_mpii_pose_dataset(path='data', is_16_pos_only=False):
     n_people = n_train_people + n_test_people
     logging.info("n_people: {} n_train_people: {} n_test_people: {}".format(n_people, n_train_people, n_test_people))
     # add path to all image file name
-    for i in range(len(img_train_list)):
-        img_train_list[i] = os.path.join(img_dir, img_train_list[i])
-    for i in range(len(img_test_list)):
-        img_test_list[i] = os.path.join(img_dir, img_test_list[i])
+    for i, value in enumerate(img_train_list):
+        img_train_list[i] = os.path.join(img_dir, value)
+    for i, value in enumerate(img_test_list):
+        img_test_list[i] = os.path.join(img_dir, value)
     return img_train_list, ann_train_list, img_test_list, ann_test_list
 
 
@@ -2064,14 +2031,17 @@ def maybe_download_and_extract(filename, working_directory, url_source, extract=
 
     # We first define a download function, supporting both Python 2 and 3.
     def _download(filename, working_directory, url_source):
-        def _dlProgress(count, blockSize, totalSize):
+
+        progress_bar = progressbar.ProgressBar()
+
+        def _dlProgress(count, blockSize, totalSize, pbar=progress_bar):
             if (totalSize != 0):
-                totalBlocks = math.ceil(float(totalSize) / float(blockSize))
-                percent = float(count) / float(totalBlocks) * 100.0
-                # https://www.quora.com/How-can-I-delete-the-last-printed-line-in-Python-language
-                sys.stdout.write('\033[F')  # back to previous line
-                sys.stdout.write('\033[K')  # clear line
-                sys.stdout.write('Downloading %s...%g%%\n' % (filename, percent))
+
+                if not pbar.max_value:
+                    totalBlocks = math.ceil(float(totalSize) / float(blockSize))
+                    pbar.max_value = int(totalBlocks)
+
+                pbar.update(count, force=True)
 
         if sys.version_info[0] == 2:
             from urllib import urlretrieve
