@@ -521,11 +521,11 @@ Super-Resolution 层
 
 1D 子像素卷积层
 ^^^^^^^^^^^^^^^^
-.. autofunction:: SubpixelConv1d
+.. autoclass:: SubpixelConv1d
 
 2D 子像素卷积层
 ^^^^^^^^^^^^^^^^
-.. autofunction:: SubpixelConv2d
+.. autoclass:: SubpixelConv2d
 
 
 空间变换网络
