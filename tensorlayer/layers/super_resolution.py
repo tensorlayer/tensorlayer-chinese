@@ -70,7 +70,9 @@ class SubpixelConv2d(Layer):
         _err_log = "SubpixelConv2d: The number of input channels == (scale x scale) x The number of output channels"
 
         super(SubpixelConv2d, self).__init__(prev_layer=prev_layer, name=name)
-        logging.info("SubpixelConv2d  %s: scale: %d n_out_channel: %s act: %s" % (name, scale, n_out_channel, act.__name__))
+        logging.info(
+            "SubpixelConv2d  %s: scale: %d n_out_channel: %s act: %s" % (name, scale, n_out_channel, act.__name__)
+        )
 
         def _PS(X, r, n_out_channels):
             if n_out_channels >= 1:
@@ -147,7 +149,6 @@ class SubpixelConv1d(Layer):
             self.outputs = act(_PS(self.inputs, r=scale))
 
         self.all_layers.append(self.outputs)
-
 
 
 # Alias
