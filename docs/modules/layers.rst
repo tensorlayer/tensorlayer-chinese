@@ -464,9 +464,6 @@ Dropconnect + 全链接层
 
 .. autoclass:: UpSampling2dLayer
 
-2D 可变形卷积
-^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DeformableConv2dLayer
 
 1D 多孔卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -511,6 +508,10 @@ Dropconnect + 全链接层
 2D Depthwise Separable 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: SeparableConv2d
+
+2D Deformable 卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DeformableConv2d
 
 2D 分组卷积层
 ^^^^^^^^^^^^^
