@@ -57,7 +57,6 @@ API目录
   modules/rein
   modules/files
   modules/visualize
-  modules/ops
   modules/activation
   modules/models
   modules/distributed

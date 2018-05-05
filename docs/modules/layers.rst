@@ -240,9 +240,9 @@ API - 神经网络层
    DeConv2dLayer
    Conv3dLayer
    DeConv3dLayer
+
    UpSampling2dLayer
    DownSampling2dLayer
-   DeformableConv2dLayer
    AtrousConv1dLayer
    AtrousConv2dLayer
 
@@ -463,11 +463,6 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: UpSampling2dLayer
-
-2D 下采样层
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: DownSampling2dLayer
 
 2D 可变形卷积
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -741,13 +736,14 @@ Simple Seq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Seq2Seq
 
-PeekySeq2Seq
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: PeekySeq2Seq
+..
+  PeekySeq2Seq
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .. autoclass:: PeekySeq2Seq
 
-AttentionSeq2Seq
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: AttentionSeq2Seq
+  AttentionSeq2Seq
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  .. autoclass:: AttentionSeq2Seq
 
 
 形状修改层
