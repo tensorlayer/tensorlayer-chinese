@@ -43,6 +43,7 @@ Adversarial Learning
  - `Unsupervised Image to Image Translation with Generative Adversarial Networks <https://github.com/zsdonghao/Unsup-Im2Im>`_ by `zsdonghao <https://github.com/zsdonghao/Unsup-Im2Im>`__.
  - `Improved CycleGAN <https://github.com/luoxier/CycleGAN_Tensorlayer>`_ with resize-convolution by `luoxier <https://github.com/luoxier/CycleGAN_Tensorlayer>`_.
  - `Super Resolution GAN <https://arxiv.org/abs/1609.04802>`_ by `zsdonghao <https://github.com/zsdonghao/SRGAN>`__.
+ - `BEGAN: Boundary Equilibrium Generative Adversarial Networks <http://arxiv.org/abs/1703.10717>`_ by `2wins <https://github.com/2wins/BEGAN-tensorlayer>`__.
  - `DAGAN: Fast Compressed Sensing MRI Reconstruction <https://github.com/nebulaV/DAGAN>`_ by `nebulaV <https://github.com/nebulaV/DAGAN>`__.
 
 Natural Language Processing
