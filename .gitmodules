@@ -1,0 +1,3 @@
+[submodule "tensorlayer-master"]
+	path = tensorlayer-master
+	url = https://github.com/tensorlayer/tensorlayer.git
