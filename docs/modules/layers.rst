@@ -245,6 +245,7 @@ API - 神经网络层
    DownSampling2dLayer
    AtrousConv1dLayer
    AtrousConv2dLayer
+   AtrousDeConv2dLayer
 
    Conv1d
    Conv2d
@@ -334,6 +335,8 @@ API - 神经网络层
    ScaleLayer
 
    PReluLayer
+   PRelu6Layer
+   PTRelu6Layer
 
    MultiplexerLayer
 
@@ -474,6 +477,12 @@ Dropconnect + 全链接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: AtrousConv2dLayer
+
+2D多孔反卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autoclass:: AtrousDeConv2dLayer
+
 
 
 卷积层 (Simplified)
@@ -875,7 +884,18 @@ Scale 层
 带参数的激活函数
 ------------------
 
+PReLU 层
+^^^^^^^^^^^^
 .. autoclass:: PReluLayer
+
+
+PReLU6 层
+^^^^^^^^^^^^
+.. autoclass:: PRelu6Layer
+
+PTReLU6 层
+^^^^^^^^^^^^^
+.. autoclass:: PTRelu6Layer
 
 流控制层
 -----------
