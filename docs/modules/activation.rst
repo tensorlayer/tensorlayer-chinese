@@ -24,26 +24,22 @@ TensorFlow官方的函数，比如
 
 .. autosummary::
 
-   identity
-   ramp
-   leaky_relu
-   leaky_relu6
-   leaky_twice_relu6
-   swish
-   sign
-   hard_tanh
-   pixel_wise_softmax
+  leaky_relu
+  leaky_relu6
+  leaky_twice_relu6
+  ramp
+  swish
+  sign
+  hard_tanh
+  pixel_wise_softmax
 
-Identity
------------
-.. autofunction:: identity
 
 Ramp
------------
+------
 .. autofunction:: ramp
 
-Leaky Relu
------------
+Leaky ReLU
+------------
 .. autofunction:: leaky_relu
 
 Leaky ReLU6
@@ -54,21 +50,20 @@ Twice Leaky ReLU6
 -----------------
 .. autofunction:: leaky_twice_relu6
 
-
 Swish
------------
+------------
 .. autofunction:: swish
 
-可求导 Sign
------------
+Sign
+---------------------
 .. autofunction:: sign
 
 Hard Tanh
------------
+---------------------
 .. autofunction:: hard_tanh
 
-Pixel-wise Softmax
-----------------------
+Pixel-wise softmax
+--------------------
 .. autofunction:: pixel_wise_softmax
 
 带有参数的激活函数
