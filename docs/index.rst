@@ -47,6 +47,7 @@ API目录
 
 .. toctree::
   :maxdepth: 2
+  :caption: 模块
 
   modules/activation
   modules/array_ops
@@ -54,14 +55,19 @@ API目录
   modules/distributed
   modules/files
   modules/iterate
+  modules/layers
   modules/models
   modules/nlp
-  modules/layers
   modules/optimizers
   modules/prepro
   modules/rein
   modules/utils
   modules/visualize
+
+.. toctree::
+  :maxdepth: 2
+  :caption: 开发中模块
+
   modules/db
 
 命令行界面
