@@ -91,7 +91,7 @@ TensorLayer的想法源于组合TensorFlow的灵活性和正确的 building bloc
     make clean
     make html
 
-然后，打开 ``docs/_build/index.html`` 来查看会出现在 `readthedocs<http://tensorlayer.readthedocs/org/>`_ 文档。
+然后，打开 ``docs/_build/index.html`` 来查看会出现在 `readthedocs <http://tensorlayer.readthedocs/org/>`_ 文档。
 如果您更改了很多内容，并且似乎出现了许多误导性的错误信息或警告，运行``make clean html``来让Sphinx重新生成所有文件。
 
 编写英文文档文字时，请尽可能地按照现有文档的文字习惯，
