@@ -8,6 +8,7 @@ TensorLayer 提供了一些预训练模型，通过这套API，您可以非常�
 .. autosummary::
 
     VGG16
+    VGG19
     SqueezeNetV1
     MobileNetV1
 
@@ -15,6 +16,11 @@ VGG16
 ----------------------
 
 .. autoclass:: VGG16
+
+VGG19
+----------------------
+
+.. autoclass:: VGG19
 
 SqueezeNetV1
 ----------------
