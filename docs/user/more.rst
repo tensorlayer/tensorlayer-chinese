@@ -1,50 +1,54 @@
-.. _tutorial:
+.. _more:
 
+============
+更多 More
+============
+
+FAQ
+========
+
+请见 `英文网站 <http://tensorlayer.readthedocs.io/en/latest/user/more.html>`_ .
+
+你的贡献
 =================
-Your Contribution
-=================
 
-There are many functions need to be contributed such as
-Maxout, ResNet, Bi-directional RNN, Neural Turing Machine etc.
-Please push on Github, every bit helps and will be credited.
+贡献方式有很多种，比如提供应用、实现新的TensorLayer层、回答 `GitHub`_ Issues 以及帮助完善翻译等等。
+每一点贡献都会署名，欢迎在 `GitHub`_ 上push。
 
+..
+ 竞赛
+ ============
 
-============
-Competitions
-============
-
-Coming soon
+ 有奖竞赛即将到来
 
 
 
-============
-Applications
-============
+ 应用例子 
+ ============
 
-There are some good applications implemented by TLayer.
-You may able to find some useful examples for your project.
-If you want to share your application, please contact hao.dong11@imperial.ac.uk.
+ 有很多基于TensorLayer开发的优秀应用，你或许可以在这里找到适合你项目用的模型。
+ 此外，如果你想分享你的应用例子，请联系 hao.dong11@imperial.ac.uk.
 
-CNN+LSTM for Biosignal
-------------------------
+ 1D CNN+LSTM for Biosignal
+ ------------------------
 
-Author : `Akara Supratak <https://akaraspt.github.io>`_
+ 作者 : `Akara Supratak <https://akaraspt.github.io>`_
 
-Introduction
-^^^^^^^^^^^^
+ 介绍
+ ^^^^^^^^^
 
-Implementation
-^^^^^^^^^^^^^^
+ 实现
+ ^^^^^^^^^^^
 
-Citation
-^^^^^^^^
-
-===========
-Recruitment
-===========
+ 引用
+ ^^^^^^^^
 
 
-Data Science Institute, Imperial College London
+招聘信息
+==============
+
+
+帝国理工大学－数据科学院
 ------------------------------------------------
 
 Data science is therefore by nature at the core of all modern transdisciplinary scientific activities, as it involves the whole life cycle of data, from acquisition and exploration to analysis and communication of the results. Data science is not only concerned with the tools and methods to obtain, manage and analyse data: it is also about extracting value from data and translating it from asset to product.
@@ -69,7 +73,7 @@ and other ways to
 
 
 
-
+.. _GitHub: https://github.com/zsdonghao/tensorlayer
 .. _Deeplearning Tutorial: http://deeplearning.stanford.edu/tutorial/
 .. _Convolutional Neural Networks for Visual Recognition: http://cs231n.github.io/
 .. _Neural Networks and Deep Learning: http://neuralnetworksanddeeplearning.com/

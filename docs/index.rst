@@ -1,118 +1,91 @@
-Welcome to TLayer
-=======================================
+TensorLayer 中文文档
+==============================
 
 
-.. image:: user/my_figs/img_tlayer.png
+.. image:: user/my_figs/tl_transparent_logo.png
   :scale: 25 %
   :align: center
-  :target: https://github.com/zsdonghao/tlayer
+  :target: https://github.com/tensorlayer/tensorlayer
 
-`TLayer`_ was designed for both Researchers
-and Engineers, it is a transparent library built on the top of Google TensorFlow.
-It was designed to provide a higher-level
-API to TensorFlow in order to speed-up experimentations and developments.
-`TLayer`_ is easy to extended and modified.
-In addition, we provides mass examples and tutorials
-to help you to find the one you need in your project.
+**好消息** 我们获得了 `ACM Multimedia (MM) <http://www.acmmm.org/2017/mm-2017-awardees/>`_ **年度最佳开源软件奖**。
 
-The `documentation <http://tlayer.readthedocs.io/en/latest/user/tutorial.html>`_
-is not only for describing how to use `TLayer`_ but also
-a tutorial to walk through different type of Neural Networks, Deep
-Reinforcement Learning and Natural Language Processing etc.
+TensorLayer 是为研究人员和工程师设计的一款基于Google TensorFlow开发的深度学习与强化学习库。
+它提供高级别的（Higher-Level）深度学习API，这样不仅可以加快研究人员的实验速度，也能够减少工程师在实际开发当中的重复工作。 TensorLayer非常易于修改和扩展，这使它可以同时用于机器学习的研究与应用。
+此外，TensorLayer 提供了大量示例和教程来帮助初学者理解深度学习，并提供大量的官方例子程序方便开发者快速找到适合自己项目的例子。
+更多细节请点击 `这里 <https://github.com/zsdonghao/tensorlayer>`_ 。
 
-However, different with other inflexible TensorFlow wrappers,
-`TLayer`_ assumes that you are somewhat familiar with Neural Networks and TensorFlow.
-A basic understanding of how TensorFlow works is required to be
-able to use `TLayer`_ skillfully.
-
-
-.. _TLayer-philosopy:
-
-Philosophy
-----------
-
-`TLayer`_ grew out of a need to combine the flexibility of TensorFlow with the
-availability of the right building blocks for training neural networks.
-Its development is guided by a number of design goals:
-
-
-* **Transparency**: Do not hide TensorFlow behind abstractions. Try to rely on
-  TensorFlow's functionality where possible, and follow TensorFlow's conventions.
-  Do not hide training process, all iteration, initialization can be managed
-  by user.
-
-* **Tensor**: Neural networks perform on multidimensional data arrays which are
-  referred to as "tensors".
-
-* **TPU**: Tensor Processing Unit is a custom ASIC built specifically for
-  machine learning and tailored for TensorFlow.
-
-* **Distribution**: Distributed Machine Learning is the default function of TensorFlow.
-
-* **Compatibility**: A network is abstracted to regularization, cost and outputs
-  of each layer. Easy to work with other TensorFlow libraries.
-
-* **Simplicity**: Be easy to use, easy to extend and modify, to facilitate use
-  in Research and Engineering.
-
-* **High-Speed**: The running speed under GPU support is the same with
-  TensorFlow only. The simplicity do not sacrifice the performance.
-
-
+这篇文档不仅仅是为了描述如何使用这个库也是一个遍历不同类型的神经网络，
+深度强化学习和自然语言处理等内容的教程。
+此外，TensorLayer的Tutorial包含了所有TensorFlow官方深度学习教程的模块化实现，因此你可以对照TensorFlow深度学习教程来学习 `[英文] <https://www.tensorflow.org/versions/master/tutorials/index.html>`_ `[极客学院中文翻译] <http://wiki.jikexueyuan.com/project/tensorflow-zh/>`_
 
 .. note::
-   If you got problem to read the docs online, you could download the project
-   on github, then go to ``/docs/_build/html/index.html`` to read the docs
-   offline.
+  我们建议你在 `Github <https://github.com/zsdonghao/tensorlayer>`_ 上star和watch `官方项目 <https://github.com/zsdonghao/tensorlayer>`_ ，这样当官方有更新时，你会立即知道。本文档为 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_ 的翻译版，更新速度会比英文原版慢，若你的英文还行，我们建议你直接阅读 `官方RTD文档 <http://tensorlayer.readthedocs.io/>`_。
 
+  如果你阅读在线中文文档时有什么问题，你可以在github上下载这个项目，
+  然后去 ``/docs/cn/_build/html/index.html`` 阅读离线中文文档。
+  或者在 `Read the docs <http://tensorlayer.readthedocs.io/en/latest/>`_ 中阅读官方原文档。
 
+用户指南
+-----------
 
-User Guide
-------------
+TensorLayer用户指南说明了如何去安装TensorFlow,CUDA和cuDNN，
+然后如何用TensorLayer建立和训练神经网络和如何作为（一个开发者支持这个库。）
 
-The TLayer user guide explains how to install TensorFlow, CUDA and cuDNN,
-how to build and train neural networks using TLayer, and how to contribute
-to the library as a developer.
+.. toctree::
+   :maxdepth: 2
+
+   user/installation
+   user/tutorial
+   user/example
+   user/development
+   user/more
+
+API目录
+----------
+
+如果你正在寻找某个特殊的函数，类或者方法，这一列文档就是为你准备的。
 
 .. toctree::
   :maxdepth: 2
+  :caption: 模块
 
-  user/installation
-  user/tutorial
-  user/development
-  user/more
-
-API Reference
--------------
-
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
-
-.. toctree::
-  :maxdepth: 2
-
-  modules/layers
   modules/activation
-  modules/nlp
-  modules/rein
-  modules/iterate
+  modules/array_ops
   modules/cost
-  modules/visualize
+  modules/distributed
   modules/files
+  modules/iterate
+  modules/layers
+  modules/models
+  modules/nlp
+  modules/optimizers
+  modules/prepro
+  modules/rein
   modules/utils
-  modules/preprocess
-  modules/ops
+  modules/visualize
+
+.. toctree::
+  :maxdepth: 2
+  :caption: 开发中模块
+
+  modules/db
+
+命令行界面
+----------------------
+
+TensorLayer提供简单易用的命令行工具 `tl` 来执行一些常用的任务。
+
+.. toctree::
+  :maxdepth: 2
+
+  modules/cli
 
 
-Indices and tables
+索引与附录
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
-.. _GitHub: https://github.com/zsdonghao/tlayer
-
-
-
-.. _TLayer: https://github.com/zsdonghao/tlayer/
+.. _GitHub: https://github.com/zsdonghao/tensorlayer

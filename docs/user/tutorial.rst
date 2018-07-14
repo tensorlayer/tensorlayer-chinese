@@ -1,38 +1,120 @@
 .. _tutorial:
 
-========
-Tutorial
-========
+===================
+教程 Tutorials
+===================
 
-For deep learning, this tutorial will walk you through building a handwritten
-digits classifier using the MNIST dataset, arguably the "Hello World" of neural
-networks. For reinforcement learning, we will let computer learns to play Pong
-game from the original screen inputs. For nature language processing, we start
-from word embedding, and then describe language modeling and machine
-translation.
+对于深度学习，该教程会引导您使用MNIST数据集构建不同的手写数字的分类器，
+这可以说是神经网络的 "Hello World" 。
+对于强化学习，我们将让计算机根据屏幕画面来学习玩乒乓球游戏。
+对于自然语言处理。我们从词嵌套（Word Embedding）开始，然后学习递归网络（Recurrent Network）。
+此外，TensorLayer的Tutorial包含了所有TensorFlow官方深度学习教程的模块化实现，因此您可以对照TensorFlow深度学习教程来学习 `[英文] <https://www.tensorflow.org/versions/master/tutorials/index.html>`_ `[极客学院中文翻译] <http://wiki.jikexueyuan.com/project/tensorflow-zh/>`_ 。 。
+
 
 .. note::
-    For experts: Read the source code of ``InputLayer`` and ``DenseLayer``, you
-    will understand how `TLayer`_ work. After that, we recommend you to read
-    the codes for tutorial directly.
+    若您已经对TensorFlow非常熟悉，阅读 ``InputLayer`` 和 ``DenseLayer`` 的源代码可让您很好地理解 TensorLayer 是如何工作的。
 
-Before we start
-===============
-
-The tutorial assumes that you are somewhat familiar with neural networks and
-TensorFlow (the library which `TLayer`_ is built on top of). You can try to learn
-both at once from the `Deeplearning Tutorial`_.
-
-For a more slow-paced introduction to artificial neural networks, we recommend
-`Convolutional Neural Networks for Visual Recognition`_ by Andrej Karpathy et
-al., `Neural Networks and Deep Learning`_ by Michael Nielsen.
-
-To learn more about TensorFlow, have a look at the `TensorFlow tutorial`_. You will not
-need all of it, but a basic understanding of how TensorFlow works is required to be
-able to use `TLayer`_. If you're new to TensorFlow, going through that tutorial.
+本文档的中文深度学习教程需要更多贡献者参与，有意者请联系 tensorlayer@gmail.com 。
 
 
-Run the MNIST example
+《深度学习：一起玩转TensorLayer》
+================================
+
+好消息！中文社区推出了 `《深度学习：一起玩转TensorLayer》 <http://www.broadview.com.cn/book/5059>`_ 一书。本书由TensorLayer创始人领衔，TensorLayer主要开发团队倾力打造而成。内容不仅覆盖了人工神经网络的基本知识，如多层感知器、卷积网络、递归网络及增强学习等，还着重讲解了深度学习的一些新的技术，如生成对抗网络、学习方法和实践经验，配有许多应用及产品的实例。读者可从零开始掌握深度学习技术，以及使用TensorLayer实现的各种应用。
+本书以通俗易懂的方式讲解深度学习技术，同时配有实现方法教学，面向深度学习初学者、进阶者，以及希望长期从事深度学习研究和产品开发的深度学习的大学生和工程师。
+
+.. image:: my_figs/book_cover.jpeg
+  :scale: 100 %
+  :align: center
+  :target: http://www.broadview.com.cn/book/5059
+
+.. image:: my_figs/book_description.jpeg
+  :scale: 90 %
+  :align: center
+  :target: http://www.broadview.com.cn/book/5059
+
+在我们开始之前
+==================
+
+本教程假定您在神经网络和TensorFlow方面具有一定的基础。在深度学习方面，这里推荐一些相关的网络资源。
+
+对于人工神经网络更系统的介绍，我们推荐Andrej Karpathy等人所著的 `Convolutional Neural Networks for Visual Recognition`_
+、Michael Nielsen 的 `Neural Networks and Deep Learning`_ 和 `Deeplearning Tutorial`_ 。
+
+要了解TensorFlow的更多内容，请阅读 `TensorFlow Tutorial`_ 。
+您不需要学会所有TensorFlow的细节，只需要知道TensorFlow大概是如何工作的，就能够使用TensorLayer。
+如果您是深度学习新手，建议您阅读整个教程。
+
+
+TensorLayer很简单
+=======================
+
+下面的代码是TensorLayer的一个简单例子，来自 `tutorial_mnist_simple.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_mnist_simple.py>`_ ，见`所有例子 <http://tensorlayer.readthedocs.io/en/latest/user/example.html>`_ 。
+我们提供了很多方便的函数（如： ``fit()`` ，``test()`` ），但如果您想了解更多实现细节，或想成为机器学习领域的专家，我们鼓励
+您尽可能地直接使用数据迭代工具箱（``tl.iternate``）加上TensorFlow的操作（如： ``sess.run()``） 来训练模型，请参考 `tutorial_mlp_dropout1.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_mlp_dropout1.py>`_ 和 `tutorial_mlp_dropout2.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_mlp_dropout2.py>_`。
+
+.. code-block:: python
+
+  import tensorflow as tf
+  import tensorlayer as tl
+
+  sess = tf.InteractiveSession()
+
+  # 准备数据
+  X_train, y_train, X_val, y_val, X_test, y_test = \
+                                  tl.files.load_mnist_dataset(shape=(-1,784))
+
+  # 定义 placeholder
+  x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
+  y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
+
+  # 定义模型
+  network = tl.layers.InputLayer(x, name='input_layer')
+  network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu1')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
+  network = tl.layers.DenseLayer(network, n_units=800,
+                                  act = tf.nn.relu, name='relu2')
+  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
+  network = tl.layers.DenseLayer(network, n_units=10,
+                                  act = tf.identity,
+                                  name='output_layer')
+  # 定义损失函数和衡量指标
+  # tl.cost.cross_entropy 在内部使用 tf.nn.sparse_softmax_cross_entropy_with_logits() 实现 softmax
+  y = network.outputs
+  cost = tl.cost.cross_entropy(y, y_, name = 'cost')
+  correct_prediction = tf.equal(tf.argmax(y, 1), y_)
+  acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+  y_op = tf.argmax(tf.nn.softmax(y), 1)
+
+  # 定义 optimizer
+  train_params = network.all_params
+  train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
+                              epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
+
+  # 初始化 session 中的所有参数
+  tl.layers.initialize_global_variables(sess)
+
+  # 列出模型信息
+  network.print_params()
+  network.print_layers()
+
+  # 训练模型
+  tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
+              acc=acc, batch_size=500, n_epoch=500, print_freq=5,
+              X_val=X_val, y_val=y_val, eval_train=False)
+
+  # 评估模型
+  tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
+
+  # 把模型保存成 .npz 文件
+  tl.files.save_npz(network.all_params , name='model.npz')
+  sess.close()
+
+
+
+运行MNIST例子
 =====================
 
 .. _fig_0601:
@@ -41,25 +123,21 @@ Run the MNIST example
   :scale: 100 %
   :align: center
 
-In the first part of the tutorial, we will just run the MNIST example that's
-included in the source distribution of `TLayer`_. MNIST dataset contains 60000
-handwritten digits that is commonly used for training various
-image processing systems, each of digit has 28x28 pixels.
+在本教程的第一部分，我们仅仅运行TensorLayer官方提供的MNIST例子。
+MNIST数据集包含了60000个长宽各28像素的灰白手写数字图片，它通常用于测试小型神经网络图像分类的效果。
 
-We assume that you have already run through the :ref:`installation`. If you
-haven't done so already, get a copy of the source tree of TLayer, and navigate
-to the folder in a terminal window. Enter the folder and run the ``tutorial_mnist.py``
-example script:
+我们假设您已经按照 :ref:`installation` 安装好了TensorLayer。
+如果您还没有，请从Github复制一个TensorLayer的目录到本地，进入该文件夹，
+然后运行 ``tutorial_mnist.py`` 这个例子脚本：
 
 .. code-block:: bash
 
   python tutorial_mnist.py
 
-If everything is set up correctly, you will get an output like the following:
+如果所有设置都正确，您将得到下面的结果：
 
 .. code-block:: text
 
-  TLayer: GPU MEM Fraction 0.300000
   Downloading train-images-idx3-ubyte.gz
   Downloading train-labels-idx1-ubyte.gz
   Downloading t10k-images-idx3-ubyte.gz
@@ -73,20 +151,20 @@ If everything is set up correctly, you will get an output like the following:
   y_test.shape (10000,)
   X float32   y int64
 
-  TLayer:Instantiate InputLayer input_layer (?, 784)
-  TLayer:Instantiate DropoutLayer drop1: keep: 0.800000
-  TLayer:Instantiate DenseLayer relu1: 800, <function relu at 0x11281cb70>
-  TLayer:Instantiate DropoutLayer drop2: keep: 0.500000
-  TLayer:Instantiate DenseLayer relu2: 800, <function relu at 0x11281cb70>
-  TLayer:Instantiate DropoutLayer drop3: keep: 0.500000
-  TLayer:Instantiate DenseLayer output_layer: 10, <function identity at 0x115e099d8>
+  [TL] InputLayer input_layer (?, 784)
+  [TL] DropoutLayer drop1: keep: 0.800000
+  [TL] DenseLayer relu1: 800, relu
+  [TL] DropoutLayer drop2: keep: 0.500000
+  [TL] DenseLayer relu2: 800, relu
+  [TL] DropoutLayer drop3: keep: 0.500000
+  [TL] DenseLayer output_layer: 10, identity
 
   param 0: (784, 800) (mean: -0.000053, median: -0.000043 std: 0.035558)
-  param 1: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-  param 2: (800, 800) (mean: 0.000008, median: 0.000041 std: 0.035371)
-  param 3: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-  param 4: (800, 10) (mean: 0.000469, median: 0.000432 std: 0.049895)
-  param 5: (10,) (mean: 0.000000, median: 0.000000 std: 0.000000)
+  param 1: (800,)     (mean: 0.000000,  median: 0.000000  std: 0.000000)
+  param 2: (800, 800) (mean: 0.000008,  median: 0.000041  std: 0.035371)
+  param 3: (800,)     (mean: 0.000000,  median: 0.000000  std: 0.000000)
+  param 4: (800, 10)  (mean: 0.000469,  median: 0.000432  std: 0.049895)
+  param 5: (10,)      (mean: 0.000000,  median: 0.000000  std: 0.000000)
   num of params: 1276810
 
   layer 0: Tensor("dropout/mul_1:0", shape=(?, 784), dtype=float32)
@@ -121,9 +199,8 @@ If everything is set up correctly, you will get an output like the following:
     val acc: 0.983700
   ...
 
-The example script allows you to try different models, including Multi-Layer Perceptron,
-Dropout, Dropconnect, Stacked Denoising Autoencoder and Convolutional Neural Network.
-Select different models from ``if __name__ == '__main__':``.
+这个例子脚本允许您从 ``if__name__=='__main__':`` 中选择不同的模型进行尝试，包括多层神经网络（Multi-Layer Perceptron），
+退出（Dropout），退出连接（DropConnect），堆栈式降噪自编码器（Stacked Denoising Autoencoder）和卷积神经网络（CNN）。
 
 .. code-block:: python
 
@@ -134,134 +211,113 @@ Select different models from ``if __name__ == '__main__':``.
 
 
 
+理解MNIST例子
+=====================
 
-Understand the MNIST example
-============================
+现在就让我们看看这些代码是如何工作的！
 
-Let's now investigate what's needed to make that happen! To follow along, open
-up the source code.
+序言
+-----------
 
-
-Preface
--------
-
-The first thing you might notice is that besides TLayer, we also import numpy
-and tensorflow:
+您可能会首先注意到，除TensorLayer之外，我们还导入了Numpy和TensorFlow：
 
 .. code-block:: python
 
-  import tensorflow as tf
-  import tlayer as tl
-  from tlayer.layers import set_keep
-  import numpy as np
   import time
+  import numpy as np
+  import tensorflow as tf
+  import tensorlayer as tl
 
 
-As we know, TLayer is built on top of TensorFlow, it is meant as a supplement helping
-with some tasks, not as a replacement. You will always mix TLayer with some
-vanilla TensorFlow code. The ``set_keep`` is used to access the placeholder of keeping probabilities
-when using Denoising Autoencoder.
+这是因为TensorLayer是建立在TensorFlow上的，TensorLayer设计的初衷是为了简化工作并提供帮助而不是取代TensorFlow。
+所以您会需要一起使用TensorLayer和一些常见的TensorFlow代码。
+
+请注意，当使用降噪自编码器(Denoising Autoencoder)时，代码中的 ``set_keep`` 被当作用来访问保持概率(Keeping Probabilities)的占位符。
 
 
-Loading data
-------------
+载入数据
+-------------
 
-The first piece of code defines a function ``load_mnist_dataset()``. Its purpose is
-to download the MNIST dataset (if it hasn't been downloaded yet) and return it
-in the form of regular numpy arrays. There is no TLayer involved at all, so
-for the purpose of this tutorial, we can regard it as:
+下面第一部分的代码首先定义了 ``load_mnist_dataset()`` 函数。
+其目的是为了自动下载MNIST数据集（如果还未下载），并且返回标准numpy数列通过numpy array的格式。
+到这里还没有涉及TensorLayer。
 
 .. code-block:: python
 
   X_train, y_train, X_val, y_val, X_test, y_test = \
                     tl.files.load_mnist_dataset(shape=(-1,784))
 
-``X_train.shape`` is ``(50000, 784)``, to be interpreted as: 50,000
-images and each image has 784 pixels. ``y_train.shape`` is simply ``(50000,)``, which is a vector the same
-length of ``X_train`` giving an integer class label for each image -- namely,
-the digit between 0 and 9 depicted in the image (according to the human
-annotator who drew that digit).
 
-For Convolutional Neural Network example, the MNIST can be load as 4D version as follow:
+``X_train.shape`` 为 ``(50000,784)``，可以理解成共有50000张图片并且每张图片有784个数值（像素点）。
+``Y_train.shape`` 为 ``(50000,)`` ，它是一个和 ``X_train`` 长度相同的向量，用于给出每幅图的数字标签，即这些图片所包含的位于0-9之间的10个数字。
+
+另外对于卷积神经网络的例子，MNIST还可以按下面的4D版本来载入：
 
 .. code-block:: python
 
   X_train, y_train, X_val, y_val, X_test, y_test = \
               tl.files.load_mnist_dataset(shape=(-1, 28, 28, 1))
 
-``X_train.shape`` is ``(50000, 28, 28, 1)`` which represents 50,000 images with 1 channel, 28 rows and 28 columns each.
-Channel one is because it is a grey scale image, every pixel have only one value.
+``X_train.shape`` 为 ``(50000,28,28,1)`` ，这代表了50000张图片，每张图片有28行和28列。
+通道为1是因为它是灰度图像，所以每个像素只能有一个值。
 
-Building the model
-------------------
+建立模型
+----------------
 
-This is where TLayer steps in. It allows you to define an arbitrarily
-structured neural network by creating and stacking or merging layers.
-Since every layer knows its immediate incoming layers, the output layer (or
-output layers) of a network double as a handle to the network as a whole, so
-usually this is the only thing we will pass on to the rest of the code.
+来到这里，就轮到TensorLayer来一显身手了！TensorLayer允许您通过创建，堆叠或者合并图层(Layers)来定义任意结构的神经网络。
+由于每一层都知道它在一个网络中的直接输入层和（多个）输出接收层，所以通常这是我们唯一要传递给其他代码的内容。
 
-As mentioned above, ``tutorial_mnist.py`` supports four types of models, and we
-implement that via easily exchangeable functions of the same interface.
-First, we'll define a function that creates a Multi-Layer Perceptron (MLP) of
-a fixed architecture, explaining all the steps in detail. We'll then implement
-a Denosing Autoencoder (DAE), after that we will then stack all Denoising Autoencoder and
-supervised fine-tune them. Finally, we'll show how to create a
-Convolutional Neural Network (CNN).
+正如上文提到的， ``tutorial_mnist.py`` 有四个例子。
+首先，我们将定义一个结构固定的多层次感知器（Multi-Layer Perceptron），所有的步骤都会详细的讲解。
+然后，我们会实现一个去噪自编码器(Denosing Autoencoding)。
+接着，我们要将所有去噪自编码器堆叠起来并对他们进行监督微调(Supervised Fine-tune)。
+最后，我们将展示如何去创建一个卷积神经网络(Convolutional Neural Network)。
 
+此外，如果您有兴趣，我们还提供了一个简化版的MNIST例子在 ``tutorial_mnist_simple.py`` 中，和一个对于
+-10数据集的卷积神经网络(CNN)的例子在 ``tutorial_cifar10_tfrecord.py`` 中可供参考。
 
-Multi-Layer Perceptron (MLP)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+多层神经网络 (Multi-Layer Perceptron)
+------------------------------------------------
 
-The first script, ``main_test_layers()``, creates an MLP of two hidden layers of
-800 units each, followed by a softmax output layer of 10 units. It applies 20%
-dropout to the input data and 50% dropout to the hidden layers.
+第一个脚本 ``main_test_layers()`` ，创建了一个具有两个隐藏层，每层800个单元的多层感知器，最后一层是10个单元的Softmax输出层。
+它对输入数据采用保留80%数值的Dropout操作，并且对隐藏层使用50%的Dropout操作。这里并不会介绍Dropout原理，感兴趣的朋友可以在网上找到大量相关资料。
 
-To feed data into the network, TensofFlow placeholders need to be defined as follow.
-The ``None`` here means the network will accept input data of arbitrary batchsize after compilation.
-The ``x`` is used to hold the ``X_train`` data and ``y_`` is used to hold the ``y_train`` data.
-If you know the batchsize beforehand and do not need this flexibility, you should give the batchsize
-here -- especially for convolutional layers, this can allow TensorFlow to apply
-some optimizations.
+为了提供数据给这个网络，TensorFlow可以通过placeholder实现，需如下定义。
+在这里 ``None`` 是指在编译之后，网络将接受任意批规模（Batch Size）的数据
+``x`` 是用来输入 ``X_train`` 数据的，而 ``y_`` 是用来输入 ``y_train`` 数据的。
+如果您想固定Batch Size，您可以把 ``None`` 代替为给定数值，这样可以运用TensorFlow一些优化功能，特别是当网络特别大的时候。
 
 .. code-block:: python
 
-    x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
+    x  = tf.placeholder(tf.float32, shape=[None, 784], name='x')
     y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
 
-The foundation of each neural network in TLayer is an
-:class:`InputLayer <tlayer.layers.InputLayer>` instance
-representing the input data that will subsequently be fed to the network. Note
-that the ``InputLayer`` is not tied to any specific data yet.
+在TensorLayer中每个神经网络的基础是一个 :class:`InputLayer <tensorlayer.layers.InputLayer>` 实例。它代表了将要提供给网络的输入数据。
 
 .. code-block:: python
 
     network = tl.layers.InputLayer(x, name='input_layer')
 
-Before adding the first hidden layer, we'll apply 20% dropout to the input
-data. This is realized via a :class:`DropoutLayer
-<tlayer.layers.DropoutLayer>` instance:
+在添加第一层隐藏层之前，我们要对输入数据进行Dropout操作。
+这里我们通过一个 :class:`DropoutLayer<tensorlayer.layers.DropoutLayer>` 来实现。
 
 .. code-block:: python
 
     network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
 
-Note that the first constructor argument is the incoming layer, the second
-argument is the keeping probability for the activation value. Now we'll proceed
-with the first fully-connected hidden layer of 800 units. Note
-that when stacking a :class:`DenseLayer <tlayer.layers.DenseLayer>`.
+请注意这里的第一个参数是输入层，第二个参数是保持概率（Keeping probability for the activation value），则数值不被置为零的概率。
+现在我们要继续构造第一个800个单位的全连接的隐藏层。
+尤其是当要堆叠一个 :class:`DenseLayer <tensorlayer.layers.DenseLayer>` 时，要特别注意。
 
 .. code-block:: python
 
     network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu1')
 
-Again, the first constructor argument means that we're stacking ``network`` on
-top of ``network``.
-``n_units`` simply gives the number of units for this fully-connected layer.
-``act`` takes an activation function, several of which are defined
-in :mod:`tensorflow.nn` and `tlayer.activation`. Here we've chosen the rectifier, so
-we'll obtain ReLUs. We'll now add dropout of 50%, another 800-unit dense layer and 50% dropout
-again:
+同样，加一个新层时，我们在原来的 ``network`` 之上堆叠出新的 ``network`` 。
+``n_units`` 简明地给出了新全连接层的神经元单位数。
+``act`` 指定了一个激活函数，这里的激活函数有一部分已经被定义在了 :mod:`tensorflow.nn` 和  `tensorlayer.activation` 中。
+我们在这里选择了整流器（Rectifier）作为激活函数。
+接着继续添加50%的Dropout层，以及另外800个单元的全链接层（Dense layer），和50%的Dropout层：
 
 .. code-block:: python
 
@@ -269,18 +325,16 @@ again:
     network = tl.layers.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
 
-Finally, we'll add the fully-connected output layer which the ``n_units`` equals to
-the number of classes.
+最后，我们加入 ``n_units`` 等于分类个数的全连接的输出层。注意， ``cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))`` 在内部实现 Softmax，以提高计算效率，因此最后一层的输出为 identity ，更多细节请参考 ``tl.cost.cross_entropy()`` 。
 
 .. code-block:: python
 
     network = tl.layers.DenseLayer(network,
                                   n_units=10,
-                                  act = tl.activation.identity,
+                                  act = tl.act.identity,
                                   name='output_layer')
 
-As mentioned above, each layer is linked to its incoming layer(s), so we only
-need the output layer(s) to access a network in TLayer:
+如上所述，因为每一层都被链接到了它的输入层，所以我们只需要在TensorLayer中将输出层接入一个网络：
 
 .. code-block:: python
 
@@ -288,18 +342,18 @@ need the output layer(s) to access a network in TLayer:
     y_op = tf.argmax(tf.nn.softmax(y), 1)
     cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
 
-Here, ``network.outputs`` is the 10 identity outputs from the network (in one hot format), ``y_op`` is the integer
-output represents the class index. While ``cost`` is the cross-entropy between target and predicted labels.
+在这里，``network.outputs`` 是网络的10个种类的输出概率（以One-hot的形式）。
+``y_op`` 是代表类索引的整数输出， ``cost`` 是目标和预测标签的交叉熵（Cross Entropy）。
 
-Denoising Autoencoder (DAE)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+降噪自编码器(Denoising Autoencoder)
+------------------------------------------------
 
-Autoencoder is a unsupervised learning models which able to extract representative features,
-it has become more widely used for learning generative models of data and Greedy layer-wise pre-train.
-For vanilla Autoencoder see `Deeplearning Tutorial`_.
+自编码器是一种无监督学习（Unsupervisered Learning）模型，可从数据中学习出更好的表达，
+目前已经用于逐层贪婪的预训练（Greedy layer-wise pre-train）。
+有关Vanilla自编码器，请参考教程 `Deeplearning Tutorial`_。
 
-The script ``main_test_denoise_AE()`` implements a Denoising Autoencoder with corrosion rate of 50%.
-The Autoencoder can be defined as follow, where an Autoencoder is represented by a ``DenseLayer``:
+`tutorial_mnist.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_mnist.py>`_ 的 ``main_test_denoise_AE()`` 实现了50%的腐蚀率（Corrosion Rate）的去噪自编码器。
+这个自编码器可以按如下方式定义，这里的使用全链接层来搭建一个自编码器：
 
 .. code-block:: python
 
@@ -312,13 +366,13 @@ The Autoencoder can be defined as follow, where an Autoencoder is represented by
                                         act=tf.nn.sigmoid,
                                         name='recon_layer1')
 
-To train the ``DenseLayer``, simply run ``ReconLayer.pretrain()``, if using denoising Autoencoder, the name of
-corrosion layer (a ``DropoutLayer``) need to be specified as follow. To save the feature images, set ``save`` to True.
-There are many kinds of pre-train metrices according to different architectures and applications. For sigmoid activation,
-the Autoencoder can be implemented by using KL divergence, while for rectifer, L1 regularization of activation outputs
-can make the output to be sparse. So the default behaviour of ``ReconLayer`` only provide KLD and cross-entropy for sigmoid
-activation function and L1 of activation outputs and mean-squared-error for rectifing activation function.
-We recommend you to modify ``ReconLayer`` to achieve your own pre-train metrice.
+训练 ``DenseLayer`` ，只需要运行 ``ReconLayer.pretrain()`` 即可。
+如果要使用去噪自编码器，可以使用 ``DropoutLayer`` 作为腐蚀层（Corrosion layer）。
+
+对于Sigmoid型激活函数来说，自编码器可以用KL散度来实现。
+而对于整流器（Rectifier）来说，对激活函数输出的L1正则化能使得输出变得稀疏。
+所以 ``ReconLayer`` 默认只对整流激活函数(ReLU)提供KL散度和交叉熵这两种损失度量，而对Sigmoid型激活函数提供均方误差以及激活输出的L1范数这两种损失度量。
+我们建议您修改 ``ReconLayer`` 来实现自己的预训练方式。
 
 .. code-block:: python
 
@@ -333,94 +387,50 @@ We recommend you to modify ``ReconLayer`` to achieve your own pre-train metrice.
                           save=True,
                           save_name='w1pre_')
 
-In addition, the script ``main_test_stacked_denoise_AE()`` shows how to stacked multiple Autoencoder to one network and then
-fine-tune.
+此外，脚本 ``main_test_stacked_denoise_AE()`` 展示了如何将多个自编码器堆叠到一个网络，然后进行微调。
 
+卷积神经网络(Convolutional Neural Network)
+----------------------------------------------------------
 
-Convolutional Neural Network (CNN)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Finally, the ``main_test_cnn_layer()`` script creates two CNN layers and
-max pooling stages, a fully-connected hidden layer and a fully-connected output
-layer.
-
-At the begin, we add a :class:`Conv2dLayer
-<tlayer.layers.Conv2dLayer>` with 32 filters of size 5x5 on top, follow by
-max-pooling of factor 2 in both dimensions. And then apply a ``Conv2dLayer`` with
-64 filters of size 5x5 again and follow by a max_pool again. After that, flatten
-the 4D output to 1D vector by using ``FlattenLayer``, and apply a dropout with 50%
-to last hidden layer. The ``?`` represents arbitrary batch_size.
-
+`tutorial_mnist.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_mnist.py>`_ 的 ``main_test_cnn_layer()`` 创建了如下的一个卷积网络分类器。
 
 .. code-block:: python
 
-    network = tl.layers.InputLayer(x, name='input_layer')
-    network = tl.layers.Conv2dLayer(network,
-                            act = tf.nn.relu,
-                            shape = [5, 5, 1, 32],  # 32 features for each 5x5 patch
-                            strides=[1, 1, 1, 1],
-                            padding='SAME',
-                            name ='cnn_layer1')     # output: (?, 28, 28, 32)
-    network = tl.layers.PoolLayer(network,
-                            ksize=[1, 2, 2, 1],
-                            strides=[1, 2, 2, 1],
-                            padding='SAME',
-                            pool = tf.nn.max_pool,
-                            name ='pool_layer1',)   # output: (?, 14, 14, 32)
-    network = tl.layers.Conv2dLayer(network,
-                            act = tf.nn.relu,
-                            shape = [5, 5, 32, 64], # 64 features for each 5x5 patch
-                            strides=[1, 1, 1, 1],
-                            padding='SAME',
-                            name ='cnn_layer2')     # output: (?, 14, 14, 64)
-    network = tl.layers.PoolLayer(network,
-                            ksize=[1, 2, 2, 1],
-                            strides=[1, 2, 2, 1],
-                            padding='SAME',
-                            pool = tf.nn.max_pool,
-                            name ='pool_layer2',)   # output: (?, 7, 7, 64)
-    network = tl.layers.FlattenLayer(network, name='flatten_layer')
-                                                    # output: (?, 3136)
+    network = tl.layers.Conv2d(network, 32, (5, 5), (1, 1),
+            act=tf.nn.relu, padding='SAME', name='cnn1')
+    network = tl.layers.MaxPool2d(network, (2, 2), (2, 2),
+            padding='SAME', name='pool1')
+    network = tl.layers.Conv2d(network, 64, (5, 5), (1, 1),
+            act=tf.nn.relu, padding='SAME', name='cnn2')
+    network = tl.layers.MaxPool2d(network, (2, 2), (2, 2),
+            padding='SAME', name='pool2')
+
+    network = tl.layers.FlattenLayer(network, name='flatten')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop1')
-                                                    # output: (?, 3136)
-    network = tl.layers.DenseLayer(network, n_units=256, act = tf.nn.relu, name='relu1')
-                                                    # output: (?, 256)
+    network = tl.layers.DenseLayer(network, 256, act=tf.nn.relu, name='relu1')
     network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
-                                                    # output: (?, 256)
-    network = tl.layers.DenseLayer(network, n_units=10,
-                    act = tl.activation.identity, name='output_layer')
-                                                    # output: (?, 10)
+    network = tl.layers.DenseLayer(network, 10, act=tf.identity, name='output')
 
 
-.. note::
-    For experts: ``Conv2dLayer`` will create a convolutional layer using
-    ``tensorflow.nn.conv2d``, TensorFlow's default convolution.
+训练模型
+----------------
 
+在 ``tutorial_mnist.py`` 脚本的其余部分，在MNIST数据上对于只使用交叉熵的循环训练进行了设置并且运行。
 
+数据集迭代
+^^^^^^^^^^^^^
 
-Training the model
-------------------
-
-The remaining part of the ``tutorial_mnist.py`` script copes with setting up and running
-a training loop over the MNIST dataset by using cross-entropy only.
-
-
-Dataset iteration
-^^^^^^^^^^^^^^^^^
-
-An iteration function for synchronously iterating over two
-numpy arrays of input data and targets, respectively, in mini-batches of a
-given number of items. More iteration function can be found in ``tlayer.iterate``
+一个在给定的项目数的最小批规模下的输入特征及其对应的标签的两个Numpy数列依次同步的迭代函数。
+更多有关迭代函数的说明，可以在 ``tensorlayer.iterate`` 中找到。
 
 .. code-block:: python
 
     tl.iterate.minibatches(inputs, targets, batchsize, shuffle=False)
 
+损失和更新公式
+^^^^^^^^^^^^^^
 
-Loss and update expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Continuing, we create a loss expression to be minimized in training:
+我们继续创建一个在训练中被最小化的损失表达式：
 
 .. code-block:: python
 
@@ -428,21 +438,18 @@ Continuing, we create a loss expression to be minimized in training:
     y_op = tf.argmax(tf.nn.softmax(y), 1)
     cost = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
 
-
-More cost or regularization can be applied here, take ``main_test_layers()`` for example,
-to apply max-norm on the weight matrices, we can add the following line:
+更多的损失函数或者正则化方法可以在这里定义。比如，如果要在权重矩阵中应用最大范数（Max-norm）方法，您可以添加下列代码。
 
 .. code-block:: python
 
     cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) +
                   tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
 
-Depending on the problem you are solving, you will need different loss functions,
-see :mod:`tlayer.cost` for more.
+根据要解决的问题，您会需要使用不同的损失函数，更多有关损失函数的说明请见： `tensorlayer.cost`
+除了通过 ``network.all_params`` 来获取网络参数，您还可以通过 ``tl.layers.get_variables_with_name`` 来通过字符串方式获取指定的参数。
 
-Having the model and the loss function defined, we create update expressions
-for training the network. TLayer do not provide many optimizer, we used TensorFlow's
-optimizer instead:
+有了模型和定义的损失函数之后，我们就可以创建用于训练网络的更新公式。
+接下去，我们将使用TensorFlow的优化器如下：
 
 .. code-block:: python
 
@@ -450,8 +457,7 @@ optimizer instead:
     train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
         epsilon=1e-08, use_locking=False).minimize(cost, var_list=train_params)
 
-
-For training the network, we fed data and the keeping probabilities to the ``feed_dict``.
+为了训练网络，我们需要提供数据和保持概率给 ``feed_dict``。
 
 .. code-block:: python
 
@@ -459,9 +465,9 @@ For training the network, we fed data and the keeping probabilities to the ``fee
     feed_dict.update( network.all_drop )
     sess.run(train_op, feed_dict=feed_dict)
 
-While, for validation and testing, we use slightly different way. All
-dropout, dropconnect, corrosion layers need to be disable.
-``tl.utils.dict_to_one`` set all ``network.all_drop`` to 1.
+同时为了进行验证和测试，我们这里用了略有不同的方法。
+所有的Dropout，DropConnect，腐蚀层（Corrosion Layers）都将被禁用。
+``tl.utils.dict_to_one`` 将会设置所有 ``network.all_drop`` 值为1。
 
 .. code-block:: python
 
@@ -470,52 +476,43 @@ dropout, dropconnect, corrosion layers need to be disable.
     feed_dict.update(dp_dict)
     err, ac = sess.run([cost, acc], feed_dict=feed_dict)
 
-As an additional monitoring quantity, we create an expression for the
-classification accuracy:
+最后，作为一个额外的监测量，我们需要创建一个分类准确度的公式：
 
 .. code-block:: python
 
     correct_prediction = tf.equal(tf.argmax(y, 1), y_)
     acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+下一步？
+^^^^^^^^^^^^^^
 
-What Next?
-^^^^^^^^^^^
-
-We also have a more advanced image classification example in ``tutorial_cifar10.py``.
-Please read the code and notes, figure out how to generate more training data and what
-is local response normalization. After that, try to implement
-`Residual Network <http://doi.org/10.3389/fpsyg.2013.00124>`_ (Hint: you will need
-to use the Layer.outputs).
+在 `tutorial_cifar10_tfrecord.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_cifar10_tfrecord.py>`_ 中我们还有更复杂的图像分类的例子。
+请阅读代码及注释，以明白如数据增强（Data Augmentation）的重要性，以及什么是局部响应正则化。
+此外，您可以尝试着去实现 `残差网络(Residual Network) <http://doi.org/10.3389/fpsyg.2013.00124>`_。
 
 
+运行乒乓球例子
+====================
 
-
-
-Run the Pong Game example
-=========================
-
-In the second part of the tutorial, we will run the Deep Reinforcement Learning
-example that is introduced by Karpathy in `Deep Reinforcement Learning: Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_.
+在本教程的第二部分，我们将运行一个深度强化学习的例子，它在Karpathy的两篇博客 `Deep Reinforcement Learning:Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ 有介绍。
 
 .. code-block:: bash
 
   python tutorial_atari_pong.py
 
-Before running the tutorial code, you need to install `OpenAI gym environment <https://gym.openai.com/docs>`_
-which is a benchmark for Reinforcement Learning.
-If everything is set up correctly, you will get an output like the following:
+在运行教程代码之前 您需要安装 `OpenAI gym environment <https://gym.openai.com/docs>`_ ，它提供了大量强化学习常用的游戏环境。
+如果一切运行正常，您将得到以下的输出：
 
 .. code-block:: text
 
   [2016-07-12 09:31:59,760] Making new env: Pong-v0
-    TLayer:Instantiate InputLayer input_layer (?, 6400)
-    TLayer:Instantiate DenseLayer relu1: 200, <function relu at 0x1119471e0>
-    TLayer:Instantiate DenseLayer output_layer: 3, <function identity at 0x114bd39d8>
-    param 0: (6400, 200) (mean: -0.000009, median: -0.000018 std: 0.017393)
-    param 1: (200,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-    param 2: (200, 3) (mean: 0.002239, median: 0.003122 std: 0.096611)
-    param 3: (3,) (mean: 0.000000, median: 0.000000 std: 0.000000)
+    [TL] InputLayer input_layer (?, 6400)
+    [TL] DenseLayer relu1: 200, relu
+    [TL] DenseLayer output_layer: 3, identity
+    param 0: (6400, 200) (mean: -0.000009  median: -0.000018 std: 0.017393)
+    param 1: (200,)      (mean: 0.000000   median: 0.000000  std: 0.000000)
+    param 2: (200, 3)    (mean: 0.002239   median: 0.003122  std: 0.096611)
+    param 3: (3,)        (mean: 0.000000   median: 0.000000  std: 0.000000)
     num of params: 1280803
     layer 0: Tensor("Relu:0", shape=(?, 200), dtype=float32)
     layer 1: Tensor("add_1:0", shape=(?, 3), dtype=float32)
@@ -549,21 +546,19 @@ If everything is set up correctly, you will get an output like the following:
   episode 1: game 5 took 0.17348s, reward: -1.000000
   episode 1: game 6 took 0.09415s, reward: -1.000000
 
-This example allow computer to learn how to play Pong game from the screen inputs,
-just like human behavior. After training for 15,000 episodes, the computer can
-win 20% of the games. The computer win 35% of the games at 20,000 episode,
-we can seen the computer learn faster and faster as it has more winning data to
-train. If you run it for 30,000 episode, it start to win.
+这个例子让神经网络通过游戏画面来学习如何像人类一样打乒乓球。神经网络将于伪AI电脑对战不断地对战，最后学会战胜它。
+在经过15000个序列的训练之后，神经网络就可以赢得20%的比赛。
+在20000个序列的训练之后，神经网络可以赢得35%的比赛，
+我们可以看到计算机学的越来越快，这是因为它有更多的胜利的数据来进行训练。
+训练了30000个序列后，神经网络再也不会输了。
 
 .. code-block:: python
 
   render = False
   resume = False
 
-Setting 'render' to 'True', if you want to display the game environment. When
-you run the code again, you can set 'resume' to 'True', the code will load the
-existing model and train the model basic on it.
-
+如果您想显示游戏过程，那就设置 `render` 为 `True` 。
+当您再次运行该代码，您可以设置 `resume` 为 `True`，那么代码将加载现有的模型并且会基于它继续训练。
 
 .. _fig_0601:
 
@@ -571,35 +566,27 @@ existing model and train the model basic on it.
     :scale: 30 %
     :align: center
 
+理解强化学习
+===================
 
-Understand Reinforcement learning
-==================================
+乒乓球
+-------------
 
-Pong Game
----------
-
-To understand Reinforcement Learning, we let computer to learn how to play
-Pong game from the original screen inputs. Before we start, we highly recommend
-you to go through a famous blog called `Deep Reinforcement Learning: Pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_
-which is a minimalistic implementation of Deep Reinforcement Learning by
-using python-numpy and OpenAI gym environment.
-
+要理解强化学习，我们要让电脑学习如何从原始的屏幕输入（像素输入）打乒乓球。
+在我们开始之前，我们强烈建议您去浏览一个著名的博客叫做 `Deep Reinforcement Learning:pong from Pixels <http://karpathy.github.io/2016/05/31/rl/>`_ ,
+这是使用python numpy库和OpenAI gym environment来实现的一个深度强化学习的例子。
 
 .. code-block:: bash
 
   python tutorial_atari_pong.py
 
+策略网络(Policy Network)
+---------------------------
 
-
-Policy Network
----------------
-
-In Deep Reinforcement Learning, the Policy Network is the same with Deep Neural
-Network, it is our player (or “agent”) who output actions to tell what we should
-do (move UP or DOWN); in Karpathy's code, he only defined 2 actions, UP and DOWN
-and using a single simgoid output;
-In order to make our tutorial more generic, we defined 3 actions which are UP,
-DOWN and STOP (do nothing) by using 3 softmax outputs.
+在深度强化学习中，Policy Network 等同于深度神经网络。
+它是我们的选手（或者说“代理人（Agent）“），它的输出告诉我们应该做什么（如：向上移动或向下移动）：
+在Karpathy的代码中，他只定义了2个动作，向上移动和向下移动，并且仅使用单个Simgoid输出：
+为了使我们的教程更具有普遍性，我们使用3个Softmax输出来定义向上移动，向下移动和停止（什么都不做）3个动作。
 
 .. code-block:: python
 
@@ -614,10 +601,8 @@ DOWN and STOP (do nothing) by using 3 softmax outputs.
     probs = network.outputs
     sampling_prob = tf.nn.softmax(probs)
 
-Then when our agent is playing Pong, it calculates the probabilities of different
-actions, and then draw sample (action) from this uniform distribution. As the
-actions are represented by 1, 2 and 3, but the softmax outputs should be start
-from 0, we calculate the label value by minus 1.
+然后我们的代理人就一直与伪AI对战。它计算不同动作的概率，并且之后会从这个均匀的分布中选取样本（动作）。
+因为动作被1,2和3代表，但是Softmax输出应该从0开始，所以我们会把动作索引减去1来作为网络输出。
 
 .. code-block:: python
 
@@ -630,32 +615,44 @@ from 0, we calculate the label value by minus 1.
     ...
     ys.append(action - 1)
 
+策略逼近(Policy Gradient)
+---------------------------
 
-Policy Gradient
----------------
+策略梯度下降法是一个end-to-end的算法，它直接学习从状态映射到动作的策略函数。
+一个近似最优的策略可以通过最大化预期的奖励来直接学习。
+策略函数的参数(例如，在乒乓球例子终使用的策略网络的参数)在预期奖励的近似值的引导下能够被训练和学习。
+换句话说，我们可以通过过更新它的参数来逐步调整策略函数，这样它能从给定的状态做出一系列行为来获得更高的奖励。
 
-The key of Deep Reinforcement Learning is how to train the Policy Network,
-there are many way to do
+策略迭代的一个替代算法就是深度Q-learning（DQN）。
+他是基于Q-learning,学习一个映射状态和动作到一些值的价值函数的算法(叫Q函数)。
+DQN采用了一个深度神经网络来作为Q函数的逼近来代表Q函数。
+训练是通过最小化时序差分（Temporal-Difference）误差来实现。
+一个名为“再体验（Experience Replay）“的神经生物学的启发式机制通常和DQN一起被使用来帮助提高非线性函数的逼近的稳定性。
 
-Q-learning xxxxx
+您可以阅读以下文档，来得到对强化学习更好的理解：
 
-AlphaGo is using xxxx
+ - `Reinforcement Learning: An Introduction. Richard S. Sutton and Andrew G. Barto <https://webdocs.cs.ualberta.ca/~sutton/book/the-book.html>`_
+ - `Deep Reinforcement Learning. David Silver, Google DeepMind <http://www.iclr.cc/lib/exe/fetch.php?media=iclr2015:silver-iclr2015.pdf>`_
+ - `UCL Course on RL <http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html>`_
+
+强化深度学习近些年来最成功的应用就是让模型去学习玩Atari的游戏。 AlphaGO同时也是使用类似的策略逼近方法来训练他们的策略网络而战胜了世界级的专业围棋选手。
+
+ - `Atari - Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_
+ - `Atari - Human-level control through deep reinforcement learning <http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html>`_
+ - `AlphaGO - Mastering the game of Go with deep neural networks and tree search <http://www.nature.com/nature/journal/v529/n7587/full/nature16961.html>`_
 
 
-Dataset iteration
-^^^^^^^^^^^^^^^^^
+数据集迭代
+^^^^^^^^^^^^^^
 
-In Reinforcement Learning, we consider a final decision as an episode.
-In Pong game, a episode is a few dozen games, because the games go up to score
-of 21 for either player. Then the batch size is how many episode we consider
-to update the model.
-In the tutorial, we train a 2-layer policy network with 200 hidden layer units
-using RMSProp on batches of 10 episodes.
+在强化学习中，我们把每场比赛所产生的所有决策来作为一个序列 (up,up,stop,...,down)。在乒乓球游戏中，比赛是在某一方达到21分后结束的，所以一个序列可能包含几十个决策。
+然后我们可以设置一个批规模的大小，每一批包含一定数量的序列，基于这个批规模来更新我们的模型。
+在本教程中，我们把每批规模设置成10个序列。使用RMSProp训练一个具有200个单元的隐藏层的2层策略网络
 
-Loss and update expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+损失和更新公式
+^^^^^^^^^^^^^^^^^^^
 
-Continuing, we create a loss expression to be minimized in training:
+接着我们创建一个在训练中被最小化的损失公式：
 
 .. code-block:: python
 
@@ -674,50 +671,39 @@ Continuing, we create a loss expression to be minimized in training:
         }
     )
 
-The loss in a batch is relate to all outputs of Policy Network, all actions we
-made and the corresponding discounted rewards in a batch. We first compute the
-loss of each action by multiplying the discounted reward and the cross-entropy
-between its output and its true action. The final loss in a batch is the sum of
-all loss of the actions.
+一个batch的损失和一个batch内的策略网络的所有输出，所有的我们做出的动作和相应的被打折的奖励有关
+我们首先通过累加被打折的奖励和实际输出和真实动作的交叉熵计算每一个动作的损失。
+最后的损失是所有动作的损失的和。
 
+下一步?
+----------------
 
-What Next?
------------
+上述教程展示了您如何去建立自己的代理人，end-to-end。
+虽然它有很合理的品质，但它的默认参数不会给您最好的代理人模型。
+这有一些您可以优化的内容。
 
-The tutorial above shows how you can build your own agent, end-to-end.
-While it has reasonable quality, the default parameters will not give you
-the best agent model. Here are a few things you can improve.
+首先，与传统的MLP模型不同，比起 `Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_ 更好的是我们可以使用CNNs来采集屏幕信息
 
-First of all, instead of conventional MLP model, we can use CNNs to capture the
-screen information better as `Playing Atari with Deep Reinforcement Learning <https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf>`_
-describe.
+另外这个模型默认参数没有调整，您可以更改学习率，衰退率，或者用不同的方式来初始化您的模型的权重。
 
-Also, the default parameters of the model are not tuned. You can try changing
-the learning rate, decay, or initializing the weights of your model in a
-different way.
-
-Finally, you can try the model on different tasks (games).
+最后，您可以尝试不同任务，以及学习其他增强学习算法，请见`Example <http://tensorlayer.readthedocs.io/en/latest/user/example.html>`_ 。
 
 
 
 
+运行Word2Vec例子
+====================
 
+在教程的这一部分，我们训练一个词嵌套矩阵，每个词可以通过矩阵中唯一的行向量来表示。
+在训练结束时，含义类似的单词会有相识的词向量输出。
+在代码的最后，我们通过把单词放到一个2D平面上来可视化，我们可以看到相似的单词会被聚集在一起。
 
-
-Run the Word2Vec example
-=========================
-
-In this part of the tutorial, we train a matrix for words, where each word can
-be represented by a unique row vector in the matrix. In the end, similar words
-will have similar vectors. Then as we plot out the words into a two-dimensional
-plane, words that are similar end up clustering nearby each other
 
 .. code-block:: bash
 
   python tutorial_word2vec_basic.py
 
-
-If everything is set up correctly, you will get an output in the end.
+如果一切设置正确，您最后会得到如下的可视化图。
 
 .. _fig_0601:
 
@@ -725,18 +711,19 @@ If everything is set up correctly, you will get an output in the end.
   :scale: 100 %
   :align: center
 
+理解词嵌套(word embedding)
+=================================
 
-Understand Word Embedding
-============================
+词嵌套（嵌入）
+-------------------
 
-Word Embedding
-----------------
+我们强烈建议您先阅读Colah的博客 `Word Representations`_ `[中文翻译] <http://dataunion.org/9331.html>`_ ，
+以理解为什么我们要使用一个向量来表示一个单词。更多Word2vec的细节可以在 `Word2vec Parameter Learning Explained <http://arxiv.org/abs/1411.2738>`_ 中找到。
 
-Hao Dong highly recommend you to read Colah's blog `Word Representations`_ to
-understand why we want to use a vector representation, and how to compute the
-vectors.
+基本来说，训练一个嵌套矩阵是一个非监督学习的过程。一个单词使用唯一的ID来表示，而这个ID号就是嵌套矩阵的行号（row index），对应的行向量就是用来表示该单词的，使用向量来表示单词可以更好地表达单词的意思。比如，有4个单词的向量， ``woman − man = queen - king`` ，这个例子中可以看到，嵌套矩阵中有一个纬度是用来表示性别的。
 
-Train an embedding matrix
+
+定义一个Word2vec词嵌套矩阵如下。
 
 .. code-block:: python
 
@@ -764,26 +751,56 @@ Train an embedding matrix
           nce_b_init_args = {},
           name ='word2vec_layer',
       )
-  cost = emb_net.nce_cost
-
-Dataset iteration
-^^^^^^^^^^^^^^^^^
 
 
-Loss and update expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-Load an Embedding matrix
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In the end of training the embedding matrix,
-
-.. code-block:: bash
-
-  python tutorial_generate_text.py
+数据迭代和损失函数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Word2vec使用负采样（Negative sampling）和Skip-gram模型进行训练。
+噪音对比估计损失（NCE）会帮助减少损失函数的计算量，加快训练速度。
+Skip-Gram 将文本（context）和目标（target）反转，尝试从目标单词预测目标文本单词。
+我们使用 ``tl.nlp.generate_skip_gram_batch`` 函数来生成训练数据，如下：
 
 .. code-block:: python
+
+  # NCE损失函数由 Word2vecEmbeddingInputlayer 提供
+  cost = emb_net.nce_cost
+  train_params = emb_net.all_params
+
+  train_op = tf.train.AdagradOptimizer(learning_rate, initial_accumulator_value=0.1,
+            use_locking=False).minimize(cost, var_list=train_params)
+
+  data_index = 0
+  while (step < num_steps):
+    batch_inputs, batch_labels, data_index = tl.nlp.generate_skip_gram_batch(
+                  data=data, batch_size=batch_size, num_skips=num_skips,
+                  skip_window=skip_window, data_index=data_index)
+    feed_dict = {train_inputs : batch_inputs, train_labels : batch_labels}
+    _, loss_val = sess.run([train_op, cost], feed_dict=feed_dict)
+
+
+加载已训练好的的词嵌套矩阵
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+在训练嵌套矩阵的最后，我们保存矩阵及其词汇表、单词转ID字典、ID转单词字典。
+然后，当下次做实际应用时，可以想下面的代码中那样加载这个已经训练好的矩阵和字典，
+参考 ``tutorial_generate_text.py`` 。
+
+.. code-block:: python
+
+  vocabulary_size = 50000
+  embedding_size = 128
+  model_file_name = "model_word2vec_50k_128"
+  batch_size = None
+
+  print("Load existing embedding matrix and dictionaries")
+  all_var = tl.files.load_npy_to_any(name=model_file_name+'.npy')
+  data = all_var['data']; count = all_var['count']
+  dictionary = all_var['dictionary']
+  reverse_dictionary = all_var['reverse_dictionary']
+
+  tl.nlp.save_vocab(count, name='vocab_'+model_file_name+'.txt')
+
+  del all_var, data, count
 
   load_params = tl.files.load_npz(name=model_file_name+'.npz')
 
@@ -796,40 +813,28 @@ In the end of training the embedding matrix,
                   embedding_size = embedding_size,
                   name ='embedding_layer')
 
-  sess.run(tf.initialize_all_variables())
+  tl.layers.initialize_global_variables(sess)
 
   tl.files.assign_params(sess, [load_params[0]], emb_net)
 
 
+运行PTB例子
+==================
 
+Penn TreeBank（PTB）数据集被用在很多语言建模（Language Modeling）的论文中，包括"Empirical Evaluation and Combination of Advanced Language Modeling Techniques"和
+“Recurrent Neural Network Regularization”。该数据集的训练集有929k个单词，验证集有73K个单词，测试集有82k个单词。
+在它的词汇表刚好有10k个单词。
 
+PTB例子是为了展示如何用递归神经网络（Recurrent Neural Network）来进行语言建模的。
 
+给一句话 "I am from Imperial College London", 这个模型可以从中学习出如何从“from Imperial College”来预测出“Imperial College London”。也就是说，它根据之前输入的单词序列来预测出下一步输出的单词序列，在刚才的例子中 ``num_steps (序列长度，sequence length)`` 为 3。
 
-
-Run the PTB example
-=========================
-
-Penn TreeBank (PTB) dataset is used in many LANGUAGE MODELING papers,
-including "Empirical Evaluation and Combination of Advanced Language
-Modeling Techniques", "Recurrent Neural Network Regularization".
-It consists of 929k training words, 73k validation words, and 82k test
-words. It has 10k words in its vocabulary.
-
-The PTB example is trying to show how to train a recurrent neural network on a
-challenging task of language modeling.
-
-Given a sentence "I am from Imperial College London", the model can learn to
-predict "Imperial College London" from "from Imperial College". In other
-word, it predict next words in a text given a history of previous words.
-In this case, ``num_steps (sequence length)`` is 3.
 
 .. code-block:: bash
 
   python tutorial_ptb_lstm.py
 
-
-The script provides three settings (small, medium, large), larger model has
-better performance, you can choice different setting in:
+该脚本提供三种设置(小，中，大)，越大的模型有越好的建模性能，您可以修改下面的代码片段来选择不同的模型设置。
 
 .. code-block:: python
 
@@ -837,7 +842,8 @@ better performance, you can choice different setting in:
       "model", "small",
       "A type of model. Possible options are: small, medium, large.")
 
-If you choice small setting, you can see:
+
+如果您选择小设置，您将会看到：
 
 .. code-block:: text
 
@@ -870,57 +876,42 @@ If you choice small setting, you can see:
   Epoch: 13 Valid Perplexity: 121.475
   Test Perplexity: 116.716
 
-The PTB example proves RNN is able to modeling language, but this example
-did not do something practical. However, you should read through this example
-and ``Understand LSTM`` in order to understand the basic of RNN.
-After that, you learn how to generate text, how to achieve language translation
-and how to build a questions answering system by using RNN.
+PTB例子证明了递归神经网络能够实现语言建模，但是这个例子并没有做什么实际的事情。
+在做具体应用之前，您应该浏览这个例子的代码和下一章 “理解 LSTM” 来学好递归神经网络的基础。
+之后，您将学习如何用递归神经网络来生成文本，如何实现语言翻译和问题应答系统。
 
+理解LSTM
+=============
 
-Understand LSTM
-==================
+递归神经网络 (Recurrent Neural Network)
+-------------------------------------------
 
-Recurrent Neural Network
--------------------------
-
-Hao Dong personally think Andrey Karpathy's blog is the best material to
-`Understand Recurrent Neural Network`_ , after reading that, Colah's blog can
-help you to `Understand LSTM Network`_ which can solve The Problem of Long-Term
-Dependencies. We do not describe more about RNN, please read through these blogs
-before you go on.
+我们认为Andrey Karpathy的博客 `Understand Recurrent Neural Network`_ 是了解递归神经网络最好的材料。
+读完这个博客后，Colah的博客 `Understand LSTM Network`_ 能帮助您了解LSTM。
+我们在这里不介绍更多关于递归神经网络的内容，所以在您继续下面的内容之前，请先阅读我们建议阅读的博客。
 
 .. _fig_0601:
 
 .. image:: my_figs/karpathy_rnn.jpeg
 
-Image by Andrey Karpathy
+图片由Andrey Karpathy提供
 
+同步输入与输出序列 (Synced sequence input and output)
+--------------------------------------------------------------
 
-Synced sequence input and output
----------------------------------
+PTB例子中的模型是一个典型的同步输入与输出，Karpathy 把它描述为
+“(5) 同步序列输入与输出(例如视频分类中我们希望对每一帧进行标记)。“
 
-The model in PTB example is a typically type of synced sequence input and output,
-which was described by Karpathy as
-"(5) Synced sequence input and output (e.g. video classification where we wish
-to label each frame of the video). Notice that in every case are no pre-specified
-constraints on the lengths sequences because the recurrent transformation (green)
-is fixed and can be applied as many times as we like."
+模型的构建如下，第一层是词嵌套层（嵌入），把每一个单词转换成对应的词向量，在该例子中没有使用预先训练好的
+嵌套矩阵。第二，堆叠两层LSTM，使用Dropout来实现规则化，防止overfitting。
+最后，使用全连接层输出一序列的softmax输出。
 
-The model is built as follow. Firstly, transfer the words into word vectors by
-looking up an embedding matrix. In this tutorial, no pre-training on embedding
-matrix. Secondly, we stacked two LSTMs together use dropout among the embedding
-layer, LSTM layers and output layer for regularization. The model provides
-a sequence of softmax outputs during training.
+第一层LSTM的输出形状是 [batch_size, num_steps, hidden_size]，这是为了让下一层LSTM可以堆叠在其上面。
+第二层LSTM的输出形状是 [batch_size*num_steps, hidden_size]，这是为了让输出层（全连接层 Dense）可以堆叠在其上面。
+然后计算每个样本的softmax输出，样本总数为 n_examples = batch_size*num_steps。
 
-The first LSTM layer outputs [batch_size, num_steps, hidden_size] for stacking
-another LSTM after it. The second LSTM layer outputs [batch_size*num_steps, hidden_size]
-for stacking DenseLayer after it, then compute the softmax outputs of each example,
-i.e. n_examples = batch_size*num_steps.
-
-To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
-<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_.
-
-
+若想要更进一步理解该PTB教程，您也可以阅读 `TensorFlow 官方的PTB教程
+<https://www.tensorflow.org/versions/r0.9/tutorials/recurrent/index.html#recurrent-neural-networks>`_ ，中文翻译请见极客学院。
 
 
 .. code-block:: python
@@ -963,29 +954,26 @@ To understand the PTB tutorial, you can also read `TensorFlow PTB tutorial
               act = tl.activation.identity, name='output_layer')
 
 
-Dataset iteration
+数据迭代
 ^^^^^^^^^^^^^^^^^
 
-The batch_size can be seem as how many concurrent computations.
-As the following example shows, the first batch learn the sequence information by using 0 to 9.
-The second batch learn the sequence information by using 10 to 19.
-So it ignores the information from 9 to 10 !\n
-If only if we set the batch_size = 1, it will consider all information from 0 to 20.
+batch_size 数值可以被视为并行计算的数量。
+如下面的例子所示，第一个 batch 使用 0 到 9 来学习序列信息。
+第二个 batch 使用 10 到 19 来学习序列。
+所以它忽略了 9 到 10 之间的信息。
+只当我们 bath_size 设为 1，它才使用 0 到 20 之间所有的序列信息来学习。
 
-The meaning of batch_size here is not the same with the MNIST example. In MNIST example,
-batch_size reflects how many examples we consider in each iteration, while in
-PTB example, batch_size is how many concurrent processes (segments)
-for speed up computation.
+这里的 batch_size 的意思与 MNIST 例子略有不同。
+在 MNIST 例子，batch_size 是每次迭代中我们使用的样本数量，
+而在 PTB 的例子中，batch_size 是为加快训练速度的并行进程数。
 
-Some Information will be ignored if batch_size > 1, however, if your dataset
-is "long" enough (a text corpus usually has billions words), the ignored
-information would not effect the final result.
+虽然当 batch_size > 1 时有些信息将会被忽略，
+但是如果您的数据是足够长的（一个语料库通常有几十亿个字），被忽略的信息不会影响最终的结果。
 
-In PTB tutorial, we setted batch_size = 20, so we cut the dataset into 20 segments.
-At the begining of each epoch, we initialize (reset) the 20 RNN states for 20
-segments, then go through 20 segments separately.
+在PTB教程中，我们设置了 batch_size = 20，所以，我们将整个数据集拆分成 20 段（segment）。
+在每一轮（epoch）的开始时，我们有 20 个初始化的 LSTM 状态（State），然后分别对 20 段数据进行迭代学习。
 
-The training data will be generated as follow:
+训练数据迭代的例子如下：
 
 .. code-block:: python
 
@@ -1012,15 +1000,16 @@ The training data will be generated as follow:
   ...  [17 18 19]]
 
 .. note::
-  This example can also be considered as pre-training of the word embedding matrix.
+    这个例子可以当作词嵌套矩阵的预训练。
 
-Loss and update expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+损失和更新公式
+^^^^^^^^^^^^^^^^^^^^^
 
-The cost function is the averaged cost of each mini-batch:
+损失函数是一系列输出cross entropy的均值。
 
 .. code-block:: python
 
+  # 更多细节请见 tensorlayer.cost.cross_entropy_seq()
   def loss_fn(outputs, targets, batch_size, num_steps):
       # Returns the cost function of Cross-entropy of two sequences, implement
       # softmax internally.
@@ -1039,15 +1028,15 @@ The cost function is the averaged cost of each mini-batch:
   # Cost for Training
   cost = loss_fn(network.outputs, targets, batch_size, num_steps)
 
+在训练时，该例子在若干个epoch之后（由 ``max_epoch`` 定义），才开始按比例下降学习率（learning rate），新学习率是前一个epoch的学习率乘以一个下降率（由 ``lr_decay`` 定义）。
+此外，截断反向传播（truncated backpropagation）截断了
 
-For updating, this example decreases the initial learning rate after several
-epoachs (defined by ``max_epoch``), by multipling a ``lr_decay``. In addition,
-truncated backpropagation clips values of gradients by the ratio of the sum of
-their norms, so as to make the learning process tractable.
+为使学习过程易于处理，通常的做法是将反向传播的梯度在（按时间）展开的步骤上照一个固定长度( ``num_steps`` )截断。 通过在一次迭代中的每个时刻上提供长度为 ``num_steps`` 的输入和每次迭代完成之后反向传导，这会很容易实现。
+
 
 .. code-block:: python
 
-  # Truncated Backpropagation for training
+  # 截断反响传播 Truncated Backpropagation for training
   with tf.variable_scope('learning_rate'):
       lr = tf.Variable(0.0, trainable=False)
   tvars = tf.trainable_variables()
@@ -1056,21 +1045,19 @@ their norms, so as to make the learning process tractable.
   optimizer = tf.train.GradientDescentOptimizer(lr)
   train_op = optimizer.apply_gradients(zip(grads, tvars))
 
-
-Then at the beginning of each epoch, we assign a new learning rate:
+如果当前epoch值大于 ``max_epoch`` ，则把当前学习率乘以 ``lr_decay`` 来降低学习率。
 
 .. code-block:: python
 
   new_lr_decay = lr_decay ** max(i - max_epoch, 0.0)
   sess.run(tf.assign(lr, learning_rate * new_lr_decay))
 
-
-At the begining of each epoch, all states of LSTMs need to be resetted (initialized),
-then after each iteration, the new final states need to be assigned as the initial
-states of next iteration:
+在每一个epoch的开始之前，LSTM的状态要被重置为零状态；在每一个迭代之后，LSTM状态都会被改变，所以要把最新的LSTM状态
+作为下一个迭代的初始化状态。
 
 .. code-block:: python
 
+  # 在每一个epoch之前，把所有LSTM状态设为零状态
   state1 = tl.layers.initialize_rnn_state(lstm1.initial_state)
   state2 = tl.layers.initialize_rnn_state(lstm2.initial_state)
   for step, (x, y) in enumerate(tl.iterate.ptb_iterator(train_data,
@@ -1079,8 +1066,9 @@ states of next iteration:
                   lstm1.initial_state: state1,
                   lstm2.initial_state: state2,
                   }
-      # For training, enable dropout
+      # 启用dropout
       feed_dict.update( network.all_drop )
+      # 把新的状态作为下一个迭代的初始状态
       _cost, state1, state2, _ = sess.run([cost,
                                       lstm1.final_state,
                                       lstm2.final_state,
@@ -1089,12 +1077,11 @@ states of next iteration:
                                       )
       costs += _cost; iters += num_steps
 
-Predicting
+预测
 ^^^^^^^^^^^^^
 
-After training the model, we no long consider the number of steps (sequence length),
-i.e. ``batch_size, num_steps`` are ``1``. Then we can predict the next word step
-by step, instead of predict a sequence of words from a sequence of words.
+在训练完模型之后，当我们预测下一个输出时，我们不需要考虑序列长度了，因此 ``batch_size`` 和 ``num_steps`` 都设为 1 。
+然后，我们可以一步一步地输出下一个单词，而不是通过一序列的单词来输出一序列的单词。
 
 .. code-block:: python
 
@@ -1107,11 +1094,11 @@ by step, instead of predict a sequence of words from a sequence of words.
   cost_test = loss_fn(network_test.outputs, targets_test, 1, 1)
   ...
   print("Evaluation")
-  # Testing
+  # 测试
   # go through the test set step by step, it will take a while.
   start_time = time.time()
   costs = 0.0; iters = 0
-  # reset all states at the begining
+  # 与训练时一样，设置所有LSTM状态为零状态
   state1 = tl.layers.initialize_rnn_state(lstm1_test.initial_state)
   state2 = tl.layers.initialize_rnn_state(lstm2_test.initial_state)
   for step, (x, y) in enumerate(tl.iterate.ptb_iterator(test_data,
@@ -1130,850 +1117,681 @@ by step, instead of predict a sequence of words from a sequence of words.
   print("Test Perplexity: %.3f took %.2fs" % (test_perplexity, time.time() - start_time))
 
 
+下一步？
+------------
 
-What Next?
------------
+您已经明白了同步序列输入和序列输出（Synced sequence input and output）。
+现在让我们思考下序列输入单一输出的情况（Sequence input and one output），
+LSTM 也可以学会通过给定一序列输入如 “我来自北京，我会说.." 来输出
+一个单词 "中文"。
 
-Now, you understand Synced sequence input and output. Let think about
-Many to one (Sequence input and one output), we can also use "I am from Imperial"
-to predict the next word "College" right? Please try your best to build a text
-generator, which give some seed words to generate context, some people even used
-Many to one model to automatically generate papers !
+请仔细阅读并理解 ``tutorial_generate_text.py`` 的代码，它讲了如何加载一个已经训练好的词嵌套矩阵，
+以及如何给定机器一个文档，让它来学习文字自动生成。
 
-Karpathy's blog :
+Karpathy的博客：
 "(3) Sequence input (e.g. sentiment analysis where a given sentence is
 classified as expressing positive or negative sentiment). "
 
 
+更多经典教程
+===================
+
+您能在例子页面找到包括Seq2seq, 各类对抗学习和增强学习的例子。
 
 
 
+..
+  运行机器翻译例子
+  ===================
+
+  .. code-block:: python
+
+    python tutorial_translate.py
+
+  该脚本将训练一个神经网络来把英文翻译成法文。
+  如果一切正常，您将看到：
+  - 下载WMT英文-法文翻译数据库，包括训练集和测试集。
+  - 通过训练集创建英文和法文的词汇表。
+  - 把训练集和测试集的单词转换成数字ID表示。
 
 
+  .. code-block:: bash
 
+    Prepare raw data
+    Load or Download WMT English-to-French translation > wmt
+    Training data : wmt/giga-fren.release2
+    Testing data : wmt/newstest2013
 
-Run the Translation example
-===========================
+    Create vocabularies
+    Vocabulary of French : wmt/vocab40000.fr
+    Vocabulary of English : wmt/vocab40000.en
+    Creating vocabulary wmt/vocab40000.fr from data wmt/giga-fren.release2.fr
+      processing line 100000
+      processing line 200000
+      processing line 300000
+      processing line 400000
+      processing line 500000
+      processing line 600000
+      processing line 700000
+      processing line 800000
+      processing line 900000
+      processing line 1000000
+      processing line 1100000
+      processing line 1200000
+      ...
+      processing line 22500000
+    Creating vocabulary wmt/vocab40000.en from data wmt/giga-fren.release2.en
+      processing line 100000
+      ...
+      processing line 22500000
 
-.. code-block:: python
-
-  python tutorial_translate.py
-
-This script is going to training a neural network to translate English to French.
-If everything is correct, you will see.
-
-- Download WMT English-to-French translation data, includes training and testing data.
-- Create vocabulary files for English and French from training data.
-- Create the tokenized training and testing data from original training and
-  testing data.
-
-.. code-block:: bash
-
-  Load or Download WMT English-to-French translation > wmt
-  wmt/giga-fren.release2
-  wmt/newstest2013
-  wmt/vocab40000.fr
-  wmt/vocab40000.en
-  Creating vocabulary wmt/vocab40000.fr from data wmt/giga-fren.release2.fr
-    processing line 100000
-    processing line 200000
-    processing line 300000
-    processing line 400000
-    processing line 500000
-    processing line 600000
-    processing line 700000
-    processing line 800000
-    processing line 900000
-    processing line 1000000
-    processing line 1100000
-    processing line 1200000
     ...
-    processing line 22500000
-  Creating vocabulary wmt/vocab40000.en from data wmt/giga-fren.release2.en
-    processing line 100000
+
+  首先，我们从WMT'15网站上下载英语-法语翻译数据。训练数据和测试数据如下。
+  训练数据用于训练模型，测试数据用于评估该模型。
+
+  .. code-block:: text
+
+    wmt/training-giga-fren.tar  <-- 英文－法文训练集 (2.6GB)
+                                    giga-fren.release2.* 从该文件解压出来
+    wmt/dev-v2.tgz              <-- 多种语言的测试集 (21.4MB)
+                                    newstest2013.* 从该文件解压出来
+
+    wmt/giga-fren.release2.fr   <-- 法文训练集 (4.57GB)
+    wmt/giga-fren.release2.en   <-- 英文训练集 (3.79GB)
+
+    wmt/newstest2013.fr         <-- 法文测试集 (393KB)
+    wmt/newstest2013.en         <-- 英文测试集 (333KB)
+
+  所有 ``giga-fren.release2.*`` 是训练数据， ``giga-fren.release2.fr`` 内容如下：
+
+  .. code-block:: text
+
+    Il a transformé notre vie | Il a transformé la société | Son fonctionnement | La technologie, moteur du changement Accueil | Concepts | Enseignants | Recherche | Aperçu | Collaborateurs | Web HHCC | Ressources | Commentaires Musée virtuel du Canada
+    Plan du site
+    Rétroaction
+    Crédits
+    English
+    Qu’est-ce que la lumière?
+    La découverte du spectre de la lumière blanche Des codes dans la lumière Le spectre électromagnétique Les spectres d’émission Les spectres d’absorption Les années-lumière La pollution lumineuse
+    Le ciel des premiers habitants La vision contemporaine de l'Univers L’astronomie pour tous
+    Bande dessinée
+    Liens
+    Glossaire
+    Observatoires
     ...
-    processing line 22500000
 
-  ...
+  ``giga-fren.release2.en`` 内容如下，我们可以看到单词或者句子用 ``|`` 或 ``\n`` 来分隔。
 
-Firstly, we download English-to-French translation data from the WMT'15
-Website. The training and testing data as follow. The training data is used to
-train the model, the testing data is used to XXXX.
+  .. code-block:: text
 
-.. code-block:: text
+    Changing Lives | Changing Society | How It Works | Technology Drives Change Home | Concepts | Teachers | Search | Overview | Credits | HHCC Web | Reference | Feedback Virtual Museum of Canada Home Page
+    Site map
+    Feedback
+    Credits
+    Français
+    What is light ?
+    The white light spectrum Codes in the light The electromagnetic spectrum Emission spectra Absorption spectra Light-years Light pollution
+    The sky of the first inhabitants A contemporary vison of the Universe Astronomy for everyone
+    Cartoon
+    Links
+    Glossary
+    Observatories
 
-  wmt/training-giga-fren.tar  <-- Training data for English-to-French (2.6GB)
-                                  giga-fren.release2.* are extracted from it.
-  wmt/dev-v2.tgz              <-- Testing data for different language (21.4MB)
-                                  newstest2013.* are extracted from it.
+  测试数据 ``newstest2013.en`` 和 ``newstest2013.fr`` 如下所示：
 
-  wmt/giga-fren.release2.fr   <-- Training data of French   (4.57GB)
-  wmt/giga-fren.release2.en   <-- Training data of English  (3.79GB)
+  .. code-block:: text
 
-  wmt/newstest2013.fr         <-- Testing data of French    (393KB)
-  wmt/newstest2013.en         <-- Testing data of English   (333KB)
+    newstest2013.en :
+    A Republican strategy to counter the re-election of Obama
+    Republican leaders justified their policy by the need to combat electoral fraud.
+    However, the Brennan Centre considers this a myth, stating that electoral fraud is rarer in the United States than the number of people killed by lightning.
 
-As ``giga-fren.release2.*`` are the training data, ``giga-fren.release2.fr`` look as follow.
+    newstest2013.fr :
+    Une stratégie républicaine pour contrer la réélection d'Obama
+    Les dirigeants républicains justifièrent leur politique par la nécessité de lutter contre la fraude électorale.
+    Or, le Centre Brennan considère cette dernière comme un mythe, affirmant que la fraude électorale est plus rare aux États-Unis que le nombre de personnes tuées par la foudre.
 
-.. code-block:: text
+  下载完数据之后，开始创建词汇表文件。
+  从训练数据 ``giga-fren.release2.fr`` 和 ``giga-fren.release2.en``创建 ``vocab40000.fr`` 和 ``vocab40000.en`` 这个过程需要较长一段时间，数字 ``40000`` 代表了词汇库的大小。
 
-  Il a transformé notre vie | Il a transformé la société | Son fonctionnement | La technologie, moteur du changement Accueil | Concepts | Enseignants | Recherche | Aperçu | Collaborateurs | Web HHCC | Ressources | Commentaires Musée virtuel du Canada
-  Plan du site
-  Rétroaction
-  Crédits
-  English
-  Qu’est-ce que la lumière?
-  La découverte du spectre de la lumière blanche Des codes dans la lumière Le spectre électromagnétique Les spectres d’émission Les spectres d’absorption Les années-lumière La pollution lumineuse
-  Le ciel des premiers habitants La vision contemporaine de l'Univers L’astronomie pour tous
-  Bande dessinée
-  Liens
-  Glossaire
-  Observatoires
-  ...
+  ``vocab40000.fr`` (381KB) 按下列所示地按每行一个单词的方式存储（one-item-per-line）。
 
-While ``giga-fren.release2.en`` look as follow, we can see words or sentences
-are separated by ``|`` or ``\n``.
+  .. code-block:: text
 
-.. code-block:: text
+    _PAD
+    _GO
+    _EOS
+    _UNK
+    de
+    ,
+    .
+    '
+    la
+    et
+    des
+    les
+    à
+    le
+    du
+    l
+    en
+    )
+    d
+    0
+    (
+    00
+    pour
+    dans
+    un
+    que
+    une
+    sur
+    au
+    0000
+    a
+    par
 
-  Changing Lives | Changing Society | How It Works | Technology Drives Change Home | Concepts | Teachers | Search | Overview | Credits | HHCC Web | Reference | Feedback Virtual Museum of Canada Home Page
-  Site map
-  Feedback
-  Credits
-  Français
-  What is light ?
-  The white light spectrum Codes in the light The electromagnetic spectrum Emission spectra Absorption spectra Light-years Light pollution
-  The sky of the first inhabitants A contemporary vison of the Universe Astronomy for everyone
-  Cartoon
-  Links
-  Glossary
-  Observatories
+  ``vocab40000.en`` (344KB) 也是如此。
 
+  .. code-block:: text
 
-The testing data ``newstest2013.en`` and ``newstest2013.fr`` look as follow.
+    _PAD
+    _GO
+    _EOS
+    _UNK
+    the
+    .
+    ,
+    of
+    and
+    to
+    in
+    a
+    )
+    (
+    0
+    for
+    00
+    that
+    is
+    on
+    The
+    0000
+    be
+    by
+    with
+    or
+    :
+    as
+    "
+    000
+    are
+    ;
 
-.. code-block:: text
+  接着我们开始创建英文和法文的数字化（ID）训练集和测试集。这也要较长一段时间。
 
-  newstest2013.en :
-  A Republican strategy to counter the re-election of Obama
-  Republican leaders justified their policy by the need to combat electoral fraud.
-  However, the Brennan Centre considers this a myth, stating that electoral fraud is rarer in the United States than the number of people killed by lightning.
+  .. code-block:: text
 
-  newstest2013.fr :
-  Une stratégie républicaine pour contrer la réélection d'Obama
-  Les dirigeants républicains justifièrent leur politique par la nécessité de lutter contre la fraude électorale.
-  Or, le Centre Brennan considère cette dernière comme un mythe, affirmant que la fraude électorale est plus rare aux États-Unis que le nombre de personnes tuées par la foudre.
+    Tokenize data
+    Tokenizing data in wmt/giga-fren.release2.fr  <-- Training data of French
+      tokenizing line 100000
+      tokenizing line 200000
+      tokenizing line 300000
+      tokenizing line 400000
+      ...
+      tokenizing line 22500000
+    Tokenizing data in wmt/giga-fren.release2.en  <-- Training data of English
+      tokenizing line 100000
+      tokenizing line 200000
+      tokenizing line 300000
+      tokenizing line 400000
+      ...
+      tokenizing line 22500000
+    Tokenizing data in wmt/newstest2013.fr        <-- Testing data of French
+    Tokenizing data in wmt/newstest2013.en        <-- Testing data of English
 
+  最后，我们所有的文件如下所示：
 
-After downloading the dataset, it start to create vocabulary files,
-``vocab40000.fr`` and ``vocab40000.en`` from the training data ``giga-fren.release2.fr``
-and ``giga-fren.release2.en``, usually it will take a while. The number ``40000``
-reflects the vocabulary size.
+  .. code-block:: text
 
-The ``vocab40000.fr`` (381KB) stores one-item-per-line as follow.
+    wmt/training-giga-fren.tar  <-- 英文－法文训练集 (2.6GB)
+                                    giga-fren.release2.* 从该文件解压出来
+    wmt/dev-v2.tgz              <-- 多种语言的测试集 (21.4MB)
+                                    newstest2013.* 从该文件解压出来
 
-.. code-block:: text
+    wmt/giga-fren.release2.fr   <-- 法文训练集 (4.57GB)
+    wmt/giga-fren.release2.en   <-- 英文训练集 (3.79GB)
 
-  _PAD
-  _GO
-  _EOS
-  _UNK
-  de
-  ,
-  .
-  '
-  la
-  et
-  des
-  les
-  à
-  le
-  du
-  l
-  en
-  )
-  d
-  0
-  (
-  00
-  pour
-  dans
-  un
-  que
-  une
-  sur
-  au
-  0000
-  a
-  par
+    wmt/newstest2013.fr         <-- 法文测试集 (393KB)
+    wmt/newstest2013.en         <-- 英文测试集 (333KB)
 
-The ``vocab40000.en`` (344KB) stores one-item-per-line as follow.
+    wmt/vocab40000.fr           <-- 法文词汇表 (381KB)
+    wmt/vocab40000.en           <-- 英文词汇表 (344KB)
 
-.. code-block:: text
+    wmt/giga-fren.release2.ids40000.fr   <-- 数字化法文训练集 (2.81GB)
+    wmt/giga-fren.release2.ids40000.en   <-- 数字化英文训练集 (2.38GB)
 
-  _PAD
-  _GO
-  _EOS
-  _UNK
-  the
-  .
-  ,
-  of
-  and
-  to
-  in
-  a
-  )
-  (
-  0
-  for
-  00
-  that
-  is
-  on
-  The
-  0000
-  be
-  by
-  with
-  or
-  :
-  as
-  "
-  000
-  are
-  ;
+    wmt/newstest2013.ids40000.fr         <-- 数字化法文训练集 (268KB)
+    wmt/newstest2013.ids40000.en         <-- 数字化英文测试集 (232KB)
+
+  现在，把数字化的数据读入buckets中，并计算不同buckets中数据样本的个数。
 
 
-And then, we start to create the tokenized training and testing data for both
-English and French. It will take a while as well.
+  .. code-block:: text
 
-.. code-block:: text
+    Read development (test) data into buckets
+    dev data: (5, 10) [[13388, 4, 949], [23113, 8, 910, 2]]
+    en word_ids: [13388, 4, 949]
+    en context: [b'Preventing', b'the', b'disease']
+    fr word_ids: [23113, 8, 910, 2]
+    fr context: [b'Pr\xc3\xa9venir', b'la', b'maladie', b'_EOS']
 
-  Tokenizing data in wmt/giga-fren.release2.fr  <-- Training data of French
-    tokenizing line 100000
-    tokenizing line 200000
-    tokenizing line 300000
-    tokenizing line 400000
+    Read training data into buckets (limit: 0)
+      reading data line 100000
+      reading data line 200000
+      reading data line 300000
+      reading data line 400000
+      reading data line 500000
+      reading data line 600000
+      reading data line 700000
+      reading data line 800000
+      ...
+      reading data line 22400000
+      reading data line 22500000
+    train_bucket_sizes: [239121, 1344322, 5239557, 10445326]
+    train_total_size: 17268326.0
+    train_buckets_scale: [0.013847375825543252, 0.09169638099257565, 0.3951164693091849, 1.0]
+    train data: (5, 10) [[1368, 3344], [1089, 14, 261, 2]]
+    en word_ids: [1368, 3344]
+    en context: [b'Site', b'map']
+    fr word_ids: [1089, 14, 261, 2]
+    fr context: [b'Plan', b'du', b'site', b'_EOS']
+
+    the num of training data in each buckets: [239121, 1344322, 5239557, 10445326]
+    the num of training data: 17268326
+    train_buckets_scale: [0.013847375825543252, 0.09169638099257565, 0.3951164693091849, 1.0]
+
+  最后开始训练模型，当 ``steps_per_checkpoint = 10`` 时，您将看到：
+
+  ``steps_per_checkpoint = 10``
+
+  .. code-block:: text
+
+    Create Embedding Attention Seq2seq Model
+
+    global step 10 learning rate 0.5000 step-time 22.26 perplexity 12761.50
+      eval: bucket 0 perplexity 5887.75
+      eval: bucket 1 perplexity 3891.96
+      eval: bucket 2 perplexity 3748.77
+      eval: bucket 3 perplexity 4940.10
+    global step 20 learning rate 0.5000 step-time 20.38 perplexity 28761.36
+      eval: bucket 0 perplexity 10137.01
+      eval: bucket 1 perplexity 12809.90
+      eval: bucket 2 perplexity 15758.65
+      eval: bucket 3 perplexity 26760.93
+    global step 30 learning rate 0.5000 step-time 20.64 perplexity 6372.95
+      eval: bucket 0 perplexity 1789.80
+      eval: bucket 1 perplexity 1690.00
+      eval: bucket 2 perplexity 2190.18
+      eval: bucket 3 perplexity 3808.12
+    global step 40 learning rate 0.5000 step-time 16.10 perplexity 3418.93
+      eval: bucket 0 perplexity 4778.76
+      eval: bucket 1 perplexity 3698.90
+      eval: bucket 2 perplexity 3902.37
+      eval: bucket 3 perplexity 22612.44
+    global step 50 learning rate 0.5000 step-time 14.84 perplexity 1811.02
+      eval: bucket 0 perplexity 644.72
+      eval: bucket 1 perplexity 759.16
+      eval: bucket 2 perplexity 984.18
+      eval: bucket 3 perplexity 1585.68
+    global step 60 learning rate 0.5000 step-time 19.76 perplexity 1580.55
+      eval: bucket 0 perplexity 1724.84
+      eval: bucket 1 perplexity 2292.24
+      eval: bucket 2 perplexity 2698.52
+      eval: bucket 3 perplexity 3189.30
+    global step 70 learning rate 0.5000 step-time 17.16 perplexity 1250.57
+      eval: bucket 0 perplexity 298.55
+      eval: bucket 1 perplexity 502.04
+      eval: bucket 2 perplexity 645.44
+      eval: bucket 3 perplexity 604.29
+    global step 80 learning rate 0.5000 step-time 18.50 perplexity 793.90
+      eval: bucket 0 perplexity 2056.23
+      eval: bucket 1 perplexity 1344.26
+      eval: bucket 2 perplexity 767.82
+      eval: bucket 3 perplexity 649.38
+    global step 90 learning rate 0.5000 step-time 12.61 perplexity 541.57
+      eval: bucket 0 perplexity 180.86
+      eval: bucket 1 perplexity 350.99
+      eval: bucket 2 perplexity 326.85
+      eval: bucket 3 perplexity 383.22
+    global step 100 learning rate 0.5000 step-time 18.42 perplexity 471.12
+      eval: bucket 0 perplexity 216.63
+      eval: bucket 1 perplexity 348.96
+      eval: bucket 2 perplexity 318.20
+      eval: bucket 3 perplexity 389.92
+    global step 110 learning rate 0.5000 step-time 18.39 perplexity 474.89
+      eval: bucket 0 perplexity 8049.85
+      eval: bucket 1 perplexity 1677.24
+      eval: bucket 2 perplexity 936.98
+      eval: bucket 3 perplexity 657.46
+    global step 120 learning rate 0.5000 step-time 18.81 perplexity 832.11
+      eval: bucket 0 perplexity 189.22
+      eval: bucket 1 perplexity 360.69
+      eval: bucket 2 perplexity 410.57
+      eval: bucket 3 perplexity 456.40
+    global step 130 learning rate 0.5000 step-time 20.34 perplexity 452.27
+      eval: bucket 0 perplexity 196.93
+      eval: bucket 1 perplexity 655.18
+      eval: bucket 2 perplexity 860.44
+      eval: bucket 3 perplexity 1062.36
+    global step 140 learning rate 0.5000 step-time 21.05 perplexity 847.11
+      eval: bucket 0 perplexity 391.88
+      eval: bucket 1 perplexity 339.09
+      eval: bucket 2 perplexity 320.08
+      eval: bucket 3 perplexity 376.44
+    global step 150 learning rate 0.4950 step-time 15.53 perplexity 590.03
+      eval: bucket 0 perplexity 269.16
+      eval: bucket 1 perplexity 286.51
+      eval: bucket 2 perplexity 391.78
+      eval: bucket 3 perplexity 485.23
+    global step 160 learning rate 0.4950 step-time 19.36 perplexity 400.80
+      eval: bucket 0 perplexity 137.00
+      eval: bucket 1 perplexity 198.85
+      eval: bucket 2 perplexity 276.58
+      eval: bucket 3 perplexity 357.78
+    global step 170 learning rate 0.4950 step-time 17.50 perplexity 541.79
+      eval: bucket 0 perplexity 1051.29
+      eval: bucket 1 perplexity 626.64
+      eval: bucket 2 perplexity 496.32
+      eval: bucket 3 perplexity 458.85
+    global step 180 learning rate 0.4950 step-time 16.69 perplexity 400.65
+      eval: bucket 0 perplexity 178.12
+      eval: bucket 1 perplexity 299.86
+      eval: bucket 2 perplexity 294.84
+      eval: bucket 3 perplexity 296.46
+    global step 190 learning rate 0.4950 step-time 19.93 perplexity 886.73
+      eval: bucket 0 perplexity 860.60
+      eval: bucket 1 perplexity 910.16
+      eval: bucket 2 perplexity 909.24
+      eval: bucket 3 perplexity 786.04
+    global step 200 learning rate 0.4901 step-time 18.75 perplexity 449.64
+      eval: bucket 0 perplexity 152.13
+      eval: bucket 1 perplexity 234.41
+      eval: bucket 2 perplexity 249.66
+      eval: bucket 3 perplexity 285.95
     ...
-    tokenizing line 22500000
-  Tokenizing data in wmt/giga-fren.release2.en  <-- Training data of English
-    tokenizing line 100000
-    tokenizing line 200000
-    tokenizing line 300000
-    tokenizing line 400000
+    global step 980 learning rate 0.4215 step-time 18.31 perplexity 208.74
+      eval: bucket 0 perplexity 78.45
+      eval: bucket 1 perplexity 108.40
+      eval: bucket 2 perplexity 137.83
+      eval: bucket 3 perplexity 173.53
+    global step 990 learning rate 0.4173 step-time 17.31 perplexity 175.05
+      eval: bucket 0 perplexity 78.37
+      eval: bucket 1 perplexity 119.72
+      eval: bucket 2 perplexity 169.11
+      eval: bucket 3 perplexity 202.89
+    global step 1000 learning rate 0.4173 step-time 15.85 perplexity 174.33
+      eval: bucket 0 perplexity 76.52
+      eval: bucket 1 perplexity 125.97
+      eval: bucket 2 perplexity 150.13
+      eval: bucket 3 perplexity 181.07
     ...
-    tokenizing line 22500000
-  Tokenizing data in wmt/newstest2013.fr        <-- Testing data of French
-  Tokenizing data in wmt/newstest2013.en        <-- Testing data of English
-
-
-In the end, all files we have as follow.
-
-.. code-block:: text
-
-  wmt/training-giga-fren.tar  <-- Compressed Training data for English-to-French (2.6GB)
-                                  giga-fren.release2.* are extracted from it.
-  wmt/dev-v2.tgz              <-- Compressed Testing data for different language (21.4MB)
-                                  newstest2013.* are extracted from it.
-
-  wmt/giga-fren.release2.fr   <-- Training data of French   (4.57GB)
-  wmt/giga-fren.release2.en   <-- Training data of English  (3.79GB)
-
-  wmt/newstest2013.fr         <-- Testing data of French    (393KB)
-  wmt/newstest2013.en         <-- Testing data of English   (333KB)
-
-  wmt/vocab40000.fr           <-- Vocabulary of French      (381KB)
-  wmt/vocab40000.en           <-- Vocabulary of English     (344KB)
-
-  wmt/giga-fren.release2.ids40000.fr   <-- Tokenized Training data of French (2.81GB)
-  wmt/giga-fren.release2.ids40000.en   <-- Tokenized Training data of English (2.38GB)
-
-  wmt/newstest2013.ids40000.fr         <-- Tokenized Testing data of French (268KB)
-  wmt/newstest2013.ids40000.en         <-- Tokenized Testing data of English (232KB)
-
-
-Now, read all tokenized data into buckets and compute their sizes.
-
-.. code-block:: text
-
-  Reading development (testing) data into buckets
-  dev data: (5, 10) [[13388, 4, 949], [23113, 8, 910, 2]]
-  en word_ids: [13388, 4, 949]
-  en context: [b'Preventing', b'the', b'disease']
-  fr word_ids: [23113, 8, 910, 2]
-  fr context: [b'Pr\xc3\xa9venir', b'la', b'maladie', b'_EOS']
-
-  Reading training data into buckets (limit: 0).
-    reading data line 100000
-    reading data line 200000
-    reading data line 300000
-    reading data line 400000
-    reading data line 500000
-    reading data line 600000
-    reading data line 700000
-    reading data line 800000
-    ...
-    reading data line 22400000
-    reading data line 22500000
-  train_bucket_sizes: [239121, 1344322, 5239557, 10445326]
-  train_total_size: 17268326.0
-  train_buckets_scale: [0.013847375825543252, 0.09169638099257565, 0.3951164693091849, 1.0]
-  train data: (5, 10) [[1368, 3344], [1089, 14, 261, 2]]
-  en word_ids: [1368, 3344]
-  en context: [b'Site', b'map']
-  fr word_ids: [1089, 14, 261, 2]
-  fr context: [b'Plan', b'du', b'site', b'_EOS']
-
-
-
-
-Start training by using the tokenized bucket data, the training process can
-only be terminated by stop the program.
-When ``steps_per_checkpoint = 10`` you will see.
-
-.. code-block:: text
-
-  global step 10 learning rate 0.5000 step-time 22.26 perplexity 12761.50
-    eval: bucket 0 perplexity 5887.75
-    eval: bucket 1 perplexity 3891.96
-    eval: bucket 2 perplexity 3748.77
-    eval: bucket 3 perplexity 4940.10
-  global step 20 learning rate 0.5000 step-time 20.38 perplexity 28761.36
-    eval: bucket 0 perplexity 10137.01
-    eval: bucket 1 perplexity 12809.90
-    eval: bucket 2 perplexity 15758.65
-    eval: bucket 3 perplexity 26760.93
-  global step 30 learning rate 0.5000 step-time 20.64 perplexity 6372.95
-    eval: bucket 0 perplexity 1789.80
-    eval: bucket 1 perplexity 1690.00
-    eval: bucket 2 perplexity 2190.18
-    eval: bucket 3 perplexity 3808.12
-  global step 40 learning rate 0.5000 step-time 16.10 perplexity 3418.93
-    eval: bucket 0 perplexity 4778.76
-    eval: bucket 1 perplexity 3698.90
-    eval: bucket 2 perplexity 3902.37
-    eval: bucket 3 perplexity 22612.44
-  global step 50 learning rate 0.5000 step-time 14.84 perplexity 1811.02
-    eval: bucket 0 perplexity 644.72
-    eval: bucket 1 perplexity 759.16
-    eval: bucket 2 perplexity 984.18
-    eval: bucket 3 perplexity 1585.68
-  global step 60 learning rate 0.5000 step-time 19.76 perplexity 1580.55
-    eval: bucket 0 perplexity 1724.84
-    eval: bucket 1 perplexity 2292.24
-    eval: bucket 2 perplexity 2698.52
-    eval: bucket 3 perplexity 3189.30
-  global step 70 learning rate 0.5000 step-time 17.16 perplexity 1250.57
-    eval: bucket 0 perplexity 298.55
-    eval: bucket 1 perplexity 502.04
-    eval: bucket 2 perplexity 645.44
-    eval: bucket 3 perplexity 604.29
-  global step 80 learning rate 0.5000 step-time 18.50 perplexity 793.90
-    eval: bucket 0 perplexity 2056.23
-    eval: bucket 1 perplexity 1344.26
-    eval: bucket 2 perplexity 767.82
-    eval: bucket 3 perplexity 649.38
-  global step 90 learning rate 0.5000 step-time 12.61 perplexity 541.57
-    eval: bucket 0 perplexity 180.86
-    eval: bucket 1 perplexity 350.99
-    eval: bucket 2 perplexity 326.85
-    eval: bucket 3 perplexity 383.22
-  global step 100 learning rate 0.5000 step-time 18.42 perplexity 471.12
-    eval: bucket 0 perplexity 216.63
-    eval: bucket 1 perplexity 348.96
-    eval: bucket 2 perplexity 318.20
-    eval: bucket 3 perplexity 389.92
-  global step 110 learning rate 0.5000 step-time 18.39 perplexity 474.89
-    eval: bucket 0 perplexity 8049.85
-    eval: bucket 1 perplexity 1677.24
-    eval: bucket 2 perplexity 936.98
-    eval: bucket 3 perplexity 657.46
-  global step 120 learning rate 0.5000 step-time 18.81 perplexity 832.11
-    eval: bucket 0 perplexity 189.22
-    eval: bucket 1 perplexity 360.69
-    eval: bucket 2 perplexity 410.57
-    eval: bucket 3 perplexity 456.40
-  global step 130 learning rate 0.5000 step-time 20.34 perplexity 452.27
-    eval: bucket 0 perplexity 196.93
-    eval: bucket 1 perplexity 655.18
-    eval: bucket 2 perplexity 860.44
-    eval: bucket 3 perplexity 1062.36
-  global step 140 learning rate 0.5000 step-time 21.05 perplexity 847.11
-    eval: bucket 0 perplexity 391.88
-    eval: bucket 1 perplexity 339.09
-    eval: bucket 2 perplexity 320.08
-    eval: bucket 3 perplexity 376.44
-  global step 150 learning rate 0.4950 step-time 15.53 perplexity 590.03
-    eval: bucket 0 perplexity 269.16
-    eval: bucket 1 perplexity 286.51
-    eval: bucket 2 perplexity 391.78
-    eval: bucket 3 perplexity 485.23
-  global step 160 learning rate 0.4950 step-time 19.36 perplexity 400.80
-    eval: bucket 0 perplexity 137.00
-    eval: bucket 1 perplexity 198.85
-    eval: bucket 2 perplexity 276.58
-    eval: bucket 3 perplexity 357.78
-  global step 170 learning rate 0.4950 step-time 17.50 perplexity 541.79
-    eval: bucket 0 perplexity 1051.29
-    eval: bucket 1 perplexity 626.64
-    eval: bucket 2 perplexity 496.32
-    eval: bucket 3 perplexity 458.85
-  global step 180 learning rate 0.4950 step-time 16.69 perplexity 400.65
-    eval: bucket 0 perplexity 178.12
-    eval: bucket 1 perplexity 299.86
-    eval: bucket 2 perplexity 294.84
-    eval: bucket 3 perplexity 296.46
-  global step 190 learning rate 0.4950 step-time 19.93 perplexity 886.73
-    eval: bucket 0 perplexity 860.60
-    eval: bucket 1 perplexity 910.16
-    eval: bucket 2 perplexity 909.24
-    eval: bucket 3 perplexity 786.04
-  global step 200 learning rate 0.4901 step-time 18.75 perplexity 449.64
-    eval: bucket 0 perplexity 152.13
-    eval: bucket 1 perplexity 234.41
-    eval: bucket 2 perplexity 249.66
-    eval: bucket 3 perplexity 285.95
-  ...
-  global step 980 learning rate 0.4215 step-time 18.31 perplexity 208.74
-    eval: bucket 0 perplexity 78.45
-    eval: bucket 1 perplexity 108.40
-    eval: bucket 2 perplexity 137.83
-    eval: bucket 3 perplexity 173.53
-  global step 990 learning rate 0.4173 step-time 17.31 perplexity 175.05
-    eval: bucket 0 perplexity 78.37
-    eval: bucket 1 perplexity 119.72
-    eval: bucket 2 perplexity 169.11
-    eval: bucket 3 perplexity 202.89
-  global step 1000 learning rate 0.4173 step-time 15.85 perplexity 174.33
-    eval: bucket 0 perplexity 76.52
-    eval: bucket 1 perplexity 125.97
-    eval: bucket 2 perplexity 150.13
-    eval: bucket 3 perplexity 181.07
-  ...
-
-
-After training the model for 350000 steps, you can play with the translation by switch
-``train()`` to ``decode()``. You type in a English sentence, the program will outputs
-a French sentence.
-
-
-.. code-block:: text
-
-  Reading model parameters from wmt/translate.ckpt-340000
-  >  Who is the president of the United States?
-  Qui est le président des États-Unis ?
-
-
-
-
-
-
-
-Understand Translation
-======================
-
-Seq2seq
----------
-
-Basics
-^^^^^^
-
-Sequence to sequence is a type of "Many to many" but different with Synced
-sequence input and output in PTB tutorial. Seq2seq generates sequence output
-after feeding all sequence inputs. The following two methods can improve the
-accuracy:
- - Reversing the inputs
- - Attention mechanism
-
-To speed up the computation, we used:
-
- - Sampled softmax
-
-Karpathy's blog described Seq2seq as:
-"(4) Sequence input and sequence output (e.g. Machine Translation: an RNN
-reads a sentence in English and then outputs a sentence in French)."
-
-.. _fig_0601:
-
-.. image:: my_figs/basic_seq2seq.png
-  :scale: 100 %
-  :align: center
-
-As the above figure shows, the encoder inputs, decoder inputs and targets are:
-
-.. code-block:: text
-
-   encoder_input =  A    B    C
-   decoder_input =  <go> W    X    Y    Z
-   targets       =  W    X    Y    Z    <eos>
-
-   Note: in the code, the size of targets is one smaller than the size
-   of decoder_input, not like this figure.
-
-Papers
-^^^^^^^^
-
-The English-to-French example implements a multi-layer recurrent neural
-network as encoder, and an Attention-based decoder.
-It is the same as the model described in this paper:
- - `Grammar as a Foreign Language <http://arxiv.org/abs/1412.7449>`_
-
-The example uses sampled softmax to handle large output vocabulary size.
-In this case, as ``target_vocab_size=4000``, for vocabularies smaller
-than ``512``, it might be a better idea to just use a standard softmax loss.
-Sampled softmax is described in Section 3 of the this paper:
- - `On Using Very Large Target Vocabulary for Neural Machine Translation <http://arxiv.org/abs/1412.2007>`_
-
-Reversing the inputs and Multi-layer cells have been successfully used in
-sequence-to-sequence models for translation has beed described in this paper:
- - `Sequence to Sequence Learning with Neural Networks <http://arxiv.org/abs/1409.3215>`_
-
-Attention mechanism allows the decoder more direct access to the input, it was
-described in this paper:
- - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
-
-Alternatively, the model can also be implemented by a single-layer
-version, but with Bi-directional encoder, was presented in this paper:
- - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
-
-
-
-Implementation
----------------
-
-Bucketing and Padding
-^^^^^^^^^^^^^^^^^^^^^
-
-Bucketing is a method to efficiently handle sentences of different length.
-When translating English to French, we will have English sentences of
-different lengths ``L1`` on input, and French sentences of different
-lengths ``L2`` on output. We should in principle create a seq2seq model
-for every pair ``(L1, L2+1)`` (prefixed by a GO symbol) of
-lengths of an English and French sentence.
-
-For find the closest bucket for each pair, then we could just pad every
-sentence with a special PAD symbol in the end if the bucket is bigger
-than the sentence
-
-We use a number of buckets and pad to the closest one for efficiency.
-In this example, we used 4 buckets.
-
-.. code-block:: python
-
-  buckets = [(5, 10), (10, 15), (20, 25), (40, 50)]
-
-If the input is an English sentence with ``3`` tokens, and the corresponding
-output is a French sentence with ``6`` tokens, then they will be put in the
-first bucket and padded to length ``5`` for encoder inputs (English sentence),
-and length ``10`` for decoder inputs.
-If we have an English sentence with 8 tokens and the corresponding French
-sentence has 18 tokens, then they will be fit into ``(20, 25)`` bucket.
-
-In other word, bucket ``(I, O)`` is ``(encoder_input_size, decoder_inputs_size)``.
-
-Given a pair of ``[["I", "go", "."], ["Je", "vais", "."]]`` in tokenized format,
-we fit it into bucket ``(5, 10)``.
-The training data of encoder inputs representing ``[PAD PAD "." "go" "I"]``
-and decoder inputs ``[GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD]``. The targets
-are decoder inputs shifted by one. The ``target_weights`` is the mask of
-``targets``.
-
-
-.. code-block:: text
 
-  bucket = (I, O) = (5, 10)
-  encoder_inputs = [PAD PAD "." "go" "I"]                       <-- 5  x batch_size
-  decoder_inputs = [GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD] <-- 10 x batch_size
-  target_weights = [1   1     1     1   0 0 0 0 0 0 0]          <-- 10 x batch_size
-  targets        = ["Je" "vais" "." EOS PAD PAD PAD PAD PAD]    <-- 9  x batch_size
+  经过350000轮训练模型之后，您可以将代码中的 ``main_train()`` 换为 ``main_decode()`` 来使用训练好的翻译器，
+  您输入一个英文句子，程序将输出一个对应的法文句子。
 
+  .. code-block:: text
 
-In this script, one sentence is represented by one column, so assume
-``batch_size = 3``, ``bucket = (5, 10)`` the training data will look like:
+    Reading model parameters from wmt/translate.ckpt-350000
+    >  Who is the president of the United States?
+    Qui est le président des États-Unis ?
 
-.. code-block:: text
 
-  encoder_inputs    decoder_inputs    target_weights    targets
-  0    0    0       1    1    1       1    1    1       87   71   16748
-  0    0    0       87   71   16748   1    1    1       2    3    14195
-  0    0    0       2    3    14195   0    1    1       0    2    2
-  0    0    3233    0    2    2       0    0    0       0    0    0
-  3    698  4061    0    0    0       0    0    0       0    0    0
-                    0    0    0       0    0    0       0    0    0
-                    0    0    0       0    0    0       0    0    0
-                    0    0    0       0    0    0       0    0    0
-                    0    0    0       0    0    0       0    0    0
-                    0    0    0       0    0    0
+  理解机器翻译
+  ====================
 
-  where 0 : _PAD    1 : _GO     2 : _EOS      3 : _UNK
+  Seq2seq
+  --------------
+  序列到序列模型（Seq2seq）通常被用来转换一种语言到另一种语言。
+  但实际上它能用来做很多您可能无法想象的事情，比如我们可以将一个长的句子翻译成意思一样但短且简单的句子，
+  再比如，从莎士比亚的语言翻译成现代英语。若用上卷积神经网络(CNN)的话，我们能将视频翻译成句子，则自动看一段视频给出该视频的文字描述（Video captioning）。
 
-During training,
+  如果您只是想用 Seq2seq，您只需要考虑训练集的格式，比如如何切分单词、如何数字化单词等等。
+  所以，在本教程中，我们将讨论很多如何整理训练集。
 
 
-During prediction,
+  基础
+  ^^^^^^^^^
 
+  序列到序列模型是一种多对多（Many to many）的模型，但与PTB教程中的同步序列输入与输出(Synced sequence input and output）不一样，Seq2seq是在输入了整个序列之后，才开始输出新的序列（非同步）。
+  该教程用了下列两种最新的方法来提高准确度：
+  - 把输入序列倒转输入（Reversing the inputs）
+  - 注意机制（Attention mechanism）
 
-Special vocabulary symbols, punctuations and digits
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  为了要加快训练速度，我们使用了：
+  - softmax 抽样（Sampled softmax）
 
-The special vocabulary symbols in this example are:
+  Karpathy的博客是这样描述Seq2seq的："(4) Sequence input and sequence output (e.g. Machine Translation: an RNN reads a sentence in English and then outputs a sentence in French)."
 
-.. code-block:: python
 
-  _PAD = b"_PAD"
-  _GO = b"_GO"
-  _EOS = b"_EOS"
-  _UNK = b"_UNK"
-  PAD_ID = 0      <-- index (row number) in vocabulary
-  GO_ID = 1
-  EOS_ID = 2
-  UNK_ID = 3
-  _START_VOCAB = [_PAD, _GO, _EOS, _UNK]
+  .. _fig_0601:
 
-.. code-block:: text
+  .. image:: my_figs/basic_seq2seq.png
+    :scale: 100 %
+    :align: center
 
-          ID    MEANINGS
-  _PAD    0     Padding, empty word
-  _GO     1     1st element of decoder_inputs
-  _EOS    2     End of Sentence of targets
-  _UNK    3     Unknown word, words do not exist in vocabulary will be marked as 3
+  如上图所示，编码器输入（encoder input），解码器输入（decoder input）以及输出目标（targets）如下：
 
+  .. code-block:: text
 
-For digits, the ``normalize_digits`` of creating vocabularies and tokenized dataset
-must be consistent, if ``True`` all digits will be replaced by ``0``. Like
-``123`` to ``000```, `9` to `0` and `1990-05` to `0000-00`, then `000`, `0` and
-`0000-00` etc will be the words in the vocabulary (see ``vocab40000.en``).
-Otherwise, if ``False``, different digits
-will be seem in the vocabulary, then the vocabulary size will be very big.
-The regular expression to find digits is ``_DIGIT_RE = re.compile(br"\d")``.
-(see ``tl.nlp.create_vocabulary()`` and ``tl.nlp.data_to_token_ids()``)
+     encoder_input =  A    B    C
+     decoder_input =  <go> W    X    Y    Z
+     targets       =  W    X    Y    Z    <eos>
 
-For word split, the regular expression is
-``_WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")``, this means use
-``[ . , ! ? " ' : ; ) ( ]`` and space to split the sentence, see
-``tl.nlp.basic_tokenizer()`` which is the default tokenizer of
-``tl.nlp.create_vocabulary()`` and ``tl.nlp.data_to_token_ids()``.
+      Note：在代码实现中，targets的长度比decoder_input的长度小一，更多实现细节将在下文说明。
 
+  文献
+  ^^^^^^^^^^^
 
-All punctuation marks, such as ``. , ) (`` are all reserved in the vocabularies
-of both English and French.
+  该英语-法语的机器翻译例子使用了多层递归神经网络以及注意机制。
+  该模型和如下论文中一样：
+   - `Grammar as a Foreign Language <http://arxiv.org/abs/1412.7449>`_
 
+  该例子采用了 softmax 抽样（sampled softmax）来解决当词汇表很大时计算量大的问题。
+  在该例子中，``target_vocab_size=4000`` ，若词汇量小于 ``512`` 时用普通的softmax cross entropy即可。
+  Softmax 抽样在这篇论文的第三小节中描述:
+   - `On Using Very Large Target Vocabulary for Neural Machine Translation <http://arxiv.org/abs/1412.2007>`_
 
+  如下文章讲述了把输入序列倒转（Reversing the inputs）和多层神递归神经网络用在Seq2seq的翻译应用非常成功：
+   - `Sequence to Sequence Learning with Neural Networks <http://arxiv.org/abs/1409.3215>`_
 
-Sampled softmax
-^^^^^^^^^^^^^^^
+  如下文章讲述了注意机制（Attention Mechanism）让解码器可以更直接地得到每一个输入的信息：
+   - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
+  如下文章讲述了另一种Seq2seq模型，则使用双向编码器（Bi-directional encoder）：
+   - `Neural Machine Translation by Jointly Learning to Align and Translate <http://arxiv.org/abs/1409.0473>`_
 
-Dataset iteration
-^^^^^^^^^^^^^^^^^
 
+  实现细节
+  -------------
 
+  Bucketing and Padding
+  ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+  Bucketing 是一种能有效处理不同句子长度的方法，为什么使用Bucketing，在 `知乎 <https://www.zhihu.com/question/42057513>`_ 上已经有很好的回答了。
 
-Loss and update expressions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  当将英文翻译成法文的时，我们有不同长度的英文句子输入（长度为 ``L1 `` ），以及不同长度的法文句子输出，（长度为 ``L2`` ）。
+  我们原则上要建立每一种长度的可能性，则有很多个 ``(L1, L2+1)`` ，其中 ``L2`` 加一是因为有 GO 标志符。
 
-What Next?
------------
+  为了减少 bucket 的数量以及为句子找到最合适的 bucket，若 bucket 大于句子的长度，我们则使用 PAD 标志符填充之。
 
+  为了提高效率，我们只使用几个 bucket，然后使用 padding 来让句子匹配到最相近的 bucket 中。
+  在该例子中，我们使用如下 4 个 buckets。
 
+  .. code-block:: python
 
+    buckets = [(5, 10), (10, 15), (20, 25), (40, 50)]
 
+  如果输入的是一个有 ``3`` 个单词的英文句子，对应的法文输出有 ``6`` 个单词，
+  那么改数据将被放在第一个 bucket 中并且把 encoder inputs 和 decoder inputs 通过 padding 来让其长度变成 ``5`` 和 ``10`` 。
+  如果我们有 ``8`` 个单词的英文句子，及 ``18`` 个单词的法文句子，它们会被放到 ``(20, 25)`` 的 bucket 中。
 
+  换句话说，bucket ``(I,O)`` 是 ``(编码器输入大小(encoder_input_size)，解码器输入大小(decoder_inputs_size))`` 。
 
+  给出一对数字化训练样本 ``[["I", "go", "."], ["Je", "vais", "."]]`` ，我们把它转换为 ``(5,10)`` 。
+  编码器输入（encoder inputs）的训练数据为  ``[PAD PAD "." "go" "I"]`` ，而解码器的输入（decoder inputs）为 ``[GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD]`` 。
+  而输出目标（targets）是解码器输入（decoder inputs）平移一位。 ``target_weights`` 是输出目标（targets）的掩码。
 
+  . code-block:: text
 
+    bucket = (I, O) = (5, 10)
+    encoder_inputs = [PAD PAD "." "go" "I"]                       <-- 5  x batch_size
+    decoder_inputs = [GO "Je" "vais" "." EOS PAD PAD PAD PAD PAD] <-- 10 x batch_size
+    target_weights = [1   1     1     1   0 0 0 0 0 0 0]          <-- 10 x batch_size
+    targets        = ["Je" "vais" "." EOS PAD PAD PAD PAD PAD]    <-- 9  x batch_size
 
+  在该代码中，一个句子是由一个列向量表示，假设 ``batch_size = 3`` ， ``bucket = (5, 10)`` ，训练集如下所示。
 
+  .. code-block:: text
 
+    encoder_inputs    decoder_inputs    target_weights    targets
+    0    0    0       1    1    1       1    1    1       87   71   16748
+    0    0    0       87   71   16748   1    1    1       2    3    14195
+    0    0    0       2    3    14195   0    1    1       0    2    2
+    0    0    3233    0    2    2       0    0    0       0    0    0
+    3    698  4061    0    0    0       0    0    0       0    0    0
+                      0    0    0       0    0    0       0    0    0
+                      0    0    0       0    0    0       0    0    0
+                      0    0    0       0    0    0       0    0    0
+                      0    0    0       0    0    0       0    0    0
+                      0    0    0       0    0    0
 
+    其中 0 : _PAD    1 : _GO     2 : _EOS      3 : _UNK
 
+  在训练过程中，解码器输入是目标，而在预测过程中，下一个解码器的输入是最后一个解码器的输出。
 
+  在训练过程中，编码器输入（decoder inputs）就是目标输出（targets）；
+  当使用模型时，下一个编码器输入（decoder inputs）是上一个解码器输出（ decoder output）。
 
 
-Cost Functions
+  特殊标志符、标点符号与阿拉伯数字
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  该例子中的特殊标志符是：
+
+  .. code-block:: python
+
+    _PAD = b"_PAD"
+    _GO = b"_GO"
+    _EOS = b"_EOS"
+    _UNK = b"_UNK"
+    PAD_ID = 0      <-- index (row number) in vocabulary
+    GO_ID = 1
+    EOS_ID = 2
+    UNK_ID = 3
+    _START_VOCAB = [_PAD, _GO, _EOS, _UNK]
+
+  .. code-block:: text
+
+            ID号    意义
+    _PAD    0       Padding, empty word
+    _GO     1       decoder_inputs 的第一个元素
+    _EOS    2       targets 的结束符
+    _UNK    3       不明单词（Unknown word），没有在词汇表出现的单词被标记为3
+
+  对于阿拉伯数字，建立词汇表时与数字化数据集时的 ``normalize_digits`` 必须是一致的，若
+  ``normalize_digits=True`` 所有阿拉伯数字都将被 ``0`` 代替。比如 ``123`` 被 ``000`` 代替，``9`` 被 ``0``代替
+  ，``1990-05`` 被 ``0000-00` 代替，最后 ``000`` ， ``0`` ， ``0000-00`` 等将在词汇库中(看 ``vocab40000.en`` )。
+
+  反之，如果 ``normalize_digits=False`` ，不同的阿拉伯数字将会放入词汇表中，那么词汇表就变得十分大了。
+  本例子中寻找阿拉伯数字使用的正则表达式是 ``_DIGIT_RE = re.compile(br"\d")`` 。(详见 ``tl.nlp.create_vocabulary()`` 和 ``tl.nlp.data_to_token_ids()` )
+
+  对于分离句子成独立单词，本例子使用正则表达式 ``_WORD_SPLIT = re.compile(b"([.,!?\"':;)(])")`` ，
+  这意味着使用这几个标点符号 ``[ . , ! ? " ' : ; ) ( ]`` 以及空格来分割句子，详情请看 ``tl.nlp.basic_tokenizer()`` 。这个分割方法是 ``tl.nlp.create_vocabulary()`` 和  ``tl.nlp.data_to_token_ids()`` 的默认方法。
+
+
+  所有的标点符号，比如 ``. , ) (`` 在英文和法文数据库中都会被全部保留下来。
+
+  Softmax 抽样 (Sampled softmax)
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  softmax抽样是一种词汇表很大（Softmax 输出很多）的时候用来降低损失（cost）计算量的方法。
+  与从所有输出中计算 cross-entropy 相比，这个方法只从 ``num_samples`` 个输出中计算 cross-entropy。
+
+
+  损失和更新函数
+  ^^^^^^^^^^^^^^^^^
+  ``EmbeddingAttentionSeq2seqWrapper`` 内部实现了 SGD optimizer。
+
+  下一步？
+  ------------------
+
+  您可以尝试其他应用。
+
+
+
+
+
+
+
+
+
+翻译对照
 ===============
 
-TLayer provides a simple way to creat you own cost function. Take a MLP below for example.
+Stacked Denosing Autoencoder 堆栈式降噪自编吗器
 
-.. code-block:: python
+Word Embedding               词嵌套、词嵌入
 
-  network = tl.InputLayer(x, name='input_layer')
-  network = tl.DropoutLayer(network, keep=0.8, name='drop1')
-  network = tl.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu1')
-  network = tl.DropoutLayer(network, keep=0.5, name='drop2')
-  network = tl.DenseLayer(network, n_units=800, act = tf.nn.relu, name='relu2')
-  network = tl.DropoutLayer(network, keep=0.5, name='drop3')
-  network = tl.DenseLayer(network, n_units=10, act = tl.activation.identity, name='output_layer')
+Iteration                    迭代
 
+Natural Language Processing  自然语言处理
 
+Sparse                       稀疏的
 
-Regularization of Weights
---------------------------
+Cost function                损失函数
 
-After initializing the variables, the informations of network parameters can be
-observed by using ``network.print_params()``.
+Regularization               规则化、正则化
 
-.. code-block:: python
+Tokenization                 数字化
 
-  sess.run(tf.initialize_all_variables())
-  network.print_params()
+Truncated backpropagation    截断反向传播
 
-.. code-block:: text
 
-  param 0: (784, 800) (mean: -0.000000, median: 0.000004 std: 0.035524)
-  param 1: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-  param 2: (800, 800) (mean: 0.000029, median: 0.000031 std: 0.035378)
-  param 3: (800,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-  param 4: (800, 10) (mean: 0.000673, median: 0.000763 std: 0.049373)
-  param 5: (10,) (mean: 0.000000, median: 0.000000 std: 0.000000)
-  num of params: 1276810
 
 
-The output of network is ``network.outputs``, then the cross entropy can be
-defined as follow. Besides, to regularize the weights,
-the ``network.all_params`` contains all parameters of the network.
-In this case, ``network.all_params = [W1, b1, W2, b2, Wout, bout]`` according
-to param 0, 1 ... 5 shown by ``network.print_params()``.
-Then max-norm regularization on W1 and W2 can be performed as follow.
+更多信息
+==============
 
-.. code-block:: python
+TensorLayer 还能做什么？请继续阅读本文档。
 
-  y = network.outputs
-  # Alternatively, you can use tl.cost.cross_entropy(y, y_) instead.
-  cross_entropy = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(y, y_))
-  cost = cross_entropy
-  cost = cost + tl.cost.maxnorm_regularizer(1.0)(network.all_params[0]) +
-            tl.cost.maxnorm_regularizer(1.0)(network.all_params[2])
+最后，API 参考列表和说明如下：
 
-In addition, all TensorFlow's regularizers like
-``tf.contrib.layers.l2_regularizer`` can be used with TLayer.
 
-Regularization of Activation outputs
---------------------------------------
+layers (:mod:`tensorlayer.layers`),
 
-Instance method ``network.print_layers()`` prints all outputs of different
-layers in order. To achieve regularization on activation output, you can use
-``network.all_layers`` which contains all outputs of different layers.
-If you want to apply L1 penalty on the activations of first hidden layer,
-just simply add ``tf.contrib.layers.l2_regularizer(lambda_l1)(network.all_layers[1])``
-to the cost function.
+activation (:mod:`tensorlayer.activation`),
 
-.. code-block:: python
+natural language processing (:mod:`tensorlayer.nlp`),
 
-  network.print_layers()
+reinforcement learning (:mod:`tensorlayer.rein`),
 
-.. code-block:: text
+cost expressions and regularizers (:mod:`tensorlayer.cost`),
 
-  layer 0: Tensor("dropout/mul_1:0", shape=(?, 784), dtype=float32)
-  layer 1: Tensor("Relu:0", shape=(?, 800), dtype=float32)
-  layer 2: Tensor("dropout_1/mul_1:0", shape=(?, 800), dtype=float32)
-  layer 3: Tensor("Relu_1:0", shape=(?, 800), dtype=float32)
-  layer 4: Tensor("dropout_2/mul_1:0", shape=(?, 800), dtype=float32)
-  layer 5: Tensor("add_2:0", shape=(?, 10), dtype=float32)
+load and save files (:mod:`tensorlayer.files`),
 
+operating system (:mod:`tensorlayer.ops`),
 
+helper functions (:mod:`tensorlayer.utils`),
 
+visualization (:mod:`tensorlayer.visualize`),
 
+iteration functions (:mod:`tensorlayer.iterate`),
 
+preprocessing functions (:mod:`tensorlayer.prepro`),
 
-Easy to Modify
-================
 
-Modifying Pre-train Behaviour
-------------------------------
-
-Greedy layer-wise pretrain is an important task for deep neural network
-initialization, while there are many kinds of pre-train metrics according
-to different architectures and applications.
-
-For example, the pre-train process of `Vanilla Sparse Autoencoder <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_
-can be implemented by using KL divergence as the following code,
-but for `Deep Rectifier Network <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_,
-the sparsity can be implemented by using the L1 regularization of activation output.
-
-.. code-block:: python
-
-  # Vanilla Sparse Autoencoder
-  beta = 4
-  rho = 0.15
-  p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)
-  KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat))
-          + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
-
-
-For this reason, TLayer provides a simple way to modify or design your
-own pre-train metrice. For Autoencoder, TLayer uses ``ReconLayer.__init__()``
-to define the reconstruction layer and cost function, to define your own cost
-function, just simply modify the ``self.cost`` in ``ReconLayer.__init__()``.
-To creat your own cost expression please read `Tensorflow Math <https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html>`_.
-By default, ``ReconLayer`` only updates the weights and biases of previous 1
-layer by using ``self.train_params = self.all _params[-4:]``, where the 4
-parameters are ``[W_encoder, b_encoder, W_decoder, b_decoder]``. If you want
-to update the parameters of previous 2 layers, simply modify ``[-4:]`` to ``[-6:]``.
-
-
-.. code-block:: python
-
-  ReconLayer.__init__(...):
-      ...
-      self.train_params = self.all_params[-4:]
-      ...
-  	self.cost = mse + L1_a + L2_w
-
-
-Adding Customized Layer
--------------------------
-
-Contribute useful ``Layer`` as an developer. The source code of TLayer is
-easy to understand, open ``tlayer/layer.py`` and read ``DenseLayer``, you
-can fully understand how it work.
-
-
-Adding Customized Regularizer
-------------------------------
-
-See tlayer/cost.py
-
-
-
-
-
-
-
-
-More info
-==========
-
-For more information on what you can do with TLayer, just continue
-reading through readthedocs.
-Finally, the reference lists and explains as follow.
-
-layers (:mod:`tlayer.layers`),
-
-activation (:mod:`tlayer.activation`),
-
-natural language processing (:mod:`tlayer.nlp`),
-
-reinforcement learning (:mod:`tlayer.rein`),
-
-cost expressions and regularizers (:mod:`tlayer.cost`),
-
-load and save files (:mod:`tlayer.files`),
-
-operating system (:mod:`tlayer.ops`),
-
-helper functions (:mod:`tlayer.utils`),
-
-visualization (:mod:`tlayer.visualize`),
-
-iteration functions (:mod:`tlayer.iterate`),
-
-preprocessing functions (:mod:`tlayer.preprocess`),
-
-
-.. _TLayer: https://github.com/zsdonghao/tlayer/
 .. _Deeplearning Tutorial: http://deeplearning.stanford.edu/tutorial/
 .. _Convolutional Neural Networks for Visual Recognition: http://cs231n.github.io/
 .. _Neural Networks and Deep Learning: http://neuralnetworksanddeeplearning.com/
