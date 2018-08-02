@@ -117,8 +117,8 @@ API - 神经网络层
           layer = None,
           name ='double_layer',
       ):
-          # 校验名字是否已被使用（不变）
-          Layer.__init__(self, layer=layer, name=name)
+          # 校验名字是否已被使用，提供层管理（不变）
+          super(DoubleLayer, self).__init__(prev_layer=prev_layer, name=name)
 
           # 本层输入是上层的输出（不变）
           self.inputs = layer.outputs
@@ -130,7 +130,7 @@ API - 神经网络层
           self.outputs = self.inputs * 2
 
           # 更新层的参数（自定义部分）
-          self.all_layers.append(self.outputs)
+          self._add_layers(self.outputs)
 
 
 你的Dense层
@@ -151,8 +151,8 @@ API - 神经网络层
         act = tf.nn.relu,
         name ='simple_dense',
     ):
-        # 校验名字是否已被使用（不变）
-        Layer.__init__(self, layer=layer, name=name)
+        # 校验名字是否已被使用，提供层管理（不变）
+        super(MyDenseLayer, self).__init__(prev_layer=prev_layer, act=act, name=name)
 
         # 本层输入是上层的输出（不变）
         self.inputs = layer.outputs
@@ -167,11 +167,11 @@ API - 神经网络层
             W = tf.get_variable(name='W', shape=(n_in, n_units))
             b = tf.get_variable(name='b', shape=(n_units))
             # tensor操作
-            self.outputs = act(tf.matmul(self.inputs, W) + b)
+            self.outputs = self._apply_activation(tf.matmul(self.inputs, W) + b)
 
         # 更新层的参数（自定义部分）
-        self.all_layers.append(self.outputs)
-        self.all_params.extend([W, b])
+        self._add_layers(self.outputs)
+        self._add_params([W, b])
 
 修改预训练行为
 ^^^^^^^^^^^^^^^
@@ -329,14 +329,18 @@ Layer list
 
    SlimNetsLayer
 
+   SignLayer
+   ScaleLayer
    BinaryDenseLayer
    BinaryConv2d
    TernaryDenseLayer
    TernaryConv2d
    DorefaDenseLayer
    DorefaConv2d
-   SignLayer
-   ScaleLayer
+   QuanDenseLayer
+   QuanDenseLayerWithBN
+   QuanConv2d
+   QuanConv2dWithBN
 
    PReluLayer
    PRelu6Layer
@@ -487,15 +491,6 @@ AtrousDeConv2dLayer
 """""""""""""""""""""
 .. autoclass:: AtrousDeConv2dLayer
 
-
-Binary (De)卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-BinaryConv2d
-"""""""""""""""""""""
-.. autoclass:: BinaryConv2d
-
-
 Deformable 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -510,14 +505,6 @@ Depthwise 卷积层
 DepthwiseConv2d
 """""""""""""""""""""
 .. autoclass:: DepthwiseConv2d
-
-
-DoReFa 卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-DorefaConv2d
-"""""""""""""""""""""
-.. autoclass:: DorefaConv2d
 
 
 Group 卷积层
@@ -552,13 +539,6 @@ SubpixelConv2d
 .. autoclass:: SubpixelConv2d
 
 
-Ternary 卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-TernaryConv2d
-"""""""""""""""""""""
-.. autoclass:: TernaryConv2d
-
 
 
 .. -----------------------------------------------------------
@@ -568,25 +548,14 @@ TernaryConv2d
 全连接层
 ------------
 
-Binary 全连接层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: BinaryDenseLayer
-
 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DenseLayer
-
-DoReFa 全连接层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DorefaDenseLayer
 
 Drop Connect 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DropconnectDenseLayer
 
-Ternary 全连接层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TernaryDenseLayer
 
 .. -----------------------------------------------------------
 ..                       Dropout 层
@@ -626,11 +595,6 @@ TF-Slim 层
 
 .. autoclass:: SlimNetsLayer
 
-Keras 层
-^^^^^^^^^^^^^^^^^^^
-把Keras代码融入到TensorLayer中，请见 `tutorial_keras.py <https://github.com/tensorlayer/tensorlayer/blob/master/example/tutorial_keras.py>`_ 。
-
-.. autoclass:: KerasLayer
 
 .. -----------------------------------------------------------
 ..                    Flow Control 层
@@ -829,20 +793,62 @@ Scale
 ^^^^^^^^^^^^^^
 .. autoclass:: ScaleLayer
 
-Binary 二值化
-^^^^^^^^^^^^^^
+Binary 全连接层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BinaryDenseLayer
 
-请见全链接与卷积层API。
+Binary (De)卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Ternary 三值化
-^^^^^^^^^^^^^^
+BinaryConv2d
+"""""""""""""""""""""
+.. autoclass:: BinaryConv2d
 
-请见全链接与卷积层API。
 
-DoReFa
-^^^^^^^^^^^^^^
+Ternary 全连接层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: TernaryDenseLayer
 
-请见全链接与卷积层API。
+Ternary 卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TernaryConv2d
+"""""""""""""""""""""
+.. autoclass:: TernaryConv2d
+
+DoReFa 全连接层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: DorefaDenseLayer
+
+DoReFa 卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+DorefaConv2d
+"""""""""""""""""""""
+.. autoclass:: DorefaConv2d
+
+
+Quantization 全连接层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+QuanDenseLayer
+"""""""""""""""""""""
+.. autoclass:: QuanDenseLayer
+
+QuanDenseLayerWithBN
+""""""""""""""""""""""""""""""""""""
+.. autoclass:: QuanDenseLayerWithBN
+
+Quantization 卷积层
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Quantization
+"""""""""""""""""""""
+.. autoclass:: QuanConv2d
+
+QuanConv2dWithBN
+"""""""""""""""""""""
+.. autoclass:: QuanConv2dWithBN
 
 .. -----------------------------------------------------------
 ..                  递归层
