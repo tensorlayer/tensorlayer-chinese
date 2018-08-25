@@ -156,7 +156,7 @@ Google Drive
 .. autofunction:: save_npz
 
 从save_npz加载模型参数列表
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
 
 把模型参数载入模型
@@ -173,14 +173,14 @@ Google Drive
 .. autofunction:: save_npz_dict
 
 从save_npz_dict加载模型参数列表
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_and_assign_npz_dict
 
 
 保存模型结构
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_graph
-        
+
 加载模型结构
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_graph
@@ -219,7 +219,7 @@ Google Drive
 
 
 文件夹/文件相关函数
-------------------
+-------------------
 
 判断文件存在
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
