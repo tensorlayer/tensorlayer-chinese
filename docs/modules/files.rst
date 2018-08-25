@@ -56,6 +56,10 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
    load_and_assign_npz
    save_npz_dict
    load_and_assign_npz_dict
+   save_graph
+   load_graph
+   save_graph_and_params
+   load_graph_and_params   
    save_ckpt
    load_ckpt
 
@@ -172,6 +176,21 @@ Google Drive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_and_assign_npz_dict
 
+保存网络结构到 graph
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_graph
+
+回复网络结构从 graph
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_graph
+
+保存网络结构和参数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_graph_and_params
+
+回复网络结构和参数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_graph_and_params
 
 以列表保存模型到 .ckpt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
