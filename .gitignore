@@ -1,6 +1,8 @@
+.DS_Store
+/.pytest_cache
+/docs/test_build
 docs/_build
 tensorlayer/__pycache__
 tensorlayer/*pyc
-tensorlayer/layers/*pyc
-.DS_Store
 tensorlayer/cli/__pycache__
+tensorlayer/layers/*pyc
