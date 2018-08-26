@@ -1,0 +1,13 @@
+# https://docs.travis-ci.com/user/languages/python/
+language: python
+
+python:
+  - '3.6'
+
+install:
+  - pip install tensorflow
+  - pip install yapf
+  - pip install -r requirements/requirements_doc.txt
+
+script:
+  - ./tests/test_documentation.py
