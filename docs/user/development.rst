@@ -1,7 +1,7 @@
 开发 Development
 ================
 
-TensorLayer始于一个帝国理工的研究项目，目前由数位 `GitHub`_ 的贡献者负责维护和进行改进。
+TensorLayer始于一个帝国理工的研究项目，目前由数位 `Github`_ 的贡献者负责维护和进行改进。
 
 作为一个为研究员和工程师开发的开源项目，我们诚挚地欢迎您为对项目提供帮助。
 每个微小的支持都会帮助我们并且会被记录下来。
@@ -56,7 +56,7 @@ TensorLayer的想法源于组合TensorFlow的灵活性和正确的 building bloc
 """"""""""""""
 
 无论什么时候您发现有些文档没有解释清楚，存在误导，敷衍带过或者根本就是错的。
-请及时更新它！*Edit on GitHub*的链接就在每一篇文档的右上角
+请及时更新它！*Edit on GitHub* 的链接就在每一篇文档的右上角
 并且API引用列表中的每篇文档的*[source]*的链接可以帮助您快速地定位任何文字的根源。
 
 
@@ -109,6 +109,7 @@ TensorLayer有100%的代码覆盖率，这过去被证明是十分有用的的�
 
 * 每当您更改任何代码的时候，您应该运行测试脚本来测试它是否能优化现有属性。
 * 您修改的每个BUG说明一个缺少的测试案例，
+
 所以每个修复BUG的方案应该配置一个您没修复前的测试案例。
 
 发送拉请求
@@ -127,5 +128,5 @@ https://guides.github.com/introduction/flow/
 GitHub会关闭那个问题。
 
 
-.. _GitHUb: http://github.com/zsdonghao/tensorlayer
+.. _Github: http://github.com/zsdonghao/tensorlayer
 .. _our mailing list: hao.dong11@imperial.ac.uk
