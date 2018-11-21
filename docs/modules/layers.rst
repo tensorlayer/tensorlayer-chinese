@@ -215,6 +215,8 @@ API - 神经网络层
 Layer list
 ----------
 
+.. automodule:: tensorlayer.layers
+
 .. autosummary::
 
    get_variables_with_name

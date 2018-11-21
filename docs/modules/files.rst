@@ -192,6 +192,22 @@ Google Drive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_graph_and_params
 
+保存模型结构
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_graph
+        
+加载模型结构
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_graph
+
+保存模型结构和参数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: save_graph_and_params
+
+加载模型结构和参数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: load_graph_and_params
+
 以列表保存模型到 .ckpt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: save_ckpt
