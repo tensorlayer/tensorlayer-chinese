@@ -86,7 +86,12 @@ API - 数据预处理
    obj_box_shift
    obj_box_zoom
 
-
+   keypoint_random_crop
+   keypoint_random_crop2
+   keypoint_random_rotate
+   keypoint_random_flip
+   keypoint_random_resize
+   keypoint_random_resize_shortestedge
 
    pad_sequences
    remove_pad_sequences
@@ -416,6 +421,32 @@ Darknet格式-分开列表的类别和坐标
 图像-缩放
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: obj_box_zoom
+
+
+特征点
+------------
+
+图像-裁剪
+^^^^^^^^^^^
+.. autofunction:: keypoint_random_crop
+
+.. autofunction:: keypoint_random_crop2
+
+图像-旋转
+^^^^^^^^^
+.. autofunction:: keypoint_random_rotate
+
+图像-翻转
+^^^^^^^^^^^^
+.. autofunction:: keypoint_random_flip
+
+图像-缩放
+^^^^^^^^^^^^
+.. autofunction:: keypoint_random_resize
+
+图像-缩放 最短边
+^^^^^^^^^^^^^^^^
+.. autofunction:: keypoint_random_resize_shortestedge
 
 
 
