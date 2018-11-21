@@ -55,7 +55,7 @@ Slack是自带分组讨论功能的国际化讨论平台，可与外文用户一
 
 ---
 ## QQ 群
-不分讨论话题，加入方式请[点击](https://github.com/zsdonghao/tensorlayer/blob/master/img/img_qq.jpeg)。
+不分讨论话题，加入方式请[点击](https://github.com/tensorlayer/tensorlayer-chinese/blob/master/img/img_qq.jpeg)。
 
 
 
