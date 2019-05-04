@@ -214,7 +214,7 @@ Conv3d
 """""""""""""""""""""
 .. autoclass:: Conv3d
 
-Deconvolutions
+反卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DeConv2d
@@ -226,7 +226,7 @@ DeConv3d
 .. autoclass:: DeConv3d
 
 
-Deformable Convolutions
+Deformable 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DeformableConv2d
@@ -234,7 +234,7 @@ DeformableConv2d
 .. autoclass:: DeformableConv2d
 
 
-Depthwise Convolutions
+Depthwise 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DepthwiseConv2d
@@ -242,7 +242,7 @@ DepthwiseConv2d
 .. autoclass:: DepthwiseConv2d
 
 
-Group Convolutions
+Group 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 GroupConv2d
@@ -250,7 +250,7 @@ GroupConv2d
 .. autoclass:: GroupConv2d
 
 
-Separable Convolutions
+Separable 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SeparableConv1d
@@ -262,7 +262,7 @@ SeparableConv2d
 .. autoclass:: SeparableConv2d
 
 
-SubPixel Convolutions
+SubPixel 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SubpixelConv1d
@@ -278,14 +278,15 @@ SubpixelConv2d
 ..                        Dense Layers
 .. -----------------------------------------------------------
 
-Dense Layers
+全连接层
 -------------
 
-Dense Layer
+全连接层
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Dense
 
-Drop Connect Dense Layer
+Drop Connection 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DropconnectDense
 
@@ -294,7 +295,7 @@ Drop Connect Dense Layer
 ..                       Dropout Layer
 .. -----------------------------------------------------------
 
-Dropout Layers
+Dropout 层
 -------------------
 .. autoclass:: Dropout
 
@@ -302,15 +303,15 @@ Dropout Layers
 ..                        Extend Layers
 .. -----------------------------------------------------------
 
-Extend Layers
+拓展层
 -------------------
 
-Expand Dims Layer
+Expand Dims 层
 ^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: ExpandDims
 
 
-Tile layer
+Tile 层
 ^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Tile
 
@@ -318,14 +319,14 @@ Tile layer
 ..                  Image Resampling Layers
 .. -----------------------------------------------------------
 
-Image Resampling Layers
+图像重采样层
 -------------------------
 
-2D UpSampling
+2D 上采样层
 ^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: UpSampling2d
 
-2D DownSampling
+2D 下采样层
 ^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: DownSampling2d
 
@@ -333,14 +334,14 @@ Image Resampling Layers
 ..                      Lambda Layer
 .. -----------------------------------------------------------
 
-Lambda Layers
+Lambda 层
 ---------------
 
-Lambda Layer
+普通 Lambda 层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Lambda
 
-ElementWise Lambda Layer
+逐点 Lambda 层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: ElementwiseLambda
 
@@ -348,14 +349,14 @@ ElementWise Lambda Layer
 ..                      Merge Layer
 .. -----------------------------------------------------------
 
-Merge Layers
+合并层
 ---------------
 
-Concat Layer
+合并连接层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Concat
 
-ElementWise Layer
+逐点合并层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Elementwise
 
@@ -363,7 +364,7 @@ ElementWise Layer
 ..                      Noise Layers
 .. -----------------------------------------------------------
 
-Noise Layer
+噪声层
 ---------------
 .. autoclass:: GaussianNoise
 
@@ -371,30 +372,30 @@ Noise Layer
 ..                  Normalization Layers
 .. -----------------------------------------------------------
 
-Normalization Layers
+标准化层
 --------------------
 
-Batch Normalization
+Batch 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: BatchNorm
 
-Local Response Normalization
+Local Response 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LocalResponseNorm
 
-Instance Normalization
+Instance 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InstanceNorm
 
-Layer Normalization
+Layer 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LayerNorm
 
-Group Normalization
+Group 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GroupNorm
 
-Switch Normalization
+Switch 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: SwitchNorm
 
@@ -402,24 +403,23 @@ Switch Normalization
 ..                     Padding Layers
 .. -----------------------------------------------------------
 
-Padding Layers
+填充层
 ------------------------
 
-Pad Layer (Expert API)
+填充层 (底层 API)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Padding layer for any modes.
 
 .. autoclass:: PadLayer
 
-1D Zero padding
+1D Zero 填充层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: ZeroPad1d
 
-2D Zero padding
+2D Zero 填充层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: ZeroPad2d
 
-3D Zero padding
+3D Zero 填充层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: ZeroPad3d
 
@@ -427,64 +427,63 @@ Padding layer for any modes.
 ..                     Pooling Layers
 .. -----------------------------------------------------------
 
-Pooling Layers
+池化层
 ------------------------
 
-Pool Layer (Expert API)
+池化层 (底层 API)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-Pooling layer for any dimensions and any pooling functions.
 
 .. autoclass:: PoolLayer
 
-1D Max pooling
+1D Max 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MaxPool1d
 
-1D Mean pooling
+1D Mean 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MeanPool1d
 
-2D Max pooling
+2D Max 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MaxPool2d
 
-2D Mean pooling
+2D Mean 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MeanPool2d
 
-3D Max pooling
+3D Max 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MaxPool3d
 
-3D Mean pooling
+3D Mean 池化层
 ^^^^^^^^^^^^^^^^^^^
 .. autoclass:: MeanPool3d
 
-1D Global Max pooling
+1D Global Max 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMaxPool1d
 
-1D Global Mean pooling
+1D Global Mean 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMeanPool1d
 
-2D Global Max pooling
+2D Global Max 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMaxPool2d
 
-2D Global Mean pooling
+2D Global Mean 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMeanPool2d
 
-3D Global Max pooling
+3D Global Max 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMaxPool3d
 
-3D Global Mean pooling
+3D Global Mean 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMeanPool3d
 
-2D Corner pooling
+2D Corner 池化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: CornerPool2d
 
@@ -492,13 +491,10 @@ Pooling layer for any dimensions and any pooling functions.
 ..                    Quantized Layers
 .. -----------------------------------------------------------
 
-Quantized Nets
+量化网络层
 ------------------
 
-This is an experimental API package for building Quantized Neural Networks. We are using matrix multiplication rather than add-minus and bit-count operation at the moment. Therefore, these APIs would not speed up the inferencing, for production, you can train model via TensorLayer and deploy the model into other customized C/C++ implementation (We probably provide users an extra C/C++ binary net framework that can load model from TensorLayer).
-
-Note that, these experimental APIs can be changed in the future.
-
+这些层目前还是用矩阵实现的运算，未来我们将提供 bit-count 操作，以实现加速。
 
 Sign
 ^^^^^^^^^^^^^^
@@ -508,57 +504,57 @@ Scale
 ^^^^^^^^^^^^^^
 .. autoclass:: Scale
 
-Binary Dense Layer
+Binary 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: BinaryDense
 
-Binary (De)Convolutions
+Binary (De)卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 BinaryConv2d
 """""""""""""""""""""
 .. autoclass:: BinaryConv2d
 
-Ternary Dense Layer
+Ternary 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TernaryDense
 """""""""""""""""""""
 .. autoclass:: TernaryDense
 
-Ternary Convolutions
+Ternary 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TernaryConv2d
 """""""""""""""""""""
 .. autoclass:: TernaryConv2d
 
-DoReFa Convolutions
+DoReFa 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DorefaConv2d
 """""""""""""""""""""
 .. autoclass:: DorefaConv2d
 
-DoReFa Convolutions
+DoReFa 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DorefaConv2d
 """""""""""""""""""""
 .. autoclass:: DorefaConv2d
 
-Quantization Dense Layer
+Quantization 全连接层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 QuantizedDense
 """""""""""""""""""""
 .. autoclass:: QuantizedDense
 
-QuantizedDenseWithBN
+QuantizedDenseWithBN 全连接层+批标准化
 """"""""""""""""""""""""""""""""""""
 .. autoclass:: QuantizedDenseWithBN
 
-Quantization Convolutions
+Quantization 卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Quantization
@@ -574,23 +570,22 @@ QuantizedConv2dWithBN
 ..                  Recurrent Layers
 .. -----------------------------------------------------------
 
-Recurrent Layers
+循环层
 ---------------------
 
-Common Recurrent layer
+普通循环层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-All recurrent layers can implement any type of RNN cell by feeding different cell function (LSTM, GRU etc).
 
-RNN layer
+RNN 层
 """"""""""""""""""""""""""
 .. autoclass:: RNN
 
-Bidirectional layer
+Bidirectional 层
 """""""""""""""""""""""""""""""""
 .. autoclass:: BiRNN
 
 
-Recurrent Convolution
+循环+卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Conv RNN Cell
@@ -601,32 +596,30 @@ Basic Conv LSTM Cell
 """""""""""""""""""""""""""""""""
 .. autoclass:: BasicConvLSTMCell
 
-Conv LSTM layer
+Conv LSTM 层
 """""""""""""""""""""""""""""""""
 .. autoclass:: ConvLSTM
 
-Simple Seq2Seq
+简单 Seq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Seq2Seq
 
-Advanced Ops for Dynamic RNN
+计算步长函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-These operations usually be used inside Dynamic RNN layer, they can
-compute the sequence lengths for different situation and get the last RNN outputs by indexing.
 
-Compute Sequence length 1
+方法 1
 """"""""""""""""""""""""""
 .. autofunction:: retrieve_seq_length_op
 
-Compute Sequence length 2
+方法 2
 """"""""""""""""""""""""""
 .. autofunction:: retrieve_seq_length_op2
 
-Compute Sequence length 3
+方法 3
 """"""""""""""""""""""""""
 .. autofunction:: retrieve_seq_length_op3
 
-Get Mask
+计算掩码
 """"""""""""""""""""""""""
 .. autofunction:: target_mask_op
 
@@ -636,22 +629,22 @@ Get Mask
 ..                      Shape Layers
 .. -----------------------------------------------------------
 
-Shape Layers
+形状修改层
 ------------
 
-Flatten Layer
+Flatten 层
 ^^^^^^^^^^^^^^^
 .. autoclass:: Flatten
 
-Reshape Layer
+Reshape 层
 ^^^^^^^^^^^^^^^
 .. autoclass:: Reshape
 
-Transpose Layer
+Transpose 层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: Transpose
 
-Shuffle Layer
+Shuffle 层
 ^^^^^^^^^^^^^^^^^
 .. autoclass:: Shuffle
 
@@ -659,18 +652,18 @@ Shuffle Layer
 ..               Spatial Transformer Layers
 .. -----------------------------------------------------------
 
-Spatial Transformer
+空间变换层
 -----------------------
 
-2D Affine Transformation
+2D Affine Transformation 层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: SpatialTransformer2dAffine
 
-2D Affine Transformation function
+2D Affine Transformation 函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: transformer
 
-Batch 2D Affine Transformation function
+Batch 2D Affine Transformation 函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: batch_transformer
 
@@ -678,14 +671,14 @@ Batch 2D Affine Transformation function
 ..                      Stack Layers
 .. -----------------------------------------------------------
 
-Stack Layer
+堆叠层
 -------------
 
-Stack Layer
+堆叠层
 ^^^^^^^^^^^^^^
 .. autoclass:: Stack
 
-Unstack Layer
+反堆叠层
 ^^^^^^^^^^^^^^^
 .. autoclass:: UnStack
 
@@ -694,18 +687,18 @@ Unstack Layer
 ..                      Helper Functions
 .. -----------------------------------------------------------
 
-Helper Functions
+帮助函数
 ------------------------
 
-Flatten tensor
+Flatten 函数
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: flatten_reshape
 
-Initialize RNN state
+初始化 循环层 状态
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: initialize_rnn_state
 
-Remove repeated items in a list
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+去除列表中重复元素
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: list_remove_repeat
 
