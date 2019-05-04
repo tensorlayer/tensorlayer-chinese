@@ -35,7 +35,6 @@ TensorLayer用户指南说明了如何去安装TensorFlow,CUDA和cuDNN，
    :maxdepth: 2
 
    user/installation
-   user/tutorial
    user/example
    user/development
    user/more
@@ -52,7 +51,6 @@ API目录
   modules/activation
   modules/array_ops
   modules/cost
-  modules/distributed
   modules/files
   modules/iterate
   modules/layers
@@ -69,6 +67,8 @@ API目录
   :caption: 开发中模块
 
   modules/db
+  modules/optimizers
+  modules/distributed
 
 命令行界面
 ----------------------
