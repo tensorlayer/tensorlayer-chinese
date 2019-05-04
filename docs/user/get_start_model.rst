@@ -65,8 +65,10 @@ TensorLayer提供两种模型定义模型，静态模型提供直观的代码风
   outputs = MLP(data, foo=True) # controls the forward here
   outputs = MLP(data, foo=False)
 
-重用参数
-=====================咋
+参数（层）复用
+=====================
+
+静态模型的层复用可以如下实现。
 
 .. code-block:: python
 
@@ -98,7 +100,7 @@ TensorLayer提供两种模型定义模型，静态模型提供直观的代码风
 
   siamese_net = get_siamese_network([None, 784])
 
-For dynamic model, call the layer multiple time in forward function
+动态模型的层复用可在forward时简单地通过多次调用来实现。
 
 .. code-block:: python
 
@@ -120,7 +122,7 @@ For dynamic model, call the layer multiple time in forward function
 
   model = MyModel()
 
-Print model information
+显示模型信息
 =======================
 
 .. code-block:: python
@@ -137,10 +139,10 @@ Print model information
   #   (dense_2): Dense(n_units=10, relu, in_channels='800', name='dense_2')
   # )
 
-Get specific weights
+获取特定参数
 =======================
 
-We can get the specific weights by indexing or naming.
+我们可以通过层的名字或者参数的索引来获取特定参数。
 
 .. code-block:: python
 
@@ -151,14 +153,12 @@ We can get the specific weights by indexing or naming.
   # naming
   some_weights = MLP.get_layer('dense1').weights
 
-
-Save and restore model
+保存和恢复模型
 =======================
 
-We provide two ways to save and restore models
+我们提供两种方法保存和回复模型。
 
-
-Save weights only
+只保留参数
 ------------------
 
 .. code-block:: python
@@ -166,7 +166,7 @@ Save weights only
   MLP.save_weights('./model_weights.h5') # by default, file will be in hdf5 format
   MLP.load_weights('./model_weights.h5')
 
-Save model architecture and weights(optional)
+保留参数和网络结构
 ---------------------------------------------
 
 .. code-block:: python
@@ -175,10 +175,10 @@ Save model architecture and weights(optional)
   MLP.save('./model.h5', save_weights=True)
   MLP = Model.load('./model.h5', load_weights=True)
 
-Customizing layer
+自定义层
 ==================
 
-The fully-connected layer is
+全连接层的实现如下，以供参考。
 
 z = f(x*W+b)
 
