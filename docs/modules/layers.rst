@@ -1,258 +1,37 @@
 API - 神经网络层
-=========================
-
-为了尽可能地保持TensorLayer的简洁性，我们最小化Layer的数量，因此我们鼓励用户直接使用 TensorFlow官方的函数。
-例如，虽然我们提供local response normalization layer，但用户也可以在 ``network.outputs`` 上使用 ``tf.nn.lrn()`` 来实现之。
-更多TensorFlow官方函数请看 `这里 <https://www.tensorflow.org/versions/master/api_docs/index.html>`_。
-
-
-了解层
----------------
-
-所有TensorLayer层有如下的属性：
-
- - ``layer.outputs`` : 一个 Tensor，当前层的输出。
- - ``layer.all_params`` : 一列 Tensor, 神经网络每一个参数。
- - ``layer.all_layers`` : 一列 Tensor, 神经网络每一层输出。
- - ``layer.all_drop`` : 一个字典 {placeholder : 浮点数}, 噪声层的概率。
-
-所有TensorLayer层有如下的方法：
-
- - ``layer.print_params()`` : 打印出神经网络的参数信息（在执行 ``tl.layers.initialize_global_variables(sess)`` 之后）。另外，也可以使用 ``tl.layers.print_all_variables()`` 来打印出所有参数的信息。
- - ``layer.print_layers()`` : 打印出神经网络每一层输出的信息。
- - ``layer.count_params()`` : 打印出神经网络参数的数量。
-
-
-
-神经网络的初始化是通过输入层实现的，然后我们可以像下面的代码那样把不同的层堆叠在一起，实现一个完整的神经网络，因此一个神经网络其实就是一个 ``Layer`` 类。
-神经网络中最重要的属性有 ``network.all_params``, ``network.all_layers`` 和 ``network.all_drop``.
-其中 ``all_params`` 是一个列表(list)，它按顺序保存了指向神经网络参数(variables)的指针，下面的代码定义了一个三层神经网络，则:
-
-``all_params`` = [W1, b1, W2, b2, W_out, b_out]
-
-若需要取出特定的参数，您可以通过 ``network.all_params[2:3]`` 或 ``get_variables_with_name()`` 函数。
-然而 ``all_layers`` 也是一个列表(list)，它按顺序保存了指向神经网络每一层输出的指针，在下面的网络中，则：
-
-``all_layers`` = [drop(?,784), relu(?,800), drop(?,800), relu(?,800), drop(?,800)], identity(?,10)]
-
-其中 ``?`` 代表任意batch size都可以。
-你可以通过 ``network.print_layers()`` 和 ``network.print_params()`` 打印出每一层输出的信息以及每一个参数的信息。
-若想参看神经网络中有多少个参数，则运行 ``network.count_params()`` 。
-
-
-.. code-block:: python
-
-  sess = tf.InteractiveSession()
-
-  x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
-  y_ = tf.placeholder(tf.int64, shape=[None, ], name='y_')
-
-  network = tl.layers.InputLayer(x, name='input_layer')
-  network = tl.layers.DropoutLayer(network, keep=0.8, name='drop1')
-  network = tl.layers.DenseLayer(network, n_units=800,
-                                  act = tf.nn.relu, name='relu1')
-  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop2')
-  network = tl.layers.DenseLayer(network, n_units=800,
-                                  act = tf.nn.relu, name='relu2')
-  network = tl.layers.DropoutLayer(network, keep=0.5, name='drop3')
-  network = tl.layers.DenseLayer(network, n_units=10,
-                                  act = tl.activation.identity,
-                                  name='output_layer')
-
-  y = network.outputs
-  y_op = tf.argmax(tf.nn.softmax(y), 1)
-
-  cost = tl.cost.cross_entropy(y, y_, name='ce')
-
-  train_params = network.all_params
-
-  train_op = tf.train.AdamOptimizer(learning_rate, beta1=0.9, beta2=0.999,
-                              epsilon=1e-08, use_locking=False).minimize(cost, var_list = train_params)
-
-  tl.layers.initialize_global_variables(sess)
-
-  network.print_params()
-  network.print_layers()
-
-另外，``network.all_drop`` 是一个字典，它保存了噪声层（比如dropout）的 keeping 概率。
-在上面定义的神经网络中，它保存了三个dropout层的keeping概率。
-
-因此，在训练时如下启用dropout层。
-
-.. code-block:: python
-
-  feed_dict = {x: X_train_a, y_: y_train_a}
-  feed_dict.update( network.all_drop )
-  loss, _ = sess.run([cost, train_op], feed_dict=feed_dict)
-  feed_dict.update( network.all_drop )
-
-在测试时，如下关闭dropout层。
-
-.. code-block:: python
-
-  feed_dict = {x: X_val, y_: y_val}
-  feed_dict.update(dp_dict)
-  print("   val loss: %f" % sess.run(cost, feed_dict=feed_dict))
-  print("   val acc: %f" % np.mean(y_val ==
-                          sess.run(y_op, feed_dict=feed_dict)))
-
-更多细节，请看 MNIST 例子。
-
-
-自定义层
-----------
-
-一个简单的层
-^^^^^^^^^^^^^^^
-
-实现一个自定义层，你需要写一个新的Python类，然后实现 ``outputs`` 表达式。
-
-下面的例子实现了把输入乘以2，然后输出。
-
-.. code-block:: python
-
-  class DoubleLayer(Layer):
-      def __init__(
-          self,
-          layer = None,
-          name ='double_layer',
-      ):
-          # 校验名字是否已被使用，提供层管理（不变）
-          super(DoubleLayer, self).__init__(prev_layer=prev_layer, name=name)
-
-          # 本层输入是上层的输出（不变）
-          self.inputs = layer.outputs
-
-          # 输出信息（自定义部分）
-          print("  I am DoubleLayer")
-
-          # 本层的功能实现（自定义部分）
-          self.outputs = self.inputs * 2
-
-          # 更新层的参数（自定义部分）
-          self._add_layers(self.outputs)
-
-
-你的Dense层
-^^^^^^^^^^^^^^^
-
-在创造自定义层之前，我们来看看全连接（Dense）层是如何实现的。
-若不存在Weights矩阵和Biases向量时，它新建之，然后通过给定的激活函数计算出 ``outputs`` 。
-在最后，作为一个有新参数的层，我们需要把新参数附加到 ``all_params`` 中。
-
-
-.. code-block:: python
-
-  class MyDenseLayer(Layer):
-    def __init__(
-        self,
-        layer = None,
-        n_units = 100,
-        act = tf.nn.relu,
-        name ='simple_dense',
-    ):
-        # 校验名字是否已被使用，提供层管理（不变）
-        super(MyDenseLayer, self).__init__(prev_layer=prev_layer, act=act, name=name)
-
-        # 本层输入是上层的输出（不变）
-        self.inputs = layer.outputs
-
-        # 输出信息（自定义部分）
-        print("  MyDenseLayer %s: %d, %s" % (self.name, n_units, act))
-
-        # 本层的功能实现（自定义部分）
-        n_in = int(self.inputs._shape[-1])  # 获取上一层输出的数量
-        with tf.variable_scope(name) as vs:
-            # 新建参数
-            W = tf.get_variable(name='W', shape=(n_in, n_units))
-            b = tf.get_variable(name='b', shape=(n_units))
-            # tensor操作
-            self.outputs = self._apply_activation(tf.matmul(self.inputs, W) + b)
-
-        # 更新层的参数（自定义部分）
-        self._add_layers(self.outputs)
-        self._add_params([W, b])
-
-修改预训练行为
-^^^^^^^^^^^^^^^
-
-逐层贪婪预训练方法(Greedy layer-wise pretrain)是深度神经网络的初始化非常重要的一种方法，
-不过对不同的网络结构和应用，往往有不同的预训练的方法。
-
-例如 `"普通"稀疏自编码器(Vanilla Sparse Autoencoder ) <http://deeplearning.stanford.edu/wiki/index.php/Autoencoders_and_Sparsity>`_ 如下面的代码所示，使用 KL divergence 实现（对应于sigmoid)，
-但是对于 `深度整流神经网络(Deep Rectifier Network) <http://www.jmlr.org/proceedings/papers/v15/glorot11a/glorot11a.pdf>`_ ，
-可以通过对神经元输出进行L1规则化来实现稀疏。
-
-
-.. code-block:: python
-
-  # Vanilla Sparse Autoencoder
-  beta = 4
-  rho = 0.15
-  p_hat = tf.reduce_mean(activation_out, reduction_indices = 0)
-  KLD = beta * tf.reduce_sum( rho * tf.log(tf.div(rho, p_hat))
-          + (1- rho) * tf.log((1- rho)/ (tf.sub(float(1), p_hat))) )
-
-预训练的方法太多了，出于这个原因，TensorLayer 提供了一种简单的方法来自定义自己的预训练方法。
-对于自编码器，TensorLayer 使用 ``ReconLayer.__init__()`` 来定义重构层（reconstruction layer）和损失函数。
-要自定义自己的损失函数，只需要在 ``ReconLayer.__init__()`` 中修改 ``self.cost`` 就可以了。
-如何写出自己的损失函数，请阅读  `Tensorflow Math <https://www.tensorflow.org/versions/master/api_docs/python/math_ops.html>`_ 。
-默认情况下， ``重构层(ReconLayer)`` 只使用 ``self.train_params = self.all _params[-4:]`` 来更新前一层的 Weights 和 Biases，这4个参数为 ``[W_encoder，b_encoder，W_decoder，b_decoder]`` ，其中 ``W_encoder，b_encoder`` 属于之前的 Dense 层，  ``W_decoder，b_decoder]`` 属于当前的重构层。
-此外，如果您想要同时更新前 2 层的参数，只需要修改 ``[-4:]`` 为 ``[-6:]``。
-
-.. code-block:: python
-
-  ReconLayer.__init__(...):
-      ...
-      self.train_params = self.all_params[-4:]
-      ...
-  	self.cost = mse + L1_a + L2_w
-
-
-层预览表
----------
-
-Layer list
-----------
+================
 
 .. automodule:: tensorlayer.layers
 
-.. autosummary::
+.. -----------------------------------------------------------
+..                        Layer List
+.. -----------------------------------------------------------
 
-   get_variables_with_name
-   get_layers_with_name
-   set_name_reuse
-   print_all_variables
-   initialize_global_variables
+神经网络层列表
+--------------
+
+.. autosummary::
 
    Layer
 
-   InputLayer
-   OneHotInputLayer
-   Word2vecEmbeddingInputlayer
-   EmbeddingInputlayer
-   AverageEmbeddingInputlayer
+   Input
 
-   DenseLayer
-   ReconLayer
-   DropoutLayer
-   GaussianNoiseLayer
-   DropconnectDenseLayer
+   OneHot
+   Word2vecEmbedding
+   Embedding
+   AverageEmbedding
 
-   Conv1dLayer
-   Conv2dLayer
-   DeConv2dLayer
-   Conv3dLayer
-   DeConv3dLayer
+   Dense
+   Dropout
+   GaussianNoise
+   DropconnectDense
 
-   UpSampling2dLayer
-   DownSampling2dLayer
-   AtrousConv1dLayer
-   AtrousConv2dLayer
-   AtrousDeConv2dLayer
+   UpSampling2d
+   DownSampling2d
 
    Conv1d
    Conv2d
+   Conv3d
    DeConv2d
    DeConv3d
    DepthwiseConv2d
@@ -278,97 +57,89 @@ Layer list
    GlobalMeanPool2d
    GlobalMaxPool3d
    GlobalMeanPool3d
+   CornerPool2d
 
    SubpixelConv1d
    SubpixelConv2d
 
-   SpatialTransformer2dAffineLayer
+   SpatialTransformer2dAffine
    transformer
    batch_transformer
 
-   BatchNormLayer
-   LocalResponseNormLayer
-   InstanceNormLayer
-   LayerNormLayer
-   SwitchNormLayer
+   BatchNorm
+   LocalResponseNorm
+   InstanceNorm
+   LayerNorm
+   GroupNorm
+   SwitchNorm
 
    ROIPoolingLayer
 
-   TimeDistributedLayer
-
-   RNNLayer
-   BiRNNLayer
+   RNN
+   BiRNN
 
    ConvRNNCell
    BasicConvLSTMCell
-   ConvLSTMLayer
+   ConvLSTM
 
-   advanced_indexing_op
    retrieve_seq_length_op
    retrieve_seq_length_op2
    retrieve_seq_length_op3
    target_mask_op
-   DynamicRNNLayer
-   BiDynamicRNNLayer
 
    Seq2Seq
 
-   FlattenLayer
-   ReshapeLayer
-   TransposeLayer
+   Flatten
+   Reshape
+   Transpose
+   Shuffle
 
-   LambdaLayer
+   Lambda
 
-   ConcatLayer
-   ElementwiseLayer
-   ElementwiseLambdaLayer
+   Concat
+   Elementwise
+   ElementwiseLambda
 
-   ExpandDimsLayer
-   TileLayer
+   ExpandDims
+   Tile
 
-   StackLayer
-   UnStackLayer
+   Stack
+   UnStack
 
-   SlimNetsLayer
+   SlimNets
 
-   SignLayer
-   ScaleLayer
-   BinaryDenseLayer
+   Sign
+   Scale
+   BinaryDense
    BinaryConv2d
-   TernaryDenseLayer
+   TernaryDense
    TernaryConv2d
-   DorefaDenseLayer
+   DorefaDense
    DorefaConv2d
-   QuanDenseLayer
-   QuanDenseLayerWithBN
-   QuanConv2d
-   QuanConv2dWithBN
+   QuantizedDense
+   QuantizedDenseWithBN
+   QuantizedConv2d
+   QuantizedConv2dWithBN
 
-   PReluLayer
-   PRelu6Layer
-   PTRelu6Layer
-
-   MultiplexerLayer
+   PRelu
+   PRelu6
+   PTRelu6
 
    flatten_reshape
-   clear_layers_name
    initialize_rnn_state
    list_remove_repeat
-   merge_networks
-
-
 
 .. -----------------------------------------------------------
-..                        基础层
+..                        Basic Layers
 .. -----------------------------------------------------------
 
-基础层
+层基础类
 -----------
 
 .. autoclass:: Layer
 
 .. -----------------------------------------------------------
-..                        输入层
+..                        Input Layer
 .. -----------------------------------------------------------
 
 输入层
@@ -376,58 +147,60 @@ Layer list
 
 普通输入层
 ^^^^^^^^^^^^^^^^
-.. autoclass:: InputLayer
+.. autofunction:: Input
+
+.. -----------------------------------------------------------
+..                        Embedding Layers
+.. -----------------------------------------------------------
 
 One-hot 输入层
 ^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: OneHotInputLayer
+.. autoclass:: OneHot
 
 Word2Vec Embedding 输入层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Word2vecEmbeddingInputlayer
+.. autoclass:: Word2vecEmbedding
 
 Embedding 输入层
 ^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: EmbeddingInputlayer
+.. autoclass:: Embedding
 
 Average Embedding 输入层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: AverageEmbeddingInputlayer
+.. autoclass:: AverageEmbedding
 
 .. -----------------------------------------------------------
-..                     激活层
+..                     Activation Layers
 .. -----------------------------------------------------------
 
 
-激活层
+有参数激活函数层
 ---------------------------
 
 PReLU 层
 ^^^^^^^^^^^^^^^^^
-.. autoclass:: PReluLayer
+.. autoclass:: PRelu
 
 
 PReLU6 层
 ^^^^^^^^^^^^^^^^^^
-.. autoclass:: PRelu6Layer
+.. autoclass:: PRelu6
 
 
 PTReLU6 层
 ^^^^^^^^^^^^^^^^^^^
-.. autoclass:: PTRelu6Layer
+.. autoclass:: PTRelu6
 
 
 .. -----------------------------------------------------------
-..                  卷积层
+..                  Convolutional Layers
 .. -----------------------------------------------------------
 
 卷积层
 ---------------------
 
-简化卷积 API
+卷积层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-简化卷积层适合对TensorFlow和底层卷积操作不熟悉的用户。
 
 Conv1d
 """""""""""""""""""""
@@ -437,8 +210,11 @@ Conv2d
 """""""""""""""""""""
 .. autoclass:: Conv2d
 
+Conv3d
+"""""""""""""""""""""
+.. autoclass:: Conv3d
 
-简化反卷积层
+Deconvolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DeConv2d
@@ -450,50 +226,7 @@ DeConv3d
 .. autoclass:: DeConv3d
 
 
-原生卷积 API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Conv1dLayer
-"""""""""""""""""""""
-.. autoclass:: Conv1dLayer
-
-Conv2dLayer
-"""""""""""""""""""""
-.. autoclass:: Conv2dLayer
-
-Conv3dLayer
-"""""""""""""""""""""
-.. autoclass:: Conv3dLayer
-
-
-原生反卷积 API
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-DeConv2dLayer
-"""""""""""""""""""""
-.. autoclass:: DeConv2dLayer
-
-DeConv3dLayer
-"""""""""""""""""""""
-.. autoclass:: DeConv3dLayer
-
-
-Atrous (De)卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-AtrousConv1dLayer
-"""""""""""""""""""""
-.. autofunction:: AtrousConv1dLayer
-
-AtrousConv2dLayer
-"""""""""""""""""""""
-.. autoclass:: AtrousConv2dLayer
-
-AtrousDeConv2dLayer
-"""""""""""""""""""""
-.. autoclass:: AtrousDeConv2dLayer
-
-Deformable 卷积层
+Deformable Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DeformableConv2d
@@ -501,7 +234,7 @@ DeformableConv2d
 .. autoclass:: DeformableConv2d
 
 
-Depthwise 卷积层
+Depthwise Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DepthwiseConv2d
@@ -509,7 +242,7 @@ DepthwiseConv2d
 .. autoclass:: DepthwiseConv2d
 
 
-Group 卷积层
+Group Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 GroupConv2d
@@ -517,7 +250,7 @@ GroupConv2d
 .. autoclass:: GroupConv2d
 
 
-Separable 卷积层
+Separable Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SeparableConv1d
@@ -529,7 +262,7 @@ SeparableConv2d
 .. autoclass:: SeparableConv2d
 
 
-SubPixel 卷积层
+SubPixel Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 SubpixelConv1d
@@ -541,168 +274,140 @@ SubpixelConv2d
 .. autoclass:: SubpixelConv2d
 
 
-
-
 .. -----------------------------------------------------------
-..                        全连接层
+..                        Dense Layers
 .. -----------------------------------------------------------
 
-全连接层
-------------
+Dense Layers
+-------------
 
-全连接层
+Dense Layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DenseLayer
+.. autoclass:: Dense
 
-Drop Connect 全连接层
+Drop Connect Dense Layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DropconnectDenseLayer
+.. autoclass:: DropconnectDense
 
 
 .. -----------------------------------------------------------
-..                       Dropout 层
+..                       Dropout Layer
 .. -----------------------------------------------------------
 
-Dropout 层
+Dropout Layers
 -------------------
-.. autoclass:: DropoutLayer
+.. autoclass:: Dropout
 
 .. -----------------------------------------------------------
-..                        Extend 层
+..                        Extend Layers
 .. -----------------------------------------------------------
 
-Extend 层
+Extend Layers
 -------------------
 
-Expand Dims 层
+Expand Dims Layer
 ^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ExpandDimsLayer
+.. autoclass:: ExpandDims
 
 
-Tile 层
+Tile layer
 ^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TileLayer
-
-
-.. -----------------------------------------------------------
-..                 与其他库对接
-.. -----------------------------------------------------------
-
-与其他库对接
-------------------------------
-
-TF-Slim 层
-^^^^^^^^^^^^^^^^^^^
-与Google Tf-slim对接，所有预训练模型都可直接使用，请见 `Slim-model <https://github.com/tensorflow/models/tree/master/research/slim>`__；此外，也可以使用`tf.models` API。
-
-.. autoclass:: SlimNetsLayer
-
+.. autoclass:: Tile
 
 .. -----------------------------------------------------------
-..                    Flow Control 层
+..                  Image Resampling Layers
 .. -----------------------------------------------------------
 
-Flow Control 层
-----------------------
-.. autoclass:: MultiplexerLayer
-
-.. -----------------------------------------------------------
-..                  Image Resampling 层
-.. -----------------------------------------------------------
-
-Image Resampling 层
+Image Resampling Layers
 -------------------------
 
 2D UpSampling
 ^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: UpSampling2dLayer
+.. autoclass:: UpSampling2d
 
 2D DownSampling
 ^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DownSampling2dLayer
+.. autoclass:: DownSampling2d
 
 .. -----------------------------------------------------------
-..                      Lambda 层
+..                      Lambda Layer
 .. -----------------------------------------------------------
 
-Lambda 层
+Lambda Layers
 ---------------
 
-Lambda 层
+Lambda Layer
 ^^^^^^^^^^^^^^^^^^^
-.. autoclass:: LambdaLayer
+.. autoclass:: Lambda
 
-ElementWise Lambda 逐点操作层
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ElementwiseLambdaLayer
+ElementWise Lambda Layer
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: ElementwiseLambda
 
 .. -----------------------------------------------------------
-..                      Merge 层
+..                      Merge Layer
 .. -----------------------------------------------------------
 
-Merge 层
+Merge Layers
 ---------------
 
-Concat 层
+Concat Layer
 ^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ConcatLayer
+.. autoclass:: Concat
 
-ElementWise 层
+ElementWise Layer
 ^^^^^^^^^^^^^^^^^^^
-.. autoclass:: ElementwiseLayer
+.. autoclass:: Elementwise
 
 .. -----------------------------------------------------------
-..                      Noise 层
+..                      Noise Layers
 .. -----------------------------------------------------------
 
-Noise 层
+Noise Layer
 ---------------
-.. autoclass:: GaussianNoiseLayer
+.. autoclass:: GaussianNoise
 
 .. -----------------------------------------------------------
-..                  Normalization 层
+..                  Normalization Layers
 .. -----------------------------------------------------------
 
-Normalization 层
+Normalization Layers
 --------------------
 
 Batch Normalization
 ^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: BatchNormLayer
+.. autoclass:: BatchNorm
 
 Local Response Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: LocalResponseNormLayer
+.. autoclass:: LocalResponseNorm
 
 Instance Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: InstanceNormLayer
+.. autoclass:: InstanceNorm
 
 Layer Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: LayerNormLayer
+.. autoclass:: LayerNorm
+
+Group Normalization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: GroupNorm
 
 Switch Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: SwitchNormLayer
+.. autoclass:: SwitchNorm
 
 .. -----------------------------------------------------------
-..                Object Detection 层
+..                     Padding Layers
 .. -----------------------------------------------------------
 
-Object Detection 层
-------------------------
-.. autoclass:: ROIPoolingLayer
-
-.. -----------------------------------------------------------
-..                     Padding 层
-.. -----------------------------------------------------------
-
-Padding 层
+Padding Layers
 ------------------------
 
-Pad Layer (原生 API)
+Pad Layer (Expert API)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+Padding layer for any modes.
 
 .. autoclass:: PadLayer
 
@@ -719,14 +424,15 @@ Pad Layer (原生 API)
 .. autoclass:: ZeroPad3d
 
 .. -----------------------------------------------------------
-..                     Pooling 层
+..                     Pooling Layers
 .. -----------------------------------------------------------
 
-Padding 层
+Pooling Layers
 ------------------------
 
-Pool Layer (原生 API)
+Pool Layer (Expert API)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+Pooling layer for any dimensions and any pooling functions.
 
 .. autoclass:: PoolLayer
 
@@ -778,101 +484,113 @@ Pool Layer (原生 API)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: GlobalMeanPool3d
 
+2D Corner pooling
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: CornerPool2d
+
 .. -----------------------------------------------------------
-..                    Quantized 量化网络
+..                    Quantized Layers
 .. -----------------------------------------------------------
 
-Quantized Nets 量化网络
--------------------------
+Quantized Nets
+------------------
 
-关于TensorLayer量化网络，请见 `知乎文章 <https://zhuanlan.zhihu.com/p/37220669>`__。
+This is an experimental API package for building Quantized Neural Networks. We are using matrix multiplication rather than add-minus and bit-count operation at the moment. Therefore, these APIs would not speed up the inferencing, for production, you can train model via TensorLayer and deploy the model into other customized C/C++ implementation (We probably provide users an extra C/C++ binary net framework that can load model from TensorLayer).
+
+Note that, these experimental APIs can be changed in the future.
+
 
 Sign
 ^^^^^^^^^^^^^^
-.. autoclass:: SignLayer
+.. autoclass:: Sign
 
 Scale
 ^^^^^^^^^^^^^^
-.. autoclass:: ScaleLayer
+.. autoclass:: Scale
 
-Binary 全连接层
+Binary Dense Layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: BinaryDenseLayer
+.. autoclass:: BinaryDense
 
-Binary (De)卷积层
+Binary (De)Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 BinaryConv2d
 """""""""""""""""""""
 .. autoclass:: BinaryConv2d
 
-
-Ternary 全连接层
+Ternary Dense Layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: TernaryDenseLayer
 
-Ternary 卷积层
+TernaryDense
+"""""""""""""""""""""
+.. autoclass:: TernaryDense
+
+Ternary Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TernaryConv2d
 """""""""""""""""""""
 .. autoclass:: TernaryConv2d
 
-DoReFa 全连接层
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: DorefaDenseLayer
-
-DoReFa 卷积层
+DoReFa Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 DorefaConv2d
 """""""""""""""""""""
 .. autoclass:: DorefaConv2d
 
-
-Quantization 全连接层
+DoReFa Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-QuanDenseLayer
+DorefaConv2d
 """""""""""""""""""""
-.. autoclass:: QuanDenseLayer
+.. autoclass:: DorefaConv2d
 
-QuanDenseLayerWithBN
+Quantization Dense Layer
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+QuantizedDense
+"""""""""""""""""""""
+.. autoclass:: QuantizedDense
+
+QuantizedDenseWithBN
 """"""""""""""""""""""""""""""""""""
-.. autoclass:: QuanDenseLayerWithBN
+.. autoclass:: QuantizedDenseWithBN
 
-Quantization 卷积层
+Quantization Convolutions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Quantization
 """""""""""""""""""""
-.. autoclass:: QuanConv2d
+.. autoclass:: QuantizedConv2d
 
-QuanConv2dWithBN
+QuantizedConv2dWithBN
 """""""""""""""""""""
-.. autoclass:: QuanConv2dWithBN
+.. autoclass:: QuantizedConv2dWithBN
+
 
 .. -----------------------------------------------------------
-..                  递归层
+..                  Recurrent Layers
 .. -----------------------------------------------------------
 
-递归层
+Recurrent Layers
 ---------------------
 
-Fixed Length 递归层
+Common Recurrent layer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 All recurrent layers can implement any type of RNN cell by feeding different cell function (LSTM, GRU etc).
 
-RNN 层
+RNN layer
 """"""""""""""""""""""""""
-.. autoclass:: RNNLayer
+.. autoclass:: RNN
 
-Bidirectional 层
+Bidirectional layer
 """""""""""""""""""""""""""""""""
-.. autoclass:: BiRNNLayer
+.. autoclass:: BiRNN
 
 
-Recurrent Convolutional 层
+Recurrent Convolution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Conv RNN Cell
@@ -883,19 +601,18 @@ Basic Conv LSTM Cell
 """""""""""""""""""""""""""""""""
 .. autoclass:: BasicConvLSTMCell
 
-Conv LSTM 层
+Conv LSTM layer
 """""""""""""""""""""""""""""""""
-.. autoclass:: ConvLSTMLayer
+.. autoclass:: ConvLSTM
 
+Simple Seq2Seq
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: Seq2Seq
 
 Advanced Ops for Dynamic RNN
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 These operations usually be used inside Dynamic RNN layer, they can
 compute the sequence lengths for different situation and get the last RNN outputs by indexing.
-
-Output indexing
-"""""""""""""""""""""""""
-.. autofunction:: advanced_indexing_op
 
 Compute Sequence length 1
 """"""""""""""""""""""""""
@@ -914,44 +631,29 @@ Get Mask
 .. autofunction:: target_mask_op
 
 
-Dynamic RNN 层
-^^^^^^^^^^^^^^^^^^^^^^
-
-RNN 层
-""""""""""""""""""""""""""
-.. autoclass:: DynamicRNNLayer
-
-Bidirectional 层
-"""""""""""""""""""""""""""""""""
-.. autoclass:: BiDynamicRNNLayer
-
-
-Sequence to Sequence
-^^^^^^^^^^^^^^^^^^^^^^
-
-简单 Seq2Seq
-"""""""""""""""""
-.. autoclass:: Seq2Seq
-
 
 .. -----------------------------------------------------------
 ..                      Shape Layers
 .. -----------------------------------------------------------
 
-Shape 层
+Shape Layers
 ------------
 
-Flatten 层
+Flatten Layer
 ^^^^^^^^^^^^^^^
-.. autoclass:: FlattenLayer
+.. autoclass:: Flatten
 
-Reshape 层
+Reshape Layer
 ^^^^^^^^^^^^^^^
-.. autoclass:: ReshapeLayer
+.. autoclass:: Reshape
 
-Transpose 层
+Transpose Layer
 ^^^^^^^^^^^^^^^^^
-.. autoclass:: TransposeLayer
+.. autoclass:: Transpose
+
+Shuffle Layer
+^^^^^^^^^^^^^^^^^
+.. autoclass:: Shuffle
 
 .. -----------------------------------------------------------
 ..               Spatial Transformer Layers
@@ -962,63 +664,48 @@ Spatial Transformer
 
 2D Affine Transformation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: SpatialTransformer2dAffineLayer
+.. autoclass:: SpatialTransformer2dAffine
 
-2D Affine Transformation 函数
+2D Affine Transformation function
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: transformer
 
-Batch 2D Affine Transformation 函数
+Batch 2D Affine Transformation function
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: batch_transformer
 
 .. -----------------------------------------------------------
-..                      Stack 层
+..                      Stack Layers
 .. -----------------------------------------------------------
 
-Stack 层
+Stack Layer
 -------------
 
-Stack 层
+Stack Layer
 ^^^^^^^^^^^^^^
-.. autoclass:: StackLayer
+.. autoclass:: Stack
 
-Unstack 层
+Unstack Layer
 ^^^^^^^^^^^^^^^
-.. autoclass:: UnStackLayer
-
-.. -----------------------------------------------------------
-..                 Time Distributed 层
-.. -----------------------------------------------------------
-
-Time Distributed 层
-------------------------
-.. autoclass:: TimeDistributedLayer
+.. autoclass:: UnStack
 
 
 .. -----------------------------------------------------------
-..                      Helper 函数
+..                      Helper Functions
 .. -----------------------------------------------------------
 
-Helper 函数
+Helper Functions
 ------------------------
 
 Flatten tensor
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: flatten_reshape
 
-去除全局层名字
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: clear_layers_name
-
-初始化 RNN state
+Initialize RNN state
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: initialize_rnn_state
 
-去除列表中重复内容
+Remove repeated items in a list
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: list_remove_repeat
 
-合并网络
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: merge_networks
