@@ -4,7 +4,6 @@
 高级使用技巧
 ==================
 
-
 使用预训练卷积网络
 ================
 
@@ -23,8 +22,7 @@
   img = tl.prepro.imresize(img, (224, 224)).astype(np.float32) / 255
   output = vgg(img, is_train=False)
 
-获取整个卷积网络
-
+获取部分卷积网络
 ------------------
 
 .. code-block:: python
@@ -39,7 +37,7 @@
   # train your own classifier (only update the last layer)
   train_params = model.get_layer('out').weights
 
-Reu
+重用卷积网络
 ------------------
 
 .. code-block:: python
