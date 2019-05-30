@@ -62,7 +62,7 @@ API - 神经网络层
   y = network.outputs
   y_op = tf.argmax(tf.nn.softmax(y), 1)
 
-  cost = tl.cost.cross_entropy(y, y_, name='ce')
+  cost = tl.cost.cross_entropy(y, y_, name='ce') 
 
   train_params = network.all_params
 
@@ -722,7 +722,7 @@ Pad Layer (原生 API)
 ..                     Pooling 层
 .. -----------------------------------------------------------
 
-Padding 层
+Pooling 层
 ------------------------
 
 Pool Layer (原生 API)
