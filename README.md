@@ -17,7 +17,6 @@
 [![Chinese Book](https://img.shields.io/badge/book-中文-blue.svg)](http://www.broadview.com.cn/book/5059/)
 [![Downloads](http://pepy.tech/badge/tensorlayer)](http://pepy.tech/project/tensorlayer)
 
-
 TensorLayer是一个崭新的基于[TensorFlow](https://www.tensorflow.org)的深度学习与增强学习开发库。它提供大量的神经网络相关组件和函数来帮助顶尖研究人员和一线工程师解决复杂的人工智能问题。
 本仓库维护了TensorLayer的[中文文档](http://tensorlayercn.readthedocs.io/zh/latest)。相对于[英文文档]((https://github.com/tensorlayer/tensorlayer))，中文文档会有一定滞后性。
 

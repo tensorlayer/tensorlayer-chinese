@@ -1,0 +1,16 @@
+API - 优化器
+================
+
+.. automodule:: tensorlayer.optimizers
+
+优化器列表
+---------------
+
+.. autosummary::
+
+   AMSGrad
+
+AMSGrad 优化器
+-----------------
+.. autoclass:: AMSGrad
+  :members:
