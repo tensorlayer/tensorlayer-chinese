@@ -3,6 +3,10 @@
 build:
   image: latest  # For python 3.6
 
+submodules:
+  include: all
+  recursive: true
+
 formats:
     - epub
     - pdf
