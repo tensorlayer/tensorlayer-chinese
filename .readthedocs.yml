@@ -15,4 +15,4 @@ python:
     version: 3.6
     
 requirements_file: 
-    requirements_doc.txt
+    requirements/eequirements_doc.txt
