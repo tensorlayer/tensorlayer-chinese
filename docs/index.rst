@@ -41,9 +41,9 @@ TensorLayer用户指南说明了如何去安装TensorFlow,CUDA和cuDNN，
    user/get_involved
 
 .. toctree::
-  :maxdepth: 2
-  :caption: 开始上路
-  
+   :maxdepth: 2
+   :caption: 使用说明
+
    user/get_start_model
    user/get_start_advance
 
@@ -54,7 +54,7 @@ API目录
 
 .. toctree::
   :maxdepth: 2
-  :caption: 模块
+  :caption: 稳定模块
 
   modules/activation
   modules/array_ops
