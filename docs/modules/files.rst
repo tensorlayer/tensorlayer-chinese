@@ -1,34 +1,6 @@
 API - 文件
 ========================
 
-下载基准(benchmark)数据集，保存加载模型和数据。
-TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更好地实现跨平台，
-我们建议使用python标准文件格式 ``.npz`` 来保存和加载模型。
-
-.. code-block:: python
-
-  ## 保存模型为 .ckpt
-  saver = tf.train.Saver()
-  save_path = saver.save(sess, "model.ckpt")
-  # 从 .ckpt 加载模型
-  saver = tf.train.Saver()
-  saver.restore(sess, "model.ckpt")
-
-  ## 保存模型为 .npz
-  tl.files.save_npz(network.all_params , name='model.npz')
-  # 从 .npz 加载模型 (方法1)
-  load_params = tl.files.load_npz(name='model.npz')
-  tl.files.assign_params(sess, load_params, network)
-  # 从 .npz 加载模型 (方法2)
-  tl.files.load_and_assign_npz(sess=sess, name='model.npz', network=network)
-
-  ## 此外，你可以这样加载预训练的参数
-  # 加载第一个参数
-  tl.files.assign_params(sess, [load_params[0]], network)
-  # 加载前三个参数
-  tl.files.assign_params(sess, load_params[:3], network)
-
-
 .. automodule:: tensorlayer.files
 
 .. autosummary::
@@ -52,14 +24,10 @@ TensorFlow提供 ``.ckpt`` 文件格式来保存和加载模型，但为了更�
 
    save_npz
    load_npz
-   assign_params
+ 
    load_and_assign_npz
    save_npz_dict
    load_and_assign_npz_dict
-   save_graph
-   load_graph
-   save_graph_and_params
-   load_graph_and_params   
    save_ckpt
    load_ckpt
 
@@ -156,12 +124,9 @@ Google Drive
 .. autofunction:: save_npz
 
 从save_npz加载模型参数列表
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
 
-把模型参数载入模型
-^^^^^^^^^^^^^^^^^^^
-.. autofunction:: assign_params
 
 从.npz中加载参数并导入模型
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -173,40 +138,9 @@ Google Drive
 .. autofunction:: save_npz_dict
 
 从save_npz_dict加载模型参数列表
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_and_assign_npz_dict
 
-保存网络结构到 graph
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph
-
-回复网络结构从 graph
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph
-
-保存网络结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph_and_params
-
-回复网络结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph_and_params
-
-保存模型结构
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph
-        
-加载模型结构
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph
-
-保存模型结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph_and_params
-
-加载模型结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph_and_params
 
 以列表保存模型到 .ckpt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -234,7 +168,7 @@ Google Drive
 
 
 文件夹/文件相关函数
-------------------
+-----------------------------
 
 判断文件存在
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

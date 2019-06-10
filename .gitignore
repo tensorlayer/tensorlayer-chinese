@@ -4,3 +4,9 @@ tensorlayer/*pyc
 tensorlayer/layers/*pyc
 .DS_Store
 tensorlayer/cli/__pycache__
+.idea/
+env/
+venv/
+ENV/
+VENV/
+tensorlayer.egg-info/

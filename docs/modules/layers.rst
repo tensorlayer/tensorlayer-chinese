@@ -1,5 +1,5 @@
 API - 神经网络层
-================
+=========================
 
 
 .. -----------------------------------------------------------
@@ -7,7 +7,9 @@ API - 神经网络层
 .. -----------------------------------------------------------
 
 神经网络层列表
---------------
+---------------------------------
+
+.. automodule:: tensorlayer.layers
 
 .. autosummary::
 
@@ -66,26 +68,25 @@ API - 神经网络层
    batch_transformer
 
    BatchNorm
+   BatchNorm1d
+   BatchNorm2d
+   BatchNorm3d
    LocalResponseNorm
    InstanceNorm
+   InstanceNorm1d
+   InstanceNorm2d
+   InstanceNorm3d
    LayerNorm
    GroupNorm
    SwitchNorm
 
-   ROIPoolingLayer
-
    RNN
    BiRNN
-
-   ConvRNNCell
-   BasicConvLSTMCell
-   ConvLSTM
 
    retrieve_seq_length_op
    retrieve_seq_length_op2
    retrieve_seq_length_op3
-   target_mask_op
-
+  
    Seq2Seq
 
    Flatten
@@ -104,8 +105,6 @@ API - 神经网络层
 
    Stack
    UnStack
-
-   SlimNets
 
    Sign
    Scale
@@ -378,6 +377,18 @@ Batch 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: BatchNorm
 
+Batch1d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BatchNorm1d
+
+Batch2d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BatchNorm2d
+
+Batch3d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: BatchNorm3d
+
 Local Response 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: LocalResponseNorm
@@ -385,6 +396,18 @@ Local Response 标准化层
 Instance 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: InstanceNorm
+
+Instance1d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InstanceNorm1d
+
+Instance2d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InstanceNorm2d
+
+Instance3d 标准化层
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: InstanceNorm3d
 
 Layer 标准化层
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -585,21 +608,6 @@ Bidirectional 层
 .. autoclass:: BiRNN
 
 
-循环+卷积层
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Conv RNN Cell
-"""""""""""""""""""""""""""""""""
-.. autoclass:: ConvRNNCell
-
-Basic Conv LSTM Cell
-"""""""""""""""""""""""""""""""""
-.. autoclass:: BasicConvLSTMCell
-
-Conv LSTM 层
-"""""""""""""""""""""""""""""""""
-.. autoclass:: ConvLSTM
-
 简单 Seq2Seq
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autoclass:: Seq2Seq
@@ -618,10 +626,6 @@ Conv LSTM 层
 方法 3
 """"""""""""""""""""""""""
 .. autofunction:: retrieve_seq_length_op3
-
-计算掩码
-""""""""""""""""""""""""""
-.. autofunction:: target_mask_op
 
 
 
