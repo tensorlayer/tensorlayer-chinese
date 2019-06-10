@@ -1,13 +1,14 @@
 .. _getstartadvance:
 
 ==================
-高级使用技巧
+高级特性
 ==================
 
-使用预训练卷积网络
+
+使用预训练模型
 ================
 
-获取整个卷积网络
+获取整个模型
 ---------------
 
 .. code-block:: python
@@ -22,7 +23,7 @@
   img = tl.prepro.imresize(img, (224, 224)).astype(np.float32) / 255
   output = vgg(img, is_train=False)
 
-获取部分卷积网络
+获取部分模型
 ------------------
 
 .. code-block:: python
@@ -35,9 +36,9 @@
   nn = tl.layers.Dense(n_units=100, name='out')(nn)
   model = tl.models.Model(inputs=ni, outputs=nn)
   # train your own classifier (only update the last layer)
-  train_params = model.get_layer('out').weights
+  train_params = model.get_layer('out').all_weights
 
-重用卷积网络
+复用模型
 ------------------
 
 .. code-block:: python
