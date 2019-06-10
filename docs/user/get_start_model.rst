@@ -65,6 +65,24 @@ TensorLayer提供两种模型定义模型，静态模型提供直观的代码风
   outputs = MLP(data, foo=True) # controls the forward here
   outputs = MLP(data, foo=False)
 
+切换训练/测试模式
+=============================
+
+.. code-block:: python
+
+  # method 1: switch before forward
+  Model.train() # enable dropout, batch norm moving avg ...
+  output = Model(train_data) 
+  ... # training code here
+  Model.eval()  # disable dropout, batch norm moving avg ...
+  output = Model(test_data) 
+  ... # testing code here
+  
+  # method 2: switch while forward
+  output = Model(train_data, is_train=True)
+  output = Model(test_data, is_train=False)
+
+
 参数（层）复用
 =====================
 
