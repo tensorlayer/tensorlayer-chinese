@@ -15,12 +15,12 @@ TensorLayer 提供了一些预训练模型，通过这套API，您可以非常�
 VGG16
 ----------------------
 
-.. autoclass:: VGG16
+.. autofunction:: VGG16
 
 VGG19
 ----------------------
 
-.. autoclass:: VGG19
+.. autofunction:: VGG19
 
 SqueezeNetV1
 ----------------

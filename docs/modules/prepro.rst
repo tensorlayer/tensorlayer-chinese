@@ -180,7 +180,7 @@ HSV 转 RGB
 .. autofunction:: hsv_to_rgb
 
 调整色调（Hue）
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 .. autofunction:: adjust_hue
 
 
@@ -215,7 +215,7 @@ HSV 转 RGB
 .. autofunction:: apply_transform
 
 基于坐标点的的投影变换
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: projective_transform_by_points
 
 
