@@ -127,9 +127,6 @@ Google Drive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_npz
 
-把模型参数载入模型
-^^^^^^^^^^^^^^^^^^^
-.. autofunction:: assign_params
 
 从.npz中加载参数并导入模型
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -144,37 +141,6 @@ Google Drive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: load_and_assign_npz_dict
 
-保存网络结构到 graph
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph
-
-回复网络结构从 graph
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph
-
-保存网络结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph_and_params
-
-回复网络结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph_and_params
-
-保存模型结构
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph
-        
-加载模型结构
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph
-
-保存模型结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: save_graph_and_params
-
-加载模型结构和参数
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: load_graph_and_params
 
 以列表保存模型到 .ckpt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
