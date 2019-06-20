@@ -81,14 +81,16 @@ API - 神经网络层
    SwitchNorm
 
    RNN
+   SimpleRNN
+   GRURNN
+   LSTMRNN
    BiRNN
 
    retrieve_seq_length_op
    retrieve_seq_length_op2
    retrieve_seq_length_op3
+   target_mask_op
   
-   Seq2Seq
-
    Flatten
    Reshape
    Transpose
@@ -603,14 +605,24 @@ RNN 层
 """"""""""""""""""""""""""
 .. autoclass:: RNN
 
+
+基本RNN层 （使用简单循环单元）
+"""""""""""""""""""""""""""""""
+.. autoclass:: SimpleRNN
+
+
+基于GRU的RNN层（使用GRU循环单元）
+""""""""""""""""""""""""""""""""
+.. autoclass:: GRURNN
+
+基于LSTM的RNN层（使用LSTM循环单元）
+""""""""""""""""""""""""""""""""
+.. autoclass:: LSTMRNN
+
 Bidirectional 层
 """""""""""""""""""""""""""""""""
 .. autoclass:: BiRNN
 
-
-简单 Seq2Seq
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autoclass:: Seq2Seq
 
 计算步长函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -627,6 +639,10 @@ Bidirectional 层
 """"""""""""""""""""""""""
 .. autofunction:: retrieve_seq_length_op3
 
+
+方法 4
+"""""""""""""""""""""""""""
+.. autofunction:: target_mask_op
 
 
 .. -----------------------------------------------------------
