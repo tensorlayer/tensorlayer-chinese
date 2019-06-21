@@ -1,11 +1,7 @@
 API - 数据预处理
 =============================
 
-我们提供大量的数据增强及处理方法，使用 Numpy, Scipy, Threading 和 Queue。
-不过，我们建议你直接使用 TensorFlow 提供的 operator，如 ``tf.image.central_crop`` ，更多关于 TensorFlow 的信息请见
-`这里 <https://www.tensorflow.org/versions/master/api_docs/python/image.html>`_ 和 ``tutorial_cifar10_tfrecord.py``.
-这个包的一部分代码来自Keras。
-
+我们提供大量的数据增强及处理方法，若需要对图像进行仿射变换（Affine Transformation），请参考 `Python Can Be Fast <https://zhuanlan.zhihu.com/p/70217246>`__ 的方法，并结合`tf.py_function`一起使用。
 
 .. automodule:: tensorlayer.prepro
 
@@ -104,6 +100,8 @@ API - 数据预处理
 
 并行 Threading
 ------------------
+
+对于当前的版本，我们建议使用`tf.data`和`tf.py_function`来实现训练数据处理，`threading_data`只适合需要处理一次的数据，请参考我们Github中CIFAR10的例子。
 
 .. autofunction:: threading_data
 
