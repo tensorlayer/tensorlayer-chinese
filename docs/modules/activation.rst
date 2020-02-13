@@ -32,6 +32,7 @@ TensorFlow官方的函数，比如
   sign
   hard_tanh
   pixel_wise_softmax
+  mish
 
 
 Ramp
@@ -65,6 +66,10 @@ Hard Tanh
 Pixel-wise softmax
 --------------------
 .. autofunction:: pixel_wise_softmax
+
+mish
+-------------
+.. autofunciton:: mish
 
 带有参数的激活函数
 ------------------------------
